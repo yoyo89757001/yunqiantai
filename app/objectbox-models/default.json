@@ -4,32 +4,339 @@
   "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
   "entities": [
     {
-      "id": "1:6635212646208842270",
-      "lastPropertyId": "2:2949828315280744710",
-      "name": "CeShi",
+      "id": "2:8632471762299699024",
+      "lastPropertyId": "2:8028598958905291285",
+      "name": "BenDiInFoBean",
       "properties": [
         {
-          "id": "1:3936260554882782058",
+          "id": "1:2018530258893633355",
           "name": "id"
         },
         {
-          "id": "2:2949828315280744710",
-          "indexId": "1:2526526740458929187",
+          "id": "2:8028598958905291285",
+          "indexId": "2:2826412698374206834",
           "name": "name"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "3:3840701619543301435",
+      "lastPropertyId": "24:5014994266454314267",
+      "name": "BaoCunBean",
+      "properties": [
+        {
+          "id": "1:8003800489277953250",
+          "name": "id"
+        },
+        {
+          "id": "2:7634186184346194954",
+          "name": "shipingIP"
+        },
+        {
+          "id": "3:857483318493736187",
+          "name": "zhujiDiZhi"
+        },
+        {
+          "id": "4:5649137908398941184",
+          "name": "moban"
+        },
+        {
+          "id": "5:2625011942313773389",
+          "name": "tuisongDiZhi"
+        },
+        {
+          "id": "6:3000720314386120595",
+          "name": "gonggao"
+        },
+        {
+          "id": "7:3280491029431237452",
+          "name": "isShowMoshengren"
+        },
+        {
+          "id": "8:7565909664955226328",
+          "name": "isShowShiPingLiu"
+        },
+        {
+          "id": "9:2448936754427402752",
+          "name": "isHengOrShu"
+        },
+        {
+          "id": "10:4079567183444525600",
+          "name": "yusu"
+        },
+        {
+          "id": "11:4650738846843659946",
+          "name": "yudiao"
+        },
+        {
+          "id": "12:4349403922375551012",
+          "name": "boyingren"
+        },
+        {
+          "id": "13:1376358833404458600",
+          "name": "zhanghuId"
+        },
+        {
+          "id": "14:1497367622012318741",
+          "name": "wenzi"
+        },
+        {
+          "id": "15:6450932286794257254",
+          "name": "size"
+        },
+        {
+          "id": "16:3596508901577301413",
+          "name": "touxiangzhuji"
+        },
+        {
+          "id": "17:4570350254361148682",
+          "name": "houtaiDiZhi"
+        },
+        {
+          "id": "18:4906689225297522167",
+          "name": "huiyiId"
+        },
+        {
+          "id": "19:9107422301221320398",
+          "name": "wenzi1"
+        },
+        {
+          "id": "20:7160757398642106004",
+          "name": "size1"
+        },
+        {
+          "id": "21:3661770737549005956",
+          "name": "guanggaojiMing"
+        },
+        {
+          "id": "22:2042274923377068342",
+          "name": "shiPingWeiZhi"
+        },
+        {
+          "id": "23:916695282586587627",
+          "name": "zhanhuiId"
+        },
+        {
+          "id": "24:5014994266454314267",
+          "name": "zhanhuiBianMa"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "4:901129472523349296",
+      "lastPropertyId": "14:1198815536795244732",
+      "name": "BenDiMBbean",
+      "properties": [
+        {
+          "id": "1:3439323078931522767",
+          "name": "id"
+        },
+        {
+          "id": "2:4796283518350817079",
+          "name": "screenId"
+        },
+        {
+          "id": "3:4043281512375951585",
+          "name": "sid"
+        },
+        {
+          "id": "4:6449032864131595998",
+          "name": "createTime"
+        },
+        {
+          "id": "5:4328490942478794189",
+          "name": "bottemImageUrl"
+        },
+        {
+          "id": "6:6972093376054346392",
+          "name": "welcomeSpeak"
+        },
+        {
+          "id": "7:2117900041039389378",
+          "name": "subType"
+        },
+        {
+          "id": "8:7060857045095119503",
+          "name": "pageSize"
+        },
+        {
+          "id": "9:897523884391351899",
+          "name": "popupImageUrl"
+        },
+        {
+          "id": "10:2003674766072025981",
+          "name": "dtoResult"
+        },
+        {
+          "id": "11:3029049861371322813",
+          "name": "companyId"
+        },
+        {
+          "id": "12:2623098679799782263",
+          "name": "modifyTime"
+        },
+        {
+          "id": "13:4999683916483530112",
+          "name": "pageNum"
+        },
+        {
+          "id": "14:1198815536795244732",
+          "name": "photo_index"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "5:8193741552311883792",
+      "lastPropertyId": "31:2791795522873817411",
+      "name": "RenYuanInFo",
+      "properties": [
+        {
+          "id": "1:4312348702263867187",
+          "name": "id"
+        },
+        {
+          "id": "2:196270373551007151",
+          "name": "accountId"
+        },
+        {
+          "id": "3:4094377796613903791",
+          "name": "assemblyId"
+        },
+        {
+          "id": "4:3634047457165507238",
+          "name": "channel"
+        },
+        {
+          "id": "5:3355127832072551678",
+          "name": "come_from"
+        },
+        {
+          "id": "6:1355553961295948256",
+          "name": "companyName"
+        },
+        {
+          "id": "7:7598269928412970309",
+          "name": "country"
+        },
+        {
+          "id": "8:4845946385598797168",
+          "name": "createTime"
+        },
+        {
+          "id": "9:4270571989139344528",
+          "name": "department"
+        },
+        {
+          "id": "10:7693942215735311315",
+          "name": "dtoResult"
+        },
+        {
+          "id": "11:1749277130032858796",
+          "name": "gender"
+        },
+        {
+          "id": "12:6738443235493500353",
+          "name": "identity"
+        },
+        {
+          "id": "13:1466693734333219683",
+          "name": "jobStatus"
+        },
+        {
+          "id": "14:6759824190597157586",
+          "name": "location"
+        },
+        {
+          "id": "15:1869223426926251945",
+          "name": "meetingId"
+        },
+        {
+          "id": "16:6672752114247635611",
+          "name": "modifyTime"
+        },
+        {
+          "id": "17:1085541137465150419",
+          "name": "name"
+        },
+        {
+          "id": "18:4527236395453209587",
+          "name": "namePinyin"
+        },
+        {
+          "id": "19:7825465439462753515",
+          "name": "num"
+        },
+        {
+          "id": "20:3303615361674569698",
+          "name": "pageNum"
+        },
+        {
+          "id": "21:6881799954905834157",
+          "name": "pageSize"
+        },
+        {
+          "id": "22:2727649297222968193",
+          "name": "phone"
+        },
+        {
+          "id": "23:7959094371461328091",
+          "name": "photo_ids"
+        },
+        {
+          "id": "24:8455785698008849742",
+          "name": "province"
+        },
+        {
+          "id": "25:4506683185814906971",
+          "name": "remark"
+        },
+        {
+          "id": "26:3121973212731174733",
+          "name": "sid"
+        },
+        {
+          "id": "27:5744465725182113504",
+          "name": "sourceMeeting"
+        },
+        {
+          "id": "28:7063935317063654323",
+          "name": "sourceQuestionJson"
+        },
+        {
+          "id": "29:1490296975628339890",
+          "name": "status"
+        },
+        {
+          "id": "30:426656226346739908",
+          "name": "subject_type"
+        },
+        {
+          "id": "31:2791795522873817411",
+          "name": "title"
         }
       ],
       "relations": []
     }
   ],
-  "lastEntityId": "1:6635212646208842270",
-  "lastIndexId": "1:2526526740458929187",
+  "lastEntityId": "5:8193741552311883792",
+  "lastIndexId": "2:2826412698374206834",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
   "modelVersion": 4,
   "modelVersionParserMinimum": 4,
-  "retiredEntityUids": [],
-  "retiredIndexUids": [],
-  "retiredPropertyUids": [],
+  "retiredEntityUids": [
+    6635212646208842270
+  ],
+  "retiredIndexUids": [
+    2526526740458929187
+  ],
+  "retiredPropertyUids": [
+    3936260554882782058,
+    2949828315280744710
+  ],
   "retiredRelationUids": [],
   "version": 1
 }
