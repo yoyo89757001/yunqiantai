@@ -6,7 +6,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.widget.ImageView;
+
 
 import megvii.testfacepass.utils.FileUtil;
 

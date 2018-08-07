@@ -39,17 +39,30 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <EditText
-        android:textColor="@color/textcolor"
-        android:textSize="14sp"
-        android:inputType="number"
-        android:paddingLeft="16dp"
-        android:maxLength="4"
-        android:background="@null"
-        android:gravity="center_vertical"
+    <ImageView
+        android:layout_width="60dp"
+        android:padding="12dp"
+        android:id="@+id/k_jian"
+        android:src="@drawable/jianbg"
+        android:layout_height="60dp" />
+
+    <TextView
+        android:textColor="@color/colorBar_bg"
+        android:textSize="12sp"
+        android:background="@drawable/zidonghuoqu7"
+        android:gravity="center"
         android:id="@+id/idid"
-        android:layout_width="match_parent"
+        android:layout_width="74dp"
         android:layout_height="50dp" />
+
+
+    <ImageView
+        android:layout_width="60dp"
+        android:padding="12dp"
+        android:id="@+id/k_jia"
+        android:src="@drawable/jiabg"
+        android:layout_height="60dp" />
+
 </LinearLayout>
 
         <View
@@ -69,17 +82,31 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <EditText
-                android:textColor="@color/textcolor"
-                android:textSize="14sp"
-                android:paddingLeft="16dp"
-                android:inputType="number"
-                android:maxLength="4"
-                android:background="@null"
-                android:gravity="center_vertical"
+
+            <ImageView
+                android:layout_width="60dp"
+                android:id="@+id/g_jian"
+                android:padding="12dp"
+                android:src="@drawable/jianbg"
+                android:layout_height="60dp" />
+
+            <TextView
+                android:textColor="@color/colorBar_bg"
+                android:textSize="12sp"
+                android:background="@drawable/zidonghuoqu7"
+                android:gravity="center"
                 android:id="@+id/xiangce"
-                android:layout_width="match_parent"
+                android:layout_width="74dp"
                 android:layout_height="50dp" />
+
+
+            <ImageView
+                android:layout_width="60dp"
+                android:padding="12dp"
+                android:id="@+id/g_jia"
+                android:src="@drawable/jiabg"
+                android:layout_height="60dp" />
+
         </LinearLayout>
         <View
             android:background="@color/colorBar_bg"
@@ -88,33 +115,21 @@
 
         <LinearLayout
             android:orientation="horizontal"
-            android:layout_weight="0.5"
+            android:layout_weight="0.6"
+            android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="0dp">
 
             <Button
-                android:layout_width="0dp"
-                android:textColor="@color/colorBar_bg"
-                android:layout_weight="1"
+                android:layout_width="80dp"
+                android:textColor="@color/white"
                 android:text="确认"
                 android:id="@+id/queren"
                 android:textSize="16sp"
-                android:background="@null"
-                android:layout_height="50dp" />
+                android:background="@drawable/zidonghuoqu3"
+                android:layout_height="40dp" />
 
-            <View
-                android:layout_width="0.6dp"
-                android:background="@color/tabtextcolo"
-                android:layout_height="match_parent"/>
-            <Button
-                android:layout_width="0dp"
-                android:background="@null"
-                android:layout_weight="1"
-                android:textSize="16sp"
-                android:id="@+id/quxiao"
-                android:text="取消"
-                android:textColor="@color/colorBar_bg"
-                android:layout_height="50dp" />
+
 
         </LinearLayout>
 

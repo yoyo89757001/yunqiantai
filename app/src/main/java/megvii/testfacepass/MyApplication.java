@@ -2,6 +2,8 @@ package megvii.testfacepass;
 
 import android.app.Application;
 
+import com.yatoooon.screenadaptation.ScreenAdapterTools;
+
 import cn.jpush.android.api.JPushInterface;
 import io.objectbox.BoxStore;
 import megvii.testfacepass.beans.MyObjectBox;
@@ -20,7 +22,8 @@ public class MyApplication extends Application {
         super.onCreate();
         myApplication = this;
         mBoxStore = MyObjectBox.builder().androidContext(this).build();
-
+        //适配
+        ScreenAdapterTools.init(this);
         JPushInterface.setDebugMode(false); 	// 设置开启日志,发布时请关闭日志
         JPushInterface.init(this);     		// 初始化 JPush
     }
