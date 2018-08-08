@@ -29,11 +29,13 @@ import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.model.FileHeader;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.xmlpull.v1.XmlPullParser;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -41,7 +43,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URLDecoder;
+import java.security.Key;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,9 +54,16 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import javax.crypto.Cipher;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.DESedeKeySpec;
+import javax.crypto.spec.IvParameterSpec;
+
 import cn.jpush.android.api.JPushInterface;
 import io.objectbox.Box;
+import megvii.facepass.FacePassHandler;
 import megvii.testfacepass.MyApplication;
+import megvii.testfacepass.beans.BangDingBean;
 import megvii.testfacepass.beans.BaoCunBean;
 import megvii.testfacepass.beans.BenDiMBbean;
 import megvii.testfacepass.beans.BenDiMBbean_;
@@ -75,6 +86,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import sun.misc.BASE64Decoder;
 
 /**
  * 自定义接收器
@@ -274,9 +286,10 @@ public class MyReceiver extends BroadcastReceiver {
 				TuiSongBean renShu=gson.fromJson(jsonObject,TuiSongBean.class);
 				//1 新增 2修改//3是删除
 				switch (renShu.getTitle()){
-					case "主机管理":
+					case "绑定激活":
 						//先从老黄哪里拿主机数据。
-					//	link_getHouTaiZhuJi(renShu.getContent().getId(),context,renShu.getContent().getStatus());
+//						link_getHouTaiZhuJi(renShu.getContent().getId(),context,renShu.getContent().getStatus());
+                        link_bangding(renShu.getId(),renShu.getUrl());
 						break;
 					case "设备管理":
 						//先从老黄哪里拿门禁数据。
@@ -284,13 +297,13 @@ public class MyReceiver extends BroadcastReceiver {
 						break;
 					case "人员管理":  //单个人员
 						//先从老黄哪里拿人员数据。
-						link_getHouTaiDanRen(renShu.getContent().getId(),context,renShu.getContent().getStatus());
+					//	link_getHouTaiDanRen(renShu.getContent().getId(),context,renShu.getContent().getStatus());
 						break;
 					case "人员列表管理":
 						//先从老黄哪里拿批量人员数据。
 					//	baoCunBean.setHuiyiId(renShu.getContent().getId()+"");
 					//	baoCunBeanDao.update(baoCunBean);
-						link_getHouTaiPiLiang(renShu.getContent().getId(),context,renShu.getContent().getStatus());
+					//	link_getHouTaiPiLiang(renShu.getContent().getId(),context,renShu.getContent().getStatus());
 
 						Intent intent2=new Intent("gxshipingdizhi");
 						context.sendBroadcast(intent2);
@@ -951,6 +964,123 @@ public class MyReceiver extends BroadcastReceiver {
 		});
 	}
 
+    //绑定设备
+    private void link_bangding(String id,String url){
+        //	final MediaType JSON=MediaType.parse("application/json; charset=utf-8");
+        OkHttpClient okHttpClient= new OkHttpClient();
+        //RequestBody requestBody = RequestBody.create(JSON, json);
+        RequestBody body = new FormBody.Builder()
+                .add("id",id)
+                .build();
+        Request.Builder requestBuilder = new Request.Builder()
+//				.header("Content-Type", "application/json")
+//				.header("user-agent","Koala Admin")
+                //.post(requestBody)
+                //.get()
+                .post(body)
+                .url(baoCunBean.getHoutaiDiZhi()+url);
+
+        // step 3：创建 Call 对象
+        Call call = okHttpClient.newCall(requestBuilder.build());
+        //step 4: 开始异步请求
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("AllConnects", "请求失败"+e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.d("AllConnects", "请求成功"+call.request().toString());
+                //获得返回体
+                try{
+                    ResponseBody body = response.body();
+                    String ss=body.string().trim();
+                    Log.d("AllConnects", "绑定："+ss);
+					JsonObject jsonObject= GsonUtil.parse(ss).getAsJsonObject();
+					Gson gson=new Gson();
+					final BangDingBean dingBean=gson.fromJson(jsonObject,BangDingBean.class);
+					String md5=FileUtil.sToMD5(dingBean.getAccredit()+dingBean.getSdkPwd());
+
+					byte[] b1=new BASE64Decoder().decodeBuffer(md5);
+					byte[] b2=dingBean.getKeyiv().getBytes();
+					byte[] b3=new BASE64Decoder().decodeBuffer(dingBean.getVerifyIp());
+					byte[] b4=new BASE64Decoder().decodeBuffer(dingBean.getApiKey());
+					byte[] b5=new BASE64Decoder().decodeBuffer(dingBean.getApiSecret());
+
+				String s1s= null;
+				String s2s=null;
+				String s3s=null;
+				try {
+					s1s = new String(FileUtil.des3DecodeCBC(b1,b2,b3));
+					s2s = new String(FileUtil.des3DecodeCBC(b1,b2,b4));
+					s3s = new String(FileUtil.des3DecodeCBC(b1,b2,b5));
+
+				} catch (Exception e) {
+					Log.d("MyReceiver", e.getMessage()+"gggg");
+				}
+				Log.d("MyReceiver", "s1s:"+s1s);
+				Log.d("MyReceiver", "s2s:"+s2s);
+				Log.d("MyReceiver", "s3s:"+s3s);
+
+				FileUtil.isExists("megvii/data");
+				File file = null;
+				try {
+					file = new File(FileUtil.SDPATH+File.separator+"megvii/data/bianma.txt");
+					if (!file.exists()) {
+						file.createNewFile();
+					}else {
+						file.delete();
+						file.createNewFile();
+					}
+						FileOutputStream outputStream=new FileOutputStream(file,true);
+						byte[] bytesArray = s1s.getBytes();
+						outputStream.write(bytesArray);
+                        outputStream.write("\r\n".getBytes());// 写入一个换行
+						outputStream.flush();
+						byte[] bytesArray2 = s2s.getBytes();
+						outputStream.write(bytesArray2);
+                        outputStream.write("\r\n".getBytes());// 写入一个换行
+						outputStream.flush();
+						byte[] bytesArray3 = s3s.getBytes();
+						outputStream.write(bytesArray3);
+                        outputStream.write("\r\n".getBytes());// 写入一个换行
+						outputStream.flush();
+						outputStream.close();
+						String a1 = null,a2=null,a3=null;
+						int i=0;
+					FileInputStream inputStream = new FileInputStream(file);
+					BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+					String str = null;
+					while((str = bufferedReader.readLine()) != null)
+					{
+						i++;
+						if (i==1){
+							a1=str;
+						}else if (i==2){
+							a2=str;
+						}else if (i==3){
+							a3=str;
+						}
+					}
+					inputStream.close();
+					bufferedReader.close();
+
+					initFacePassSDK(a1,a2,a3,dingBean.getId());
+
+				} catch (Exception e) {
+					e.printStackTrace();
+					EventBus.getDefault().post("激活设备失败");
+				}
+
+                }catch (Exception e){
+                    Log.d("WebsocketPushMsg", e.getMessage()+"ttttt");
+					EventBus.getDefault().post("激活设备失败");
+                }
+
+            }
+        });
+    }
 
 
 
@@ -1056,8 +1186,80 @@ public class MyReceiver extends BroadcastReceiver {
 		}
 	}
 
+	private void initFacePassSDK(String s1,String s2,String s3,String id) {
+		FacePassHandler.getAuth(s1, s2, s3);
+		FacePassHandler.initSDK(context);
+	//	Log.d("WJY", FacePassHandler.getVersion());
+		int i=0;
+		while (true){
+			i++;
+			SystemClock.sleep(200);
+			if (FacePassHandler.isAvailable())
+			{
+				Log.d("WJY", "初始化成功");
+				break;
+			}
+			if (i>50){
+				break;
+			}
+		}
+		if (FacePassHandler.isAvailable()){
+			Log.d("WJY", "初始化成功");
+			link_uplodeBangDing(id);
+		}else {
+			Log.d("WJY", "初始化失败");
+			EventBus.getDefault().post("激活设备失败");
+		}
+
+	}
+
+	//提交绑定状态
+	private void link_uplodeBangDing(String id){
+
+		//	final MediaType JSON=MediaType.parse("application/json; charset=utf-8");
+		OkHttpClient okHttpClient= new OkHttpClient();
+		//RequestBody requestBody = RequestBody.create(JSON, json);
+		RequestBody body = new FormBody.Builder()
+				.add("id",id)
+				.build();
+		Request.Builder requestBuilder = new Request.Builder()
+//				.header("Content-Type", "application/json")
+//				.header("user-agent","Koala Admin")
+				//.post(requestBody)
+				//.get()
+				.post(body)
+				.url(baoCunBean.getHoutaiDiZhi()+"/app/destroyMachine");
+		// step 3：创建 Call 对象
+		Call call = okHttpClient.newCall(requestBuilder.build());
+		//step 4: 开始异步请求
+		call.enqueue(new Callback() {
+			@Override
+			public void onFailure(Call call, IOException e)
+			{
+				Log.d("AllConnects", "请求失败"+e.getMessage());
+			}
+
+			@Override
+			public void onResponse(Call call, Response response) throws IOException {
+				Log.d("AllConnects", "请求成功"+call.request().toString());
+				//获得返回体
+				try{
+					ResponseBody body = response.body();
+					String ss=body.string().trim();
+					Log.d("AllConnects", "上传绑定成功状态"+ss);
+					JsonObject jsonObject= GsonUtil.parse(ss).getAsJsonObject();
+
+//					Gson gson=new Gson();
+//					final HuiYiInFoBean renShu=gson.fromJson(jsonObject,HuiYiInFoBean.class);
 
 
+				}catch (Exception e){
+					Log.d("WebsocketPushMsg", e.getMessage()+"ttttt");
+				}
+
+			}
+		});
+	}
 
 
 	private void XiaZaiTuPian(Context context, RenYuanInFo renYuanInFo){

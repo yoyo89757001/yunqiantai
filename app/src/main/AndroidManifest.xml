@@ -184,6 +184,13 @@
         <!--DPI等级	        LDPI	MDPI	HDPI	XHDPI	XXHDPI	XXXHDPI-->
         <!--DPI数值	        120	160	240	320	480	640-->
 
+        <service
+            android:name=".ljkplay.services.MediaPlayerService"
+            android:enabled="false"
+            android:exported="false"
+            android:icon="@drawable/rtlogo"
+            android:label="@string/app_name" >
+        </service>
 
     </application>
 

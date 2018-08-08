@@ -50,17 +50,22 @@ public class BangDingDialog extends Dialog {
               int len=s.toString().length();
                 StringBuilder builder=new StringBuilder();
                 if (len>0){
-                    if (len==5){
+                    if (len==4){
                         builder.append(idid.getText().toString().trim());
                         builder.append("-");
                         idid.setText(builder.toString());
                         idid.setSelection(idid.getText().toString().trim().length());
-                    }else if (len==11){
+                    }else if (len==9){
                         builder.append(idid.getText().toString().trim());
                         builder.append("-");
                         idid.setText(builder.toString());
                         idid.setSelection(idid.getText().toString().trim().length());
-                    }else if (len==17){
+                    }else if (len==14){
+                        builder.append(idid.getText().toString().trim());
+                        builder.append("-");
+                        idid.setText(builder.toString());
+                        idid.setSelection(idid.getText().toString().trim().length());
+                    }else if (len==19){
                         builder.append(idid.getText().toString().trim());
                         builder.append("-");
                         idid.setText(builder.toString());

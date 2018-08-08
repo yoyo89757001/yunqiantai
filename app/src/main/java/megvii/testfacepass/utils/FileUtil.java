@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
@@ -27,6 +28,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.security.Key;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -35,6 +39,10 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
+import javax.crypto.Cipher;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.DESedeKeySpec;
+import javax.crypto.spec.IvParameterSpec;
 
 
 /**
@@ -42,6 +50,50 @@ import java.util.zip.ZipInputStream;
  */
 
 public class FileUtil {
+    public static final String SDPATH = Environment.getExternalStorageDirectory().getAbsolutePath();
+
+    public static String getSerialNumber(Context context){
+
+        String serial = null;
+
+        try {
+
+            serial = Settings.System.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+        }
+
+        return serial;
+
+    }
+
+
+
+
+    /**
+     * 获取手机IMSI号
+     */
+    public static String getIMSI(){
+
+
+        return "355" +
+                Build.BOARD.length()%10 +
+                Build.BRAND.length()%10 +
+                Build.DEVICE.length()%10 +
+                Build.DISPLAY.length()%10 +
+                Build.HOST.length()%10 +
+                Build.ID.length()%10 +
+                Build.MANUFACTURER.length()%10 +
+                Build.MODEL.length()%10 +
+                Build.PRODUCT.length()%10 +
+                Build.TAGS.length()%10 +
+                Build.TYPE.length()%10 +
+                Build.USER.length()%10;
+    }
+
 
     /**
      * bitmap转为base64
@@ -77,6 +129,53 @@ public class FileUtil {
         }
         return result;
     }
+    /**
+     * CBC解密
+     * @param key 密钥
+     * @param keyiv IV
+     * @param data Base64编码的密文
+     * @return 明文
+     * @throws Exception
+     */
+    public static byte[] des3DecodeCBC(byte[] key, byte[] keyiv, byte[] data)
+            throws Exception {
+        Key deskey = null;
+        DESedeKeySpec spec = new DESedeKeySpec(key);
+        SecretKeyFactory keyfactory = SecretKeyFactory.getInstance("desede");
+        deskey = keyfactory.generateSecret(spec);
+        Cipher cipher = Cipher.getInstance("desede" + "/CBC/PKCS5Padding");
+        IvParameterSpec ips = new IvParameterSpec(keyiv);
+        cipher.init(Cipher.DECRYPT_MODE, deskey, ips);
+        byte[] bOut = cipher.doFinal(data);
+        return bOut;
+    }
+
+    //MD5编码
+    public static String sToMD5(String key) {
+        String cacheKey;
+        try {
+            final MessageDigest mDigest = MessageDigest.getInstance("MD5");
+            mDigest.update(key.getBytes());
+            cacheKey = bytesToHexString(mDigest.digest());
+        } catch (NoSuchAlgorithmException e) {
+            cacheKey = String.valueOf(key.hashCode());
+        }
+        return cacheKey;
+    }
+
+    private static String bytesToHexString(byte[] bytes) {
+        StringBuilder sb = new StringBuilder();
+        for (byte aByte : bytes) {
+            String hex = Integer.toHexString(0xFF & aByte);
+            if (hex.length() == 1) {
+                sb.append('0');
+            }
+            sb.append(hex);
+        }
+        return sb.toString();
+    }
+
+
     /**
      * Returns the screen/display size
      */
@@ -202,7 +301,7 @@ public class FileUtil {
     public static boolean isGooglePhotosUri(Uri uri) {
         return "com.google.android.apps.photos.content".equals(uri.getAuthority());
     }
-    public static final String SDPATH = Environment.getExternalStorageDirectory().getAbsolutePath();
+
     public static final String PATH = "ruitongPD";
 
     /**

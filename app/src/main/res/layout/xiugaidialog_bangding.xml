@@ -42,7 +42,8 @@
     <EditText
         android:textColor="@color/textcolor"
         android:textSize="16sp"
-        android:maxLength="23"
+        android:maxLength="24"
+        android:text="1019-0470-8303-2182-7847"
         android:paddingLeft="16dp"
         android:background="@null"
         android:gravity="center_vertical"
