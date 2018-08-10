@@ -23,7 +23,8 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -46,8 +47,8 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: '*.jar')
     // implementation fileTree(dir: 'libs', include: ['*.jar'])
-    // implementation(name: 'FacePassAndroidSDK-trial', ext: 'aar')
-    implementation(name: 'FacePassAndroidSDK-release', ext: 'aar')
+   //  implementation(name: 'FacePassAndroidSDK-trial', ext: 'aar')
+    implementation(name: 'mylibrary-release', ext: 'aar')
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.liulishuo.filedownloader:library:1.7.4'//文件下载库
     implementation 'com.jakewharton:butterknife:8.8.1'

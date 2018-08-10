@@ -289,7 +289,7 @@ public class MyReceiver extends BroadcastReceiver {
 					case "绑定激活":
 						//先从老黄哪里拿主机数据。
 //						link_getHouTaiZhuJi(renShu.getContent().getId(),context,renShu.getContent().getStatus());
-                        link_bangding(renShu.getId(),renShu.getUrl());
+                        //link_bangding(renShu.getId(),renShu.getUrl());
 						break;
 					case "设备管理":
 						//先从老黄哪里拿门禁数据。
@@ -964,123 +964,6 @@ public class MyReceiver extends BroadcastReceiver {
 		});
 	}
 
-    //绑定设备
-    private void link_bangding(String id,String url){
-        //	final MediaType JSON=MediaType.parse("application/json; charset=utf-8");
-        OkHttpClient okHttpClient= new OkHttpClient();
-        //RequestBody requestBody = RequestBody.create(JSON, json);
-        RequestBody body = new FormBody.Builder()
-                .add("id",id)
-                .build();
-        Request.Builder requestBuilder = new Request.Builder()
-//				.header("Content-Type", "application/json")
-//				.header("user-agent","Koala Admin")
-                //.post(requestBody)
-                //.get()
-                .post(body)
-                .url(baoCunBean.getHoutaiDiZhi()+url);
-
-        // step 3：创建 Call 对象
-        Call call = okHttpClient.newCall(requestBuilder.build());
-        //step 4: 开始异步请求
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Log.d("AllConnects", "请求失败"+e.getMessage());
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                Log.d("AllConnects", "请求成功"+call.request().toString());
-                //获得返回体
-                try{
-                    ResponseBody body = response.body();
-                    String ss=body.string().trim();
-                    Log.d("AllConnects", "绑定："+ss);
-					JsonObject jsonObject= GsonUtil.parse(ss).getAsJsonObject();
-					Gson gson=new Gson();
-					final BangDingBean dingBean=gson.fromJson(jsonObject,BangDingBean.class);
-					String md5=FileUtil.sToMD5(dingBean.getAccredit()+dingBean.getSdkPwd());
-
-					byte[] b1=new BASE64Decoder().decodeBuffer(md5);
-					byte[] b2=dingBean.getKeyiv().getBytes();
-					byte[] b3=new BASE64Decoder().decodeBuffer(dingBean.getVerifyIp());
-					byte[] b4=new BASE64Decoder().decodeBuffer(dingBean.getApiKey());
-					byte[] b5=new BASE64Decoder().decodeBuffer(dingBean.getApiSecret());
-
-				String s1s= null;
-				String s2s=null;
-				String s3s=null;
-				try {
-					s1s = new String(FileUtil.des3DecodeCBC(b1,b2,b3));
-					s2s = new String(FileUtil.des3DecodeCBC(b1,b2,b4));
-					s3s = new String(FileUtil.des3DecodeCBC(b1,b2,b5));
-
-				} catch (Exception e) {
-					Log.d("MyReceiver", e.getMessage()+"gggg");
-				}
-				Log.d("MyReceiver", "s1s:"+s1s);
-				Log.d("MyReceiver", "s2s:"+s2s);
-				Log.d("MyReceiver", "s3s:"+s3s);
-
-				FileUtil.isExists("megvii/data");
-				File file = null;
-				try {
-					file = new File(FileUtil.SDPATH+File.separator+"megvii/data/bianma.txt");
-					if (!file.exists()) {
-						file.createNewFile();
-					}else {
-						file.delete();
-						file.createNewFile();
-					}
-						FileOutputStream outputStream=new FileOutputStream(file,true);
-						byte[] bytesArray = s1s.getBytes();
-						outputStream.write(bytesArray);
-                        outputStream.write("\r\n".getBytes());// 写入一个换行
-						outputStream.flush();
-						byte[] bytesArray2 = s2s.getBytes();
-						outputStream.write(bytesArray2);
-                        outputStream.write("\r\n".getBytes());// 写入一个换行
-						outputStream.flush();
-						byte[] bytesArray3 = s3s.getBytes();
-						outputStream.write(bytesArray3);
-                        outputStream.write("\r\n".getBytes());// 写入一个换行
-						outputStream.flush();
-						outputStream.close();
-						String a1 = null,a2=null,a3=null;
-						int i=0;
-					FileInputStream inputStream = new FileInputStream(file);
-					BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-					String str = null;
-					while((str = bufferedReader.readLine()) != null)
-					{
-						i++;
-						if (i==1){
-							a1=str;
-						}else if (i==2){
-							a2=str;
-						}else if (i==3){
-							a3=str;
-						}
-					}
-					inputStream.close();
-					bufferedReader.close();
-
-					initFacePassSDK(a1,a2,a3,dingBean.getId());
-
-				} catch (Exception e) {
-					e.printStackTrace();
-					EventBus.getDefault().post("激活设备失败");
-				}
-
-                }catch (Exception e){
-                    Log.d("WebsocketPushMsg", e.getMessage()+"ttttt");
-					EventBus.getDefault().post("激活设备失败");
-                }
-
-            }
-        });
-    }
 
 
 
@@ -1186,80 +1069,6 @@ public class MyReceiver extends BroadcastReceiver {
 		}
 	}
 
-	private void initFacePassSDK(String s1,String s2,String s3,String id) {
-		FacePassHandler.getAuth(s1, s2, s3);
-		FacePassHandler.initSDK(context);
-	//	Log.d("WJY", FacePassHandler.getVersion());
-		int i=0;
-		while (true){
-			i++;
-			SystemClock.sleep(200);
-			if (FacePassHandler.isAvailable())
-			{
-				Log.d("WJY", "初始化成功");
-				break;
-			}
-			if (i>50){
-				break;
-			}
-		}
-		if (FacePassHandler.isAvailable()){
-			Log.d("WJY", "初始化成功");
-			link_uplodeBangDing(id);
-		}else {
-			Log.d("WJY", "初始化失败");
-			EventBus.getDefault().post("激活设备失败");
-		}
-
-	}
-
-	//提交绑定状态
-	private void link_uplodeBangDing(String id){
-
-		//	final MediaType JSON=MediaType.parse("application/json; charset=utf-8");
-		OkHttpClient okHttpClient= new OkHttpClient();
-		//RequestBody requestBody = RequestBody.create(JSON, json);
-		RequestBody body = new FormBody.Builder()
-				.add("id",id)
-				.build();
-		Request.Builder requestBuilder = new Request.Builder()
-//				.header("Content-Type", "application/json")
-//				.header("user-agent","Koala Admin")
-				//.post(requestBody)
-				//.get()
-				.post(body)
-				.url(baoCunBean.getHoutaiDiZhi()+"/app/destroyMachine");
-		// step 3：创建 Call 对象
-		Call call = okHttpClient.newCall(requestBuilder.build());
-		//step 4: 开始异步请求
-		call.enqueue(new Callback() {
-			@Override
-			public void onFailure(Call call, IOException e)
-			{
-				Log.d("AllConnects", "请求失败"+e.getMessage());
-			}
-
-			@Override
-			public void onResponse(Call call, Response response) throws IOException {
-				Log.d("AllConnects", "请求成功"+call.request().toString());
-				//获得返回体
-				try{
-					ResponseBody body = response.body();
-					String ss=body.string().trim();
-					Log.d("AllConnects", "上传绑定成功状态"+ss);
-					JsonObject jsonObject= GsonUtil.parse(ss).getAsJsonObject();
-
-//					Gson gson=new Gson();
-//					final HuiYiInFoBean renShu=gson.fromJson(jsonObject,HuiYiInFoBean.class);
-
-
-				}catch (Exception e){
-					Log.d("WebsocketPushMsg", e.getMessage()+"ttttt");
-				}
-
-			}
-		});
-	}
 
 
 	private void XiaZaiTuPian(Context context, RenYuanInFo renYuanInFo){

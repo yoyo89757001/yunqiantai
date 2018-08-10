@@ -1,6 +1,7 @@
 package megvii.testfacepass;
 
 import android.app.Application;
+import android.util.Log;
 
 import com.yatoooon.screenadaptation.ScreenAdapterTools;
 
@@ -18,6 +19,8 @@ public class MyApplication extends Application {
 
     private static BoxStore mBoxStore;
     public static MyApplication myApplication;
+
+
 
     @Override
     public void onCreate() {

@@ -3,14 +3,12 @@ package megvii.testfacepass.ui;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+
 import android.view.Gravity;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.sdsmdg.tastytoast.TastyToast;
 import com.yatoooon.screenadaptation.ScreenAdapterTools;
 
@@ -18,35 +16,23 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.IOException;
-import java.security.Key;
 
-import javax.crypto.Cipher;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.DESedeKeySpec;
-import javax.crypto.spec.IvParameterSpec;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.objectbox.Box;
-import megvii.facepass.FacePassHandler;
+
+import megvii.facepass.ruitong.FaceInit;
 import megvii.testfacepass.MyApplication;
 import megvii.testfacepass.R;
 import megvii.testfacepass.beans.BaoCunBean;
 import megvii.testfacepass.dialog.BangDingDialog;
 import megvii.testfacepass.dialog.XiuGaiDiZhiDialog;
 import megvii.testfacepass.dialog.YuYingDialog;
-import megvii.testfacepass.utils.FileUtil;
-import megvii.testfacepass.utils.GsonUtil;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.FormBody;
+
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-import okhttp3.ResponseBody;
+
 
 public class SheZhiActivity extends Activity {
     @BindView(R.id.rl3)
@@ -112,7 +98,10 @@ public class SheZhiActivity extends Activity {
                 bangDingDialog.setOnQueRenListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        link_uplodexiazai(bangDingDialog.getZhuCeMa());
+//                        link_uplodexiazai(bangDingDialog.getZhuCeMa());
+                        FaceInit init=new FaceInit(getApplicationContext());
+                        init.init(bangDingDialog.getZhuCeMa(),baoCunBean.getHoutaiDiZhi());
+
                         bangDingDialog.dismiss();
                     }
                 });
@@ -146,79 +135,79 @@ public class SheZhiActivity extends Activity {
         startActivity(new Intent(SheZhiActivity.this,MainActivity.class));
     }
 
-    //绑定
-    private void link_uplodexiazai(String zhucema){
-        //	final MediaType JSON=MediaType.parse("application/json; charset=utf-8");
-        OkHttpClient okHttpClient= new OkHttpClient();
-        //RequestBody requestBody = RequestBody.create(JSON, json);
-        RequestBody body = new FormBody.Builder()
-                .add("registerCode",zhucema)
-                .add("machineCode", FileUtil.getSerialNumber(this) == null ? FileUtil.getIMSI() : FileUtil.getSerialNumber(this))
-                .build();
-        Request.Builder requestBuilder = new Request.Builder()
-//				.header("Content-Type", "application/json")
-//				.header("user-agent","Koala Admin")
-                //.post(requestBody)
-                //.get()
-                .post(body)
-                .url(baoCunBean.getHoutaiDiZhi()+"/app/machineSave");
-
-        // step 3：创建 Call 对象
-        Call call = okHttpClient.newCall(requestBuilder.build());
-        //step 4: 开始异步请求
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Log.d("AllConnects", "请求失败"+e.getMessage());
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast tastyToast= TastyToast.makeText(SheZhiActivity.this,"请求失败，请检查地址和网络",TastyToast.LENGTH_LONG,TastyToast.ERROR);
-                        tastyToast.setGravity(Gravity.CENTER,0,0);
-                        tastyToast.show();
-                    }
-                });
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) {
-                Log.d("AllConnects", "请求成功"+call.request().toString());
-                //获得返回体
-                try{
-
-                    ResponseBody body = response.body();
-                    String ss=body.string().trim();
-                    Log.d("AllConnects", "注册码"+ss);
-					final JsonObject jsonObject= GsonUtil.parse(ss).getAsJsonObject();
-					Gson gson=new Gson();
-					runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast tastyToast= TastyToast.makeText(SheZhiActivity.this,jsonObject.get("message").getAsString(),TastyToast.LENGTH_LONG,TastyToast.INFO);
-                            tastyToast.setGravity(Gravity.CENTER,0,0);
-                            tastyToast.show();
-
-                        }
-                    });
-					//final HuiYiInFoBean renShu=gson.fromJson(jsonObject,HuiYiInFoBean.class);
-
-
-                }catch (Exception e){
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast tastyToast= TastyToast.makeText(SheZhiActivity.this,"返回数据异常",TastyToast.LENGTH_LONG,TastyToast.ERROR);
-                            tastyToast.setGravity(Gravity.CENTER,0,0);
-                            tastyToast.show();
-
-                        }
-                    });
-                    Log.d("WebsocketPushMsg", e.getMessage()+"ttttt");
-                }
-
-            }
-        });
-    }
+//    //绑定
+//    private void link_uplodexiazai(String zhucema){
+//        //	final MediaType JSON=MediaType.parse("application/json; charset=utf-8");
+//        OkHttpClient okHttpClient= new OkHttpClient();
+//        //RequestBody requestBody = RequestBody.create(JSON, json);
+//        RequestBody body = new FormBody.Builder()
+//                .add("registerCode",zhucema)
+//                .add("machineCode", FileUtil.getSerialNumber(this) == null ? FileUtil.getIMSI() : FileUtil.getSerialNumber(this))
+//                .build();
+//        Request.Builder requestBuilder = new Request.Builder()
+////				.header("Content-Type", "application/json")
+////				.header("user-agent","Koala Admin")
+//                //.post(requestBody)
+//                //.get()
+//                .post(body)
+//                .url(baoCunBean.getHoutaiDiZhi()+"/app/machineSave");
+//
+//        // step 3：创建 Call 对象
+//        Call call = okHttpClient.newCall(requestBuilder.build());
+//        //step 4: 开始异步请求
+//        call.enqueue(new Callback() {
+//            @Override
+//            public void onFailure(Call call, IOException e) {
+//                Log.d("AllConnects", "请求失败"+e.getMessage());
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        Toast tastyToast= TastyToast.makeText(SheZhiActivity.this,"请求失败，请检查地址和网络",TastyToast.LENGTH_LONG,TastyToast.ERROR);
+//                        tastyToast.setGravity(Gravity.CENTER,0,0);
+//                        tastyToast.show();
+//                    }
+//                });
+//            }
+//
+//            @Override
+//            public void onResponse(Call call, Response response) {
+//                Log.d("AllConnects", "请求成功"+call.request().toString());
+//                //获得返回体
+//                try{
+//
+//                    ResponseBody body = response.body();
+//                    String ss=body.string().trim();
+//                    Log.d("AllConnects", "注册码"+ss);
+//					final JsonObject jsonObject= GsonUtil.parse(ss).getAsJsonObject();
+//					Gson gson=new Gson();
+//					runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            Toast tastyToast= TastyToast.makeText(SheZhiActivity.this,jsonObject.get("message").getAsString(),TastyToast.LENGTH_LONG,TastyToast.INFO);
+//                            tastyToast.setGravity(Gravity.CENTER,0,0);
+//                            tastyToast.show();
+//
+//                        }
+//                    });
+//					//final HuiYiInFoBean renShu=gson.fromJson(jsonObject,HuiYiInFoBean.class);
+//
+//
+//                }catch (Exception e){
+//                    runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            Toast tastyToast= TastyToast.makeText(SheZhiActivity.this,"返回数据异常",TastyToast.LENGTH_LONG,TastyToast.ERROR);
+//                            tastyToast.setGravity(Gravity.CENTER,0,0);
+//                            tastyToast.show();
+//
+//                        }
+//                    });
+//                    Log.d("WebsocketPushMsg", e.getMessage()+"ttttt");
+//                }
+//
+//            }
+//        });
+//    }
 
     @Subscribe(threadMode = ThreadMode.MAIN) //在ui线程执行
     public void onDataSynEvent(String event) {
