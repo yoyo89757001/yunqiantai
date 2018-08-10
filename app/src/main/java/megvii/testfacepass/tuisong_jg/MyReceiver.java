@@ -8,7 +8,6 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.Xml;
@@ -19,7 +18,6 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.request.transition.Transition;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.liulishuo.filedownloader.BaseDownloadTask;
 import com.liulishuo.filedownloader.FileDownloadListener;
@@ -29,13 +27,10 @@ import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.model.FileHeader;
 
-import org.greenrobot.eventbus.EventBus;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+
 import org.xmlpull.v1.XmlPullParser;
 
-import java.io.BufferedReader;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -43,9 +38,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
+
 import java.net.URLDecoder;
-import java.security.Key;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -54,16 +49,13 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import javax.crypto.Cipher;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.DESedeKeySpec;
-import javax.crypto.spec.IvParameterSpec;
+
 
 import cn.jpush.android.api.JPushInterface;
 import io.objectbox.Box;
-import megvii.facepass.FacePassHandler;
+
 import megvii.testfacepass.MyApplication;
-import megvii.testfacepass.beans.BangDingBean;
+
 import megvii.testfacepass.beans.BaoCunBean;
 import megvii.testfacepass.beans.BenDiMBbean;
 import megvii.testfacepass.beans.BenDiMBbean_;
@@ -71,7 +63,7 @@ import megvii.testfacepass.beans.MOBan;
 import megvii.testfacepass.beans.RenYuanInFo;
 import megvii.testfacepass.beans.Subject;
 import megvii.testfacepass.beans.TuiSongBean;
-import megvii.testfacepass.cookies.CookiesManager;
+
 import megvii.testfacepass.dialogall.ToastUtils;
 import megvii.testfacepass.utils.DateUtils;
 import megvii.testfacepass.utils.FileUtil;
@@ -80,13 +72,13 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.MediaType;
-import okhttp3.MultipartBody;
+
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
-import sun.misc.BASE64Decoder;
+
 
 /**
  * 自定义接收器
