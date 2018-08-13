@@ -9,7 +9,7 @@
 
     <FrameLayout
         android:id="@+id/frame"
-        android:visibility="gone"
+        android:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#ff000000"
@@ -20,12 +20,12 @@
             android:id="@+id/preview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone"
+            android:visibility="visible"
             android:layout_gravity="center_vertical" />
 
         <megvii.testfacepass.view.FaceView
             android:id="@+id/fcview"
-            android:visibility="gone"
+            android:visibility="visible"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 

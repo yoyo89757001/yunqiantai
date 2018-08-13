@@ -130,6 +130,7 @@ import megvii.testfacepass.MyApplication;
 import megvii.testfacepass.R;
 import megvii.testfacepass.beans.BaoCunBean;
 import megvii.testfacepass.dialog.XiuGaiGaoKuanDialog;
+import megvii.testfacepass.dialogall.ToastUtils;
 import megvii.testfacepass.dialogall.XiuGaiListener;
 import megvii.testfacepass.ljkplay.widget.media.IjkVideoView;
 import megvii.testfacepass.tts.control.InitConfig;
@@ -187,11 +188,11 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
 
     private static String serverIP;
 
-    private static final String authIP = "https://api-cn.faceplusplus.com";
+  //  private static final String authIP = "https://api-cn.faceplusplus.com";
   //  private static final String apiKey = "4gctI8NUJ2DbHDB5tkpYiidf2yEpVUIp";
   //  private static final String apiSecret = "7GpRwThibD29ld-UVoyue6aGkPhS7Py-";
-    private static final String apiKey = "CKbSYQqAuc5AzCMoOK-kbo9KaabtEciQ";
-    private static final String apiSecret = "HeZgW5ILE83nKkqF-QO5IqEEmeRxPgeI";
+  //  private static final String apiKey = "CKbSYQqAuc5AzCMoOK-kbo9KaabtEciQ";
+  //  private static final String apiSecret = "HeZgW5ILE83nKkqF-QO5IqEEmeRxPgeI";
 
     private static String recognize_url;
 
@@ -218,13 +219,10 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
     private XiuGaiGaoKuanDialog dialog=null;
     /* 显示faceId */
     private TextView faceEndTextView;
-
     /* 相机预览界面 */
     private CameraPreview cameraView;
-
     private boolean isLocalGroupExist = false;
     private boolean isAnXia=true;
-
     /* 在预览界面圈出人脸 */
     private FaceView faceView;
 
@@ -358,6 +356,8 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
         /* 初始化界面 */
         initView();
 
+
+
         /* 申请程序所需权限 */
         if (!hasPermission()) {
             requestPermission();
@@ -440,7 +440,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                         float searchThreshold = 75f;
                         float livenessThreshold = 70f;
                         boolean livenessEnabled = true;
-                        int faceMinThreshold = 150;
+                        int faceMinThreshold =50;
                         FacePassPose poseThreshold = new FacePassPose(30f, 30f, 30f);
                         float blurThreshold = 0.2f;
                         float lowBrightnessThreshold = 70f;
@@ -460,6 +460,14 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                                     trackModel, poseModel, blurModel, livenessModel, searchModel, detectModel, ageGenderModel);
                             /* 创建SDK实例 */
                             mFacePassHandler = new FacePassHandler(config);
+                            MyApplication.myApplication.setFacePassHandler(mFacePassHandler);
+                            try {
+                              boolean a=  mFacePassHandler.createLocalGroup(group_name);
+                              isLocalGroupExist = true;
+                            } catch (FacePassException e) {
+                                e.printStackTrace();
+                            }
+
                             checkGroup();
                            runOnUiThread(new Runnable() {
                                @Override
@@ -517,6 +525,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
         }
         for (String group : localGroups) {
             if (group_name.equals(group)) {
+
                 isLocalGroupExist = true;
             }
         }
@@ -665,9 +674,9 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                     Log.d(DEBUG_TAG, "2 mDetectResultQueue.size = " + mDetectResultQueue.size());
                     byte[] detectionResult = mDetectResultQueue.take();
 
-                    Log.d(DEBUG_TAG, "mDetectResultQueue.isLocalGroupExist");
+                    Log.d("ffffffffffffff", "mDetectResultQueue.rrrrrrrrr");
                     if (isLocalGroupExist) {
-                        Log.d(DEBUG_TAG, "mDetectResultQueue.recognize");
+                        Log.d("ffffffffffffff", "mDetectResultQueue.recognize");
                         FacePassRecognitionResult[] recognizeResult = mFacePassHandler.recognize(group_name, detectionResult);
                         if (recognizeResult != null && recognizeResult.length > 0) {
                             for (FacePassRecognitionResult result : recognizeResult) {
@@ -829,12 +838,15 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                 }
             }
         });
+
+
         shipingView.setHudView(mHudView); //http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4
         shipingView.setVideoURI(Uri.parse("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"));
         shipingView.setOnCompletionListener(new IMediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(IMediaPlayer iMediaPlayer) {
-               // shipingView.start();
+
+             //   shipingView.start();
             }
         });
         shipingView.setOnErrorListener(new IMediaPlayer.OnErrorListener() {
@@ -844,7 +856,20 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                 return false;
             }
         });
-       // shipingView.start();
+
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+             //   shipingView.start();
+            }
+        }).start();
+
 
 
         dbg_view=findViewById(R.id.dabg);

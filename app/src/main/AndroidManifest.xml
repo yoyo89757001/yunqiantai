@@ -191,6 +191,7 @@
             android:icon="@drawable/rtlogo"
             android:label="@string/app_name" >
         </service>
+        <service android:name=".dialogall.CommonDialogService"/>
 
     </application>
 

@@ -1,5 +1,7 @@
 package megvii.testfacepass.dialogall;
 
+import android.util.Log;
+
 /**
  * Created by 于德海 on 2016/9/8.
  *
@@ -35,7 +37,9 @@ public class ToastUtils {
 
 
     public void showDialog(String a, String t, int p){
+      //  Log.d("CommonDialogService", "ddddddddddddd");
         if(mListener!=null){
+        //    Log.d("CommonDialogService", "eeeeeeeee");
             mListener.show(a,t,p);
         }
     }

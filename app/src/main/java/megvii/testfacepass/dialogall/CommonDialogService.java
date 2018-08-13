@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,7 +44,7 @@ public class CommonDialogService extends Service implements CommonDialogListener
         public boolean handleMessage(Message msg) {
             if (msg.what==111){
                 Tishi tishi1= (Tishi) msg.obj;
-
+              //  Log.d("CommonDialogService", "a1:" + a1);
                 a1.setText(tishi1.getA());
                 tishi.setText(tishi1.getTishi());
                 progressBar.setProgress(tishi1.getP());
@@ -63,7 +64,6 @@ public class CommonDialogService extends Service implements CommonDialogListener
     public void onCreate() {
         super.onCreate();
         ToastUtils.getInstances().setListener(this);//绑定
-
     }
 
     @Override
@@ -76,14 +76,14 @@ public class CommonDialogService extends Service implements CommonDialogListener
     }
 
     private void showDialog(String a, String t, int p){
-       // Log.d("CommonDialogService", "显示");
+        Log.d("CommonDialogService", "显示");
         if(dialog==null&&CommonData.mNowContext!=null){
           //  Log.d("CommonDialogService", "显示2");
             dialog = new Dialog(CommonData.mNowContext,R.style.dialog_style);
             view = LayoutInflater.from(this).inflate(R.layout.alldialog,null,false);
-            a1 = (TextView) view.findViewById(R.id.a1);
-            tishi = (TextView) view.findViewById(R.id.tishi);
-            button = (Button) view.findViewById(R.id.guanbi);
+            a1 =  view.findViewById(R.id.a1);
+            tishi =  view.findViewById(R.id.tishi);
+            button =  view.findViewById(R.id.guanbi);
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -92,9 +92,8 @@ public class CommonDialogService extends Service implements CommonDialogListener
                 }
             });
 
+
             progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
-
-
             dialog.setContentView(view);
             dialog.setCanceledOnTouchOutside(false);
 
@@ -128,12 +127,12 @@ public class CommonDialogService extends Service implements CommonDialogListener
             message.obj=tishi;
            handler.sendMessage(message);
 
-
         }
     }
 
     @Override
     public void show(String a, String t, int p) {
+        Log.d("CommonDialogService", "机那里");
        showDialog(a,t,p);
     }
 

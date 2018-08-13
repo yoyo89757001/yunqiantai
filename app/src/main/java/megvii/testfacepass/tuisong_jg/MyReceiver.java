@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Environment;
@@ -54,6 +55,9 @@ import java.util.concurrent.TimeUnit;
 import cn.jpush.android.api.JPushInterface;
 import io.objectbox.Box;
 
+import megvii.facepass.FacePassException;
+import megvii.facepass.FacePassHandler;
+import megvii.facepass.types.FacePassAddFaceResult;
 import megvii.testfacepass.MyApplication;
 
 import megvii.testfacepass.beans.BaoCunBean;
@@ -92,7 +96,9 @@ public class MyReceiver extends BroadcastReceiver {
 	public  OkHttpClient okHttpClient=null;
 	private BaoCunBean baoCunBean=null;
 	private Box<BaoCunBean> baoCunBeanDao=null;
+	private Box<Subject> subjectBox=null;
 	private boolean isA=true;
+	private static final String group_name = "face-pass-test-x";
 	private Box<BenDiMBbean> benDiMBbeanDao=null;
 	private Box<RenYuanInFo> renYuanInFoDao=null;
 	private StringBuilder stringBuilder=null;
@@ -112,6 +118,7 @@ public class MyReceiver extends BroadcastReceiver {
 			stringBuilder=new StringBuilder();
 			stringBuilder2=new StringBuilder();
 			baoCunBeanDao = MyApplication.myApplication.getBoxStore().boxFor(BaoCunBean.class);
+			subjectBox = MyApplication.myApplication.getBoxStore().boxFor(Subject.class);
 			benDiMBbeanDao = MyApplication.myApplication.getBoxStore().boxFor(BenDiMBbean.class);
 			baoCunBean = baoCunBeanDao.get(123456L);
 			renYuanInFoDao = MyApplication.myApplication.getBoxStore().boxFor(RenYuanInFo.class);
@@ -169,18 +176,18 @@ public class MyReceiver extends BroadcastReceiver {
 					context.sendBroadcast(intent2);
 					Log.d(TAG, "推送过去");
 				}
-				if (jsonObject.get("title").getAsString().equals("zip包下载地址")){
+				if (jsonObject.get("title").getAsString().equals("人员入库")){
 					FileDownloader.setup(context);
 					isDW=true;
 					Thread.sleep(1200);
-					baoCunBean.setZhanhuiId(jsonObject.get("content").getAsJsonObject().get("id").getAsInt()+"");
-					baoCunBean.setGonggao(jsonObject.get("content").getAsJsonObject().get("screenId").getAsInt()+"");
-					baoCunBeanDao.put(baoCunBean);
+					//baoCunBean.setZhanhuiId(jsonObject.get("content").getAsJsonObject().get("id").getAsInt()+"");
+					//baoCunBean.setGonggao(jsonObject.get("content").getAsJsonObject().get("screenId").getAsInt()+"");
+					//baoCunBeanDao.put(baoCunBean);
+					//Intent intent2=new Intent("gxshipingdizhi");
+					//context.sendBroadcast(intent2);
 
-					Intent intent2=new Intent("gxshipingdizhi");
-					context.sendBroadcast(intent2);
-
-					path2 =baoCunBean.getHoutaiDiZhi()+jsonObject.get("content").getAsJsonObject().get("zip_url").getAsString();
+					path2 =baoCunBean.getHoutaiDiZhi().substring(0,baoCunBean.getHoutaiDiZhi().length()-5)+
+							jsonObject.get("url").getAsString();
 					Log.d(TAG, path2);
 					File file = new File(SDPATH);
 					if (!file.exists()) {
@@ -373,6 +380,7 @@ public class MyReceiver extends BroadcastReceiver {
 
 	public static void showNotifictionIcon(Context context, float p, String title, String contextss) {
 		//Log.d(TAG, "尽量");
+
 		ToastUtils.getInstances().showDialog(title,contextss, (int) p);
 
 //		NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
@@ -469,13 +477,18 @@ public class MyReceiver extends BroadcastReceiver {
 	//入库
 	public void getOkHttpClient3(final List<Subject> subjectList, final String trg){
 
-						String filePath=null;
+		                FacePassHandler  facePassHandler=MyApplication.myApplication.getFacePassHandler();
+		        		if (facePassHandler==null){
+							showNotifictionIcon(context,0,"识别模块初始化失败","识别模块初始化失败无法入库");
+		        			return;
+						}
 						final int size=subjectList.size();
 						int t=0;
 						Log.d(TAG, "size:" + size);
 						//循环
 						for (int j=0;j<size;j++) {
 							Log.d(TAG, "i:" + j);
+							String filePath=null;
 							while (true){
 								try {
 									Thread.sleep(100);
@@ -502,17 +515,38 @@ public class MyReceiver extends BroadcastReceiver {
 							//  Log.d("SheZhiActivity", "循环到"+j);
 
 							showNotifictionIcon(context, (int) ((j / (float) size) * 100),"入库中","入库中"+(int) ((j / (float) size) * 100)+"%");
-
-							//查询旷视
-							synchronized (subjectList.get(j)) {
-								//link_chaXunRenYuan(okHttpClient, subjectList.get(j),trg,filePath);
+							if (filePath!=null){
 								try {
-									subjectList.get(j).wait();
-								} catch (InterruptedException e) {
+									FacePassAddFaceResult faceResult= facePassHandler.addFace(BitmapFactory.decodeFile(filePath));
+									if (faceResult.result==0){
+										facePassHandler.bindGroup(group_name,faceResult.faceToken);
+										subjectList.get(j).setTeZhengMa(new String(faceResult.faceToken));
+										subjectBox.put(subjectList.get(j));
+
+									}else {
+										stringBuilder2.append("入库添加图片失败:").append("ID:")
+												.append(subjectList.get(j).getId()).append("姓名:")
+												.append(subjectList.get(j).getName()).append("时间:")
+												.append(DateUtils.time(System.currentTimeMillis() + ""))
+												.append("错误码:").append(faceResult.result).append("\n");
+									}
+
+								} catch (FacePassException e) {
 									e.printStackTrace();
 								}
 
 							}
+
+//							//查询旷视
+//							synchronized (subjectList.get(j)) {
+//								//link_chaXunRenYuan(okHttpClient, subjectList.get(j),trg,filePath);
+//								try {
+//									subjectList.get(j).wait();
+//								} catch (InterruptedException e) {
+//									e.printStackTrace();
+//								}
+//
+//							}
 
 						}
 						//   Log.d("SheZhiActivity", "循环完了");
@@ -679,18 +713,19 @@ public class MyReceiver extends BroadcastReceiver {
 				//开始标签
 				case XmlPullParser.START_TAG:
 					if ("Root".equals(parser.getName())) {
-						String id=parser.getAttributeValue(0);
-						if (baoCunBean.getZhanghuId()==null || !baoCunBean.getZhanghuId().equals(id)){
-							Log.d(TAG, "jiexi222 ");
-							showNotifictionIcon(context,0,"解析XML失败","xml账户ID不匹配");
-							Log.d(TAG, "333jiexi ");
-							return null;
-						}
+//						String id=parser.getAttributeValue(0);
+//						if (baoCunBean.getZhanghuId()==null || !baoCunBean.getZhanghuId().equals(id)){
+//							Log.d(TAG, "jiexi222 ");
+//							showNotifictionIcon(context,0,"解析XML失败","xml账户ID不匹配");
+//							Log.d(TAG, "333jiexi ");
+//							return null;
+//						}
 
 					} else if ("Subject".equals(parser.getName())) {
 
 						student=new Subject();
-						student.setId(parser.getAttributeValue(0));
+						student.setId(Long.valueOf(parser.getAttributeValue(0)));
+						student.setSid(parser.getAttributeValue(0));
 
 					} else if ("name".equals(parser.getName())) {
 						//获取name值
@@ -699,36 +734,45 @@ public class MyReceiver extends BroadcastReceiver {
 							student.setName(URLDecoder.decode(name, "UTF-8"));
 						}
 
-					} else if ("phone".equals(parser.getName())) {
+					} else if ("companyId".equals(parser.getName())) {
 						//获取nickName值
-						String nickName = parser.nextText();
-						student.setPhone(nickName);
-					}else if ("comeFrom".equals(parser.getName())) {
+						String companyId = parser.nextText();
+						if (companyId!=null){
+							student.setPhone(companyId);
+						}
+					}else if ("companyName".equals(parser.getName())) {
 						//获取nickName值
-						String nickName = parser.nextText();
-						if (nickName!=null){
-							student.setComeFrom(URLDecoder.decode(nickName, "UTF-8"));
+						String companyName = parser.nextText();
+						if (companyName!=null){
+							student.setCompanyName(URLDecoder.decode(companyName, "UTF-8"));
 						}
 					}
-					else if ("interviewee".equals(parser.getName())) {
+					else if ("workNumber".equals(parser.getName())) {
 						//获取nickName值
-						String nickName = parser.nextText();
-						if (nickName!=null){
-							student.setInterviewee(URLDecoder.decode(nickName, "UTF-8"));
+						String workNumber = parser.nextText();
+						if (workNumber!=null){
+							student.setWorkNumber(URLDecoder.decode(workNumber, "UTF-8"));
 						}
 					}
-					else if ("city".equals(parser.getName())) {
+					else if ("sex".equals(parser.getName())) {
 						//获取nickName值
-						String nickName = parser.nextText();
-						if (nickName!=null){
-							student.setCity(URLDecoder.decode(nickName, "UTF-8"));
+						String sex = parser.nextText();
+						if (sex!=null){
+							student.setSex(URLDecoder.decode(sex, "UTF-8"));
 						}
 					}
-					else if ("department".equals(parser.getName())) {
+					else if ("phone".equals(parser.getName())) {
 						//获取nickName值
 						String nickName = parser.nextText();
 						if (nickName!=null){
-							student.setDepartment(URLDecoder.decode(nickName, "UTF-8"));
+							student.setPhone(URLDecoder.decode(nickName, "UTF-8"));
+						}
+					}
+					else if ("peopleType".equals(parser.getName())) {
+						//获取nickName值
+						String nickName = parser.nextText();
+						if (nickName!=null){
+							student.setPeopleType(URLDecoder.decode(nickName, "UTF-8"));
 						}
 					}
 					else if ("email".equals(parser.getName())) {
@@ -738,32 +782,25 @@ public class MyReceiver extends BroadcastReceiver {
 							student.setEmail(URLDecoder.decode(nickName, "UTF-8"));
 						}
 					}
-					else if ("title".equals(parser.getName())) {
+					else if ("position".equals(parser.getName())) {
 						//获取nickName值
 						String nickName = parser.nextText();
 						if (nickName!=null){
-							student.setTitle(URLDecoder.decode(nickName, "UTF-8"));
+							student.setPosition(URLDecoder.decode(nickName, "UTF-8"));
 						}
 					}
-					else if ("location".equals(parser.getName())) {
+					else if ("employeeStatus".equals(parser.getName())) {
 						//获取nickName值
 						String nickName = parser.nextText();
 						if (nickName!=null){
-							student.setLocation(URLDecoder.decode(nickName, "UTF-8"));
+							student.setEmployeeStatus(Integer.valueOf(nickName));
 						}
 					}
-					else if ("assemblyId".equals(parser.getName())) {
+					else if ("quitType".equals(parser.getName())) {
 						//获取nickName值
 						String nickName = parser.nextText();
 						if (nickName!=null){
-							student.setAssemblyId(URLDecoder.decode(nickName, "UTF-8"));
-						}
-					}
-					else if ("sourceMeeting".equals(parser.getName())) {
-						//获取nickName值
-						String nickName = parser.nextText();
-						if (nickName!=null){
-							student.setSourceMeeting(URLDecoder.decode(nickName, "UTF-8"));
+							student.setQuitType(Integer.valueOf(nickName));
 						}
 					}
 					else if ("remark".equals(parser.getName())) {
@@ -780,6 +817,35 @@ public class MyReceiver extends BroadcastReceiver {
 							student.setPhoto(URLDecoder.decode(nickName, "UTF-8"));
 						}
 					}
+					else if ("storeId".equals(parser.getName())) {
+						//获取nickName值
+						String nickName = parser.nextText();
+						if (nickName!=null){
+							student.setStoreId(URLDecoder.decode(nickName, "UTF-8"));
+						}
+					}
+					else if ("storeName".equals(parser.getName())) {
+						//获取nickName值
+						String nickName = parser.nextText();
+						if (nickName!=null){
+							student.setStoreName(URLDecoder.decode(nickName, "UTF-8"));
+						}
+					}
+					else if ("entryTime".equals(parser.getName())) {
+						//获取nickName值
+						String nickName = parser.nextText();
+						if (nickName!=null){
+							student.setEntryTime(URLDecoder.decode(nickName, "UTF-8"));
+						}
+					}
+					else if ("birthday".equals(parser.getName())) {
+						//获取nickName值
+						String nickName = parser.nextText();
+						if (nickName!=null){
+							student.setBirthday(URLDecoder.decode(nickName, "UTF-8"));
+						}
+					}
+
 					break;
 				//结束标签
 				case XmlPullParser.END_TAG:

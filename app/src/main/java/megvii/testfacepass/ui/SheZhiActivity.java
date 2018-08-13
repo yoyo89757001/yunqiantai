@@ -101,7 +101,6 @@ public class SheZhiActivity extends Activity {
 //                        link_uplodexiazai(bangDingDialog.getZhuCeMa());
                         FaceInit init=new FaceInit(getApplicationContext());
                         init.init(bangDingDialog.getZhuCeMa(),baoCunBean.getHoutaiDiZhi());
-
                         bangDingDialog.dismiss();
                     }
                 });
