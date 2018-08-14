@@ -17,6 +17,7 @@
             android:visibility="visible"
             android:layout_gravity="center_vertical" />
 
+
         <megvii.testfacepass.view.FaceView
             android:id="@+id/fcview"
             android:visibility="visible"
@@ -25,25 +26,25 @@
 
 
 
+    <!--<TableLayout-->
+        <!--android:id="@+id/hud_view"-->
+        <!--android:visibility="gone"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:background="@color/ijk_transparent_dark"-->
+        <!--android:padding="8dp" />-->
+    <!---->
 
-    <TableLayout
-        android:id="@+id/hud_view"
-        android:visibility="gone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@color/ijk_transparent_dark"
-        android:padding="8dp" />
+    <!--<megvii.testfacepass.view.DBG_View-->
+        <!--android:layout_width="100dp"-->
+        <!--android:id="@+id/dabg"-->
+        <!--android:background="@color/colorBar_bg"-->
+        <!--android:layout_height="100dp" />-->
 
-    <megvii.testfacepass.view.DBG_View
-        android:layout_width="100dp"
-        android:id="@+id/dabg"
-        android:background="@color/colorBar_bg"
-        android:layout_height="100dp" />
-
-<megvii.testfacepass.ljkplay.widget.media.IjkVideoView
-    android:id="@+id/ijkplayview"
-    android:layout_width="wrap_content"
-    android:layout_height="300dp"/>
+<!--<megvii.testfacepass.ljkplay.widget.media.IjkVideoView-->
+    <!--android:id="@+id/ijkplayview"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="300dp"/>-->
 
 
 

@@ -22,7 +22,7 @@
     },
     {
       "id": "3:3840701619543301435",
-      "lastPropertyId": "30:1824631388669148685",
+      "lastPropertyId": "34:2008185569958196777",
       "name": "BaoCunBean",
       "properties": [
         {
@@ -144,6 +144,22 @@
         {
           "id": "30:1824631388669148685",
           "name": "huoTiFZ"
+        },
+        {
+          "id": "31:2948474992723744712",
+          "name": "dangqianChengShi"
+        },
+        {
+          "id": "32:7809676454263505730",
+          "name": "dangqianChengShi2"
+        },
+        {
+          "id": "33:1347029670003641346",
+          "name": "dangqianShiJian"
+        },
+        {
+          "id": "34:2008185569958196777",
+          "name": "isTianQi"
         }
       ],
       "relations": []
@@ -431,9 +447,37 @@
         }
       ],
       "relations": []
+    },
+    {
+      "id": "7:2212448687159903278",
+      "lastPropertyId": "5:1018114239741913499",
+      "name": "ChengShiIDBean",
+      "properties": [
+        {
+          "id": "1:8562448050891698073",
+          "name": "sid"
+        },
+        {
+          "id": "2:7815123460932187750",
+          "name": "id"
+        },
+        {
+          "id": "3:5146469726821585140",
+          "name": "province"
+        },
+        {
+          "id": "4:6581024133604410988",
+          "name": "city"
+        },
+        {
+          "id": "5:1018114239741913499",
+          "name": "district"
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "6:6103979508013334038",
+  "lastEntityId": "7:2212448687159903278",
   "lastIndexId": "2:2826412698374206834",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",

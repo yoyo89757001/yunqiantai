@@ -7,19 +7,33 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 
+import android.util.Log;
 import android.view.WindowManager;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.yatoooon.screenadaptation.ScreenAdapterTools;
 
 
+import java.io.IOException;
+
 import cn.jpush.android.api.JPushInterface;
+import io.objectbox.Box;
 import io.objectbox.BoxStore;
 import megvii.facepass.FacePassHandler;
+import megvii.testfacepass.beans.BaoCunBean;
+import megvii.testfacepass.beans.ChengShiIDBean;
 import megvii.testfacepass.beans.MyObjectBox;
+import megvii.testfacepass.beans.ZhiChiChengShi;
 import megvii.testfacepass.dialogall.CommonData;
 import megvii.testfacepass.dialogall.CommonDialogService;
 import megvii.testfacepass.dialogall.ToastUtils;
 import megvii.testfacepass.utils.FileUtil;
+import megvii.testfacepass.utils.GsonUtil;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.ResponseBody;
 
 /**
  * Created by Administrator on 2018/8/3.
@@ -29,7 +43,7 @@ public class MyApplication extends Application implements Application.ActivityLi
     public FacePassHandler facePassHandler=null;
     private static BoxStore mBoxStore;
     public static MyApplication myApplication;
-
+    private Box<ChengShiIDBean> chengShiIDBeanBox;
 
 
     @Override
@@ -37,6 +51,7 @@ public class MyApplication extends Application implements Application.ActivityLi
         super.onCreate();
         myApplication = this;
         mBoxStore = MyObjectBox.builder().androidContext(this).build();
+
         //适配
         ScreenAdapterTools.init(this);
         JPushInterface.setDebugMode(false); 	// 设置开启日志,发布时请关闭日志
@@ -52,6 +67,58 @@ public class MyApplication extends Application implements Application.ActivityLi
         CommonData.ScreenWidth = metric.widthPixels; // 屏幕宽度（像素）
         Intent dialogservice = new Intent(this, CommonDialogService.class);
         startService(dialogservice);
+
+        chengShiIDBeanBox=mBoxStore.boxFor(ChengShiIDBean.class);
+
+        OkHttpClient okHttpClient= new OkHttpClient();
+        okhttp3.Request.Builder requestBuilder = new okhttp3.Request.Builder()
+                .get()
+                .url("http://v.juhe.cn/weather/citys?key=356bf690a50036a5cfc37d54dc6e8319");
+        // .url("http://v.juhe.cn/weather/index?format=2&cityname="+text1+"&key=356bf690a50036a5cfc37d54dc6e8319");
+        // step 3：创建 Call 对象
+        Call call = okHttpClient.newCall(requestBuilder.build());
+        //step 4: 开始异步请求
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("AllConnects", "请求失败"+e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, okhttp3.Response response) throws IOException {
+                Log.d("AllConnects", "请求成功"+call.request().toString());
+                //获得返回体
+                try{
+
+                    ResponseBody body = response.body();
+                    String ss=body.string().trim();
+                    Log.d("AllConnects", "天气"+ss);
+
+                    JsonObject jsonObject= GsonUtil.parse(ss).getAsJsonObject();
+                    Gson gson=new Gson();
+                    final ZhiChiChengShi renShu=gson.fromJson(jsonObject,ZhiChiChengShi.class);
+                    int size=renShu.getResult().size();
+                    chengShiIDBeanBox.removeAll();
+
+                    for (int i=0;i<size;i++){
+                        ChengShiIDBean bean=new ChengShiIDBean();
+                        bean.setId(renShu.getResult().get(i).getId());
+                        bean.setCity(renShu.getResult().get(i).getCity());
+                        bean.setDistrict(renShu.getResult().get(i).getDistrict());
+                        bean.setProvince(renShu.getResult().get(i).getProvince());
+                        chengShiIDBeanBox.put(bean);
+                    }
+
+
+                }catch (Exception e){
+                    Log.d("WebsocketPushMsg", e.getMessage()+"ttttt");
+                }
+
+            }
+        });
+
+
+
     }
 
     public BoxStore getBoxStore(){

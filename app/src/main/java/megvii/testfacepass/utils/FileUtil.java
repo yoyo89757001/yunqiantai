@@ -2,6 +2,7 @@ package megvii.testfacepass.utils;
 
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Point;
@@ -70,6 +71,23 @@ public class FileUtil {
 
     }
 
+
+    public static String getJson(Context context, String fileName) {
+
+        StringBuilder stringBuilder = new StringBuilder();
+        try {
+            AssetManager assetManager = context.getAssets();
+            BufferedReader bf = new BufferedReader(new InputStreamReader(
+                    assetManager.open(fileName)));
+            String line;
+            while ((line = bf.readLine()) != null) {
+                stringBuilder.append(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return stringBuilder.toString();
+    }
 
 
 

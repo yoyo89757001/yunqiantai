@@ -2,20 +2,31 @@ package megvii.testfacepass.ui;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bigkoo.pickerview.builder.OptionsPickerBuilder;
+import com.bigkoo.pickerview.listener.OnOptionsSelectListener;
+import com.bigkoo.pickerview.view.OptionsPickerView;
+import com.google.gson.Gson;
 import com.sdsmdg.tastytoast.TastyToast;
 import com.yatoooon.screenadaptation.ScreenAdapterTools;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.json.JSONArray;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -25,12 +36,15 @@ import megvii.facepass.ruitong.FaceInit;
 import megvii.testfacepass.MyApplication;
 import megvii.testfacepass.R;
 import megvii.testfacepass.beans.BaoCunBean;
+import megvii.testfacepass.beans.ChengShiIDBean;
+import megvii.testfacepass.beans.JsonBean;
 import megvii.testfacepass.dialog.BangDingDialog;
 import megvii.testfacepass.dialog.XiuGaiDiZhiDialog;
 import megvii.testfacepass.dialog.XiuGaiHuoTiFZDialog;
 import megvii.testfacepass.dialog.XiuGaiRuKuFZDialog;
 import megvii.testfacepass.dialog.XiuGaiSBFZDialog;
 import megvii.testfacepass.dialog.YuYingDialog;
+import megvii.testfacepass.utils.FileUtil;
 import okhttp3.OkHttpClient;
 
 
@@ -51,10 +65,18 @@ public class SheZhiActivity extends Activity {
     Switch switchs;
     @BindView(R.id.rl5)
     RelativeLayout rl5;
+    @BindView(R.id.rl8)
+    RelativeLayout rl8;
+    @BindView(R.id.chengshi)
+    TextView chengshi;
 
     private Box<BaoCunBean> baoCunBeanDao = null;
     private BaoCunBean baoCunBean = null;
     public OkHttpClient okHttpClient = null;
+    private ArrayList<JsonBean> options1Items = new ArrayList<>();//省
+    private ArrayList<ArrayList<String>> options2Items = new ArrayList<>();//市
+    private ArrayList<ArrayList<ArrayList<String>>> options3Items = new ArrayList<>();//区
+    private Box<ChengShiIDBean> chengShiIDBeanBox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +87,7 @@ public class SheZhiActivity extends Activity {
         //在setContentView();后面加上适配语句
         ScreenAdapterTools.getInstance().loadView(getWindow().getDecorView());
         baoCunBeanDao = MyApplication.myApplication.getBoxStore().boxFor(BaoCunBean.class);
+        chengShiIDBeanBox = MyApplication.myApplication.getBoxStore().boxFor(ChengShiIDBean.class);
         baoCunBean = baoCunBeanDao.get(123456L);
         if (baoCunBean == null) {
             baoCunBean = new BaoCunBean();
@@ -76,9 +99,19 @@ public class SheZhiActivity extends Activity {
             baoCunBean.setRuKuMoHuDu(0.4f);
             baoCunBean.setHuoTiFZ(70);
             baoCunBean.setHuoTi(true);
+            baoCunBean.setDangqianShiJian("d");
+            baoCunBean.setTianQi(false);
 
             baoCunBeanDao.put(baoCunBean);
+        }else {
+            if (baoCunBean.getDangqianChengShi2()==null){
+                chengshi.setText("");
+            }else {
+                chengshi.setText(baoCunBean.getDangqianChengShi2());
+            }
+
         }
+
         EventBus.getDefault().register(this);//订阅
         switchs.setChecked(true);
         switchs.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -101,11 +134,18 @@ public class SheZhiActivity extends Activity {
             }
         });
 
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                initJsonData();
+            }
+        }).start();
+
 
     }
 
 
-    @OnClick({R.id.rl1, R.id.rl2, R.id.rl3, R.id.rl4,R.id.rl5, R.id.rl6, R.id.rl7})
+    @OnClick({R.id.rl1, R.id.rl2, R.id.rl3, R.id.rl4, R.id.rl5, R.id.rl6, R.id.rl7, R.id.rl8})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.rl1:
@@ -180,8 +220,8 @@ public class SheZhiActivity extends Activity {
                 sbfzDialog.show();
                 break;
             case R.id.rl5:
-                final XiuGaiHuoTiFZDialog huoTiFZDialog=new XiuGaiHuoTiFZDialog(SheZhiActivity.this);
-                huoTiFZDialog.setContents(baoCunBean.getHuoTiFZ()+"",null);
+                final XiuGaiHuoTiFZDialog huoTiFZDialog = new XiuGaiHuoTiFZDialog(SheZhiActivity.this);
+                huoTiFZDialog.setContents(baoCunBean.getHuoTiFZ() + "", null);
                 huoTiFZDialog.setOnQueRenListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -189,7 +229,7 @@ public class SheZhiActivity extends Activity {
                             baoCunBean.setHuoTiFZ(Integer.valueOf(huoTiFZDialog.getFaZhi()));
                             baoCunBeanDao.put(baoCunBean);
                             huoTiFZDialog.dismiss();
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -231,6 +271,18 @@ public class SheZhiActivity extends Activity {
                     }
                 });
                 dialog.show();
+                break;
+            case R.id.rl8:
+                //选择城市
+                if (options1Items.size() > 0 && options2Items.size() > 0 && options3Items.size() > 0) {
+                    showPickerView();
+                } else {
+                    Toast tastyToast = TastyToast.makeText(SheZhiActivity.this, "城市数据准备中...请稍后", TastyToast.LENGTH_LONG, TastyToast.INFO);
+                    tastyToast.setGravity(Gravity.CENTER, 0, 0);
+                    tastyToast.show();
+                }
+
+
                 break;
 
         }
@@ -330,5 +382,130 @@ public class SheZhiActivity extends Activity {
         tastyToast.show();
     }
 
+    private void initJsonData() {//解析数据
+
+        /**
+         * 注意：assets 目录下的Json文件仅供参考，实际使用可自行替换文件
+         * 关键逻辑在于循环体
+         *
+         * */
+        String JsonData = FileUtil.getJson(this, "province.json");//获取assets目录下的json文件数据
+
+        ArrayList<JsonBean> jsonBean = parseData(JsonData);//用Gson 转成实体
+
+        /**
+         * 添加省份数据
+         *
+         * 注意：如果是添加的JavaBean实体，则实体类需要实现 IPickerViewData 接口，
+         * PickerView会通过getPickerViewText方法获取字符串显示出来。
+         */
+        options1Items = jsonBean;
+
+        for (int i = 0; i < jsonBean.size(); i++) {//遍历省份
+            ArrayList<String> CityList = new ArrayList<>();//该省的城市列表（第二级）
+            ArrayList<ArrayList<String>> Province_AreaList = new ArrayList<>();//该省的所有地区列表（第三极）
+
+            for (int c = 0; c < jsonBean.get(i).getCityList().size(); c++) {//遍历该省份的所有城市
+                String CityName = jsonBean.get(i).getCityList().get(c).getName();
+                CityList.add(CityName);//添加城市
+
+                ArrayList<String> City_AreaList = new ArrayList<>();//该城市的所有地区列表
+
+                //如果无地区数据，建议添加空字符串，防止数据为null 导致三个选项长度不匹配造成崩溃
+                if (jsonBean.get(i).getCityList().get(c).getArea() == null
+                        || jsonBean.get(i).getCityList().get(c).getArea().size() == 0) {
+                    City_AreaList.add("");
+                } else {
+
+                    for (int d = 0; d < jsonBean.get(i).getCityList().get(c).getArea().size(); d++) {//该城市对应地区所有数据
+                        String AreaName = jsonBean.get(i).getCityList().get(c).getArea().get(d);
+
+                        City_AreaList.add(AreaName);//添加该城市所有地区数据
+                    }
+                }
+                Province_AreaList.add(City_AreaList);//添加该省所有地区数据
+            }
+
+            /**
+             * 添加城市数据
+             */
+            options2Items.add(CityList);
+
+            /**
+             * 添加地区数据
+             */
+            options3Items.add(Province_AreaList);
+        }
+    }
+
+    public ArrayList<JsonBean> parseData(String result) {//Gson 解析
+        ArrayList<JsonBean> detail = new ArrayList<>();
+        try {
+            JSONArray data = new JSONArray(result);
+            Gson gson = new Gson();
+            for (int i = 0; i < data.length(); i++) {
+                JsonBean entity = gson.fromJson(data.optJSONObject(i).toString(), JsonBean.class);
+                detail.add(entity);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+        return detail;
+    }
+
+
+    private void showPickerView() {// 弹出选择器
+
+        OptionsPickerView pvOptions = new OptionsPickerBuilder(this, new OnOptionsSelectListener() {
+            @Override
+            public void onOptionsSelect(int options1, int options2, int options3, View v) {
+                //返回的分别是三个级别的选中位置
+                final String tx = options1Items.get(options1).getPickerViewText() +
+                        options2Items.get(options1).get(options2) +
+                        options3Items.get(options1).get(options2).get(options3);
+                chengshi.setText(tx);
+                baoCunBean.setDangqianChengShi2(tx);
+                baoCunBeanDao.put(baoCunBean);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        String bidui=tx;
+                        List<ChengShiIDBean> shiIDBeanList=chengShiIDBeanBox.getAll();
+                        int size=shiIDBeanList.size();
+                        for ( int i=0;i<size;i++){
+                            ChengShiIDBean bean=shiIDBeanList.get(i);
+                            if (bidui.contains(bean.getProvince()) && bidui.contains(bean.getCity()) && bidui.contains(bean.getDistrict())){
+                                baoCunBean.setDangqianChengShi(bean.getId());
+                                baoCunBeanDao.put(baoCunBean);
+                                Log.d("SheZhiActivity", "找到了城市id");
+                                break;
+                            }
+
+                        }
+                        if (baoCunBean.getDangqianChengShi()==null){
+                            baoCunBean.setDangqianChengShi("1");
+                            baoCunBeanDao.put(baoCunBean);
+                        }
+
+
+                    }
+                }).start();
+
+              //  Toast.makeText(SheZhiActivity.this, options3Items.get(options1).get(options2).get(options3), Toast.LENGTH_SHORT).show();
+            }
+        })
+
+                .setTitleText("城市选择")
+                .setDividerColor(Color.BLACK)
+                .setTextColorCenter(Color.BLACK) //设置选中项文字颜色
+                .setContentTextSize(30)
+                .build();
+
+        /*pvOptions.setPicker(options1Items);//一级选择器
+        pvOptions.setPicker(options1Items, options2Items);//二级选择器*/
+        pvOptions.setPicker(options1Items, options2Items, options3Items);//三级选择器
+        pvOptions.show();
+    }
 
 }

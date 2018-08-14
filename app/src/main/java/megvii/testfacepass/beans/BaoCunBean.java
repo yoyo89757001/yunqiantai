@@ -40,6 +40,43 @@ public class BaoCunBean {
     private int ruKuFaceSize;
     private boolean isHuoTi;
     private int huoTiFZ;
+    private String dangqianChengShi;
+    private String dangqianChengShi2;
+    private String dangqianShiJian;
+    private boolean isTianQi;
+
+
+    public String getDangqianShiJian() {
+        return dangqianShiJian;
+    }
+
+    public void setDangqianShiJian(String dangqianShiJian) {
+        this.dangqianShiJian = dangqianShiJian;
+    }
+
+    public boolean isTianQi() {
+        return isTianQi;
+    }
+
+    public void setTianQi(boolean tianQi) {
+        isTianQi = tianQi;
+    }
+
+    public String getDangqianChengShi2() {
+        return dangqianChengShi2;
+    }
+
+    public void setDangqianChengShi2(String dangqianChengShi2) {
+        this.dangqianChengShi2 = dangqianChengShi2;
+    }
+
+    public String getDangqianChengShi() {
+        return dangqianChengShi;
+    }
+
+    public void setDangqianChengShi(String dangqianChengShi) {
+        this.dangqianChengShi = dangqianChengShi;
+    }
 
     public int getHuoTiFZ() {
         return huoTiFZ;

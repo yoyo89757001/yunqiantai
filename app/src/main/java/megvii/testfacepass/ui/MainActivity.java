@@ -4,9 +4,11 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
@@ -71,6 +73,8 @@ import com.android.volley.toolbox.Volley;
 import com.baidu.tts.client.SpeechSynthesizer;
 import com.baidu.tts.client.SpeechSynthesizerListener;
 import com.baidu.tts.client.TtsMode;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.sdsmdg.tastytoast.TastyToast;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
@@ -92,9 +96,11 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 
+import java.net.URLEncoder;
 import java.util.HashMap;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -118,6 +124,8 @@ import megvii.facepass.types.FacePassRecognitionResultType;
 import megvii.testfacepass.MyApplication;
 import megvii.testfacepass.R;
 import megvii.testfacepass.beans.BaoCunBean;
+import megvii.testfacepass.beans.ChengShiIDBean;
+import megvii.testfacepass.beans.ZhiChiChengShi;
 import megvii.testfacepass.dialog.XiuGaiGaoKuanDialog;
 
 import megvii.testfacepass.dialogall.XiuGaiListener;
@@ -127,7 +135,9 @@ import megvii.testfacepass.tts.control.MySyntherizer;
 import megvii.testfacepass.tts.control.NonBlockSyntherizer;
 import megvii.testfacepass.tts.listener.UiMessageListener;
 import megvii.testfacepass.tts.util.OfflineResource;
+import megvii.testfacepass.utils.DateUtils;
 import megvii.testfacepass.utils.FacePassUtil;
+import megvii.testfacepass.utils.GsonUtil;
 import megvii.testfacepass.utils.SettingVar;
 
 
@@ -138,6 +148,12 @@ import megvii.testfacepass.network.ByteRequest;
 import megvii.testfacepass.utils.FileUtil;
 import megvii.testfacepass.view.DBG_View;
 import megvii.testfacepass.view.FaceView;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 
 
@@ -246,7 +262,6 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
 
     /* 网络请求队列*/
     RequestQueue requestQueue;
-
 //    private EditText gaodu,kuandu;
 //    private TextView biaoti;
 //    private WindowManager.LayoutParams wmParams;
@@ -267,8 +282,6 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
     private int dw,dh;
     private LayoutInflater mInflater = null;
 
-
-
     /*图片缓存*/
     private FaceImageCache mImageCache;
 
@@ -276,7 +289,8 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
     private Box<BaoCunBean> baoCunBeanDao=null;
     private BaoCunBean baoCunBean=null;
 
-    private Button mSDKModeBtn;
+    private IntentFilter intentFilter;
+    private TimeChangeReceiver timeChangeReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -288,6 +302,15 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
         initAndroidHandler();
         baoCunBeanDao = MyApplication.myApplication.getBoxStore().boxFor(BaoCunBean.class);
         baoCunBean=baoCunBeanDao.get(123456L);
+        //每分钟的广播
+        intentFilter = new IntentFilter();
+        intentFilter.addAction(Intent.ACTION_TIME_TICK);//每分钟变化
+        intentFilter.addAction(Intent.ACTION_TIMEZONE_CHANGED);//设置了系统时区
+        intentFilter.addAction(Intent.ACTION_TIME_CHANGED);//设置了系统时间
+        timeChangeReceiver = new TimeChangeReceiver();
+        registerReceiver(timeChangeReceiver, intentFilter);
+
+
 
         mainHandler = new Handler() {
             @Override
@@ -322,10 +345,8 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
 
         EventBus.getDefault().register(this);//订阅
 
-
         /* 初始化界面 */
         initView();
-
 
 
         /* 申请程序所需权限 */
@@ -364,10 +385,24 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
         dw=dm.widthPixels;
         dh=dm.heightPixels;
 
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+               // synthesizer.speak("富贵");
+            }
+        }).start();
 
 
 
     }
+
+
 
     private void initAndroidHandler() {
 
@@ -578,7 +613,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
     @Override
     protected void onPause() {
         super.onPause();
-        shipingView.pause();
+//        shipingView.pause();
     }
 
 
@@ -678,7 +713,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
         }
 
 
-        Log.i("orientation", String.valueOf(windowRotation));
+      //  Log.i("orientation", String.valueOf(windowRotation));
         final int mCurrentOrientation = getResources().getConfiguration().orientation;
 
         if (mCurrentOrientation == Configuration.ORIENTATION_PORTRAIT) {
@@ -687,84 +722,84 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
             screenState = 0;
         }
         setContentView(R.layout.activity_main);
-        TableLayout mHudView = findViewById(R.id.hud_view);
-        shipingView=findViewById(R.id.ijkplayview);
-        shipingView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                long curTime = System.currentTimeMillis();
-                long durTime = curTime - mLastClickTime;
-                mLastClickTime = curTime;
-                if (durTime < CLICK_INTERVAL) {
-                    ++mSecretNumber;
-                    if (mSecretNumber == 3) {
-                        dialog=new XiuGaiGaoKuanDialog(MainActivity.this,MainActivity.this);
-                        dialog.setCanceledOnTouchOutside(false);
-                        dialog.setContents("修改视频的宽高",(shipingView.getRight()-shipingView.getLeft())+"",(shipingView.getBottom()-shipingView.getTop())+"",2);
-                        dialog.setOnQueRenListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                dialog.dismiss();
-                            }
-                        });
-                        dialog.show();
-                    }
-                } else {
-                    mSecretNumber = 0;
-                }
-            }
-        });
-
-
-        shipingView.setHudView(mHudView); //http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4
-        shipingView.setVideoURI(Uri.parse("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"));
-        shipingView.setOnCompletionListener(new IMediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(IMediaPlayer iMediaPlayer) {
-
-             //   shipingView.start();
-            }
-        });
-        shipingView.setOnErrorListener(new IMediaPlayer.OnErrorListener() {
-            @Override
-            public boolean onError(IMediaPlayer iMediaPlayer, int i, int i1) {
-                TastyToast.makeText(MainActivity.this,"播放失败",TastyToast.LENGTH_SHORT,TastyToast.INFO).show();
-                return false;
-            }
-        });
+//        TableLayout mHudView = findViewById(R.id.hud_view);
+//        shipingView=findViewById(R.id.ijkplayview);
+//        shipingView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                long curTime = System.currentTimeMillis();
+//                long durTime = curTime - mLastClickTime;
+//                mLastClickTime = curTime;
+//                if (durTime < CLICK_INTERVAL) {
+//                    ++mSecretNumber;
+//                    if (mSecretNumber == 3) {
+//                        dialog=new XiuGaiGaoKuanDialog(MainActivity.this,MainActivity.this);
+//                        dialog.setCanceledOnTouchOutside(false);
+//                        dialog.setContents("修改视频的宽高",(shipingView.getRight()-shipingView.getLeft())+"",(shipingView.getBottom()-shipingView.getTop())+"",2);
+//                        dialog.setOnQueRenListener(new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//                                dialog.dismiss();
+//                            }
+//                        });
+//                        dialog.show();
+//                    }
+//                } else {
+//                    mSecretNumber = 0;
+//                }
+//            }
+//        });
+//
+//
+//        shipingView.setHudView(mHudView); //http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4
+//        shipingView.setVideoURI(Uri.parse("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"));
+//        shipingView.setOnCompletionListener(new IMediaPlayer.OnCompletionListener() {
+//            @Override
+//            public void onCompletion(IMediaPlayer iMediaPlayer) {
+//
+//             //   shipingView.start();
+//            }
+//        });
+//        shipingView.setOnErrorListener(new IMediaPlayer.OnErrorListener() {
+//            @Override
+//            public boolean onError(IMediaPlayer iMediaPlayer, int i, int i1) {
+//                TastyToast.makeText(MainActivity.this,"播放失败",TastyToast.LENGTH_SHORT,TastyToast.INFO).show();
+//                return false;
+//            }
+//        });
 
       //  shipingView.start();
 
 
 
 
-        dbg_view=findViewById(R.id.dabg);
-        dbg_view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                long curTime = System.currentTimeMillis();
-                long durTime = curTime - mLastClickTime;
-                mLastClickTime = curTime;
-                if (durTime < CLICK_INTERVAL) {
-                    ++mSecretNumber;
-                    if (mSecretNumber == 3) {
-                        dialog=new XiuGaiGaoKuanDialog(MainActivity.this,MainActivity.this);
-                        dialog.setCanceledOnTouchOutside(false);
-                        dialog.setContents("修改背景宽高",(dbg_view.getRight()-dbg_view.getLeft())+"",(dbg_view.getBottom()-dbg_view.getTop())+"",1);
-                        dialog.setOnQueRenListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                dialog.dismiss();
-                            }
-                        });
-                        dialog.show();
-                    }
-                } else {
-                    mSecretNumber = 0;
-                }
-            }
-        });
+//        dbg_view=findViewById(R.id.dabg);
+//        dbg_view.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                long curTime = System.currentTimeMillis();
+//                long durTime = curTime - mLastClickTime;
+//                mLastClickTime = curTime;
+//                if (durTime < CLICK_INTERVAL) {
+//                    ++mSecretNumber;
+//                    if (mSecretNumber == 3) {
+//                        dialog=new XiuGaiGaoKuanDialog(MainActivity.this,MainActivity.this);
+//                        dialog.setCanceledOnTouchOutside(false);
+//                        dialog.setContents("修改背景宽高",(dbg_view.getRight()-dbg_view.getLeft())+"",(dbg_view.getBottom()-dbg_view.getTop())+"",1);
+//                        dialog.setOnQueRenListener(new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//                                dialog.dismiss();
+//                            }
+//                        });
+//                        dialog.show();
+//                    }
+//                } else {
+//                    mSecretNumber = 0;
+//                }
+//            }
+//        });
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -887,7 +922,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
         faceView.clear();
         faceView.invalidate();
         if (shipingView!=null)
-        shipingView.start();
+       // shipingView.start();
         super.onRestart();
     }
 
@@ -897,6 +932,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
             mRecognizeThread.isInterrupt = true;
             mRecognizeThread.interrupt();
         }
+        unregisterReceiver(timeChangeReceiver);
 
         if (requestQueue != null) {
             requestQueue.cancelAll("upload_detect_result_tag");
@@ -1081,8 +1117,6 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
     private static final int REQUEST_CODE_CHOOSE_PICK = 1;
 
 
-
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -1112,10 +1146,10 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                         toast("图片选取失败！");
                         return;
                     }
-                    if (!TextUtils.isEmpty(path) && mFaceOperationDialog != null && mFaceOperationDialog.isShowing()) {
-                        EditText imagePathEdt = (EditText) mFaceOperationDialog.findViewById(R.id.et_face_image_path);
-                        imagePathEdt.setText(path);
-                    }
+//                    if (!TextUtils.isEmpty(path) && mFaceOperationDialog != null && mFaceOperationDialog.isShowing()) {
+//                        EditText imagePathEdt = (EditText) mFaceOperationDialog.findViewById(R.id.et_face_image_path);
+//                        imagePathEdt.setText(path);
+//                    }
                 }
                 break;
         }
@@ -1326,7 +1360,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
 //
 //    }
 
-    private AlertDialog mFaceOperationDialog;
+ //   private AlertDialog mFaceOperationDialog;
 
 //    private void showAddFaceDialog() {
 //
@@ -1861,5 +1895,90 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
         tastyToast.setGravity(Gravity.CENTER,0,0);
         tastyToast.show();
     }
+
+    private void initTianQi() {
+
+
+
+    }
+
+    class TimeChangeReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (Objects.requireNonNull(intent.getAction())) {
+                case Intent.ACTION_TIME_TICK:
+                    //每过一分钟 触发
+                    if (baoCunBean!=null && !baoCunBean.getDangqianShiJian().equals(DateUtils.timesTwo(System.currentTimeMillis()+""))){
+                        //请求一次
+                        try {
+                            if (baoCunBean.getDangqianChengShi2()==null){
+                                Toast tastyToast= TastyToast.makeText(MainActivity.this,"获取天气失败,没有设置当前城市",TastyToast.LENGTH_LONG,TastyToast.INFO);
+                                tastyToast.setGravity(Gravity.CENTER,0,0);
+                                tastyToast.show();
+                                return;
+                            }
+                            Log.d("TimeChangeReceiver", baoCunBean.getDangqianChengShi());
+                            OkHttpClient okHttpClient= new OkHttpClient();
+                            okhttp3.Request.Builder requestBuilder = new okhttp3.Request.Builder()
+                                    .get()
+                                    .url("http://v.juhe.cn/weather/index?format=1&cityname="+baoCunBean.getDangqianChengShi()+"&key=356bf690a50036a5cfc37d54dc6e8319");
+                            // step 3：创建 Call 对象
+                            Call call = okHttpClient.newCall(requestBuilder.build());
+                            //step 4: 开始异步请求
+                            call.enqueue(new Callback() {
+                                @Override
+                                public void onFailure(Call call, IOException e) {
+                                    Log.d("AllConnects", "请求失败"+e.getMessage());
+                                }
+
+                                @Override
+                                public void onResponse(Call call, okhttp3.Response response) throws IOException {
+                                    Log.d("AllConnects", "请求成功"+call.request().toString());
+                                    //获得返回体
+                                    try{
+
+                                        ResponseBody body = response.body();
+                                        String ss=body.string().trim();
+                                        Log.d("AllConnects", "天气"+ss);
+
+//					JsonObject jsonObject= GsonUtil.parse(ss).getAsJsonObject();
+//					Gson gson=new Gson();
+//					final HuiYiInFoBean renShu=gson.fromJson(jsonObject,HuiYiInFoBean.class);
+
+
+                                    }catch (Exception e){
+                                        Log.d("WebsocketPushMsg", e.getMessage()+"ttttt");
+                                    }
+
+                                }
+                            });
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Toast tastyToast= TastyToast.makeText(MainActivity.this,"获取天气失败,没有设置当前城市",TastyToast.LENGTH_LONG,TastyToast.INFO);
+                            tastyToast.setGravity(Gravity.CENTER,0,0);
+                            tastyToast.show();
+                            return;
+                        }
+
+                    }
+
+
+                  //  Toast.makeText(context, "1 min passed", Toast.LENGTH_SHORT).show();
+                    break;
+                case Intent.ACTION_TIME_CHANGED:
+                    //设置了系统时间
+                   // Toast.makeText(context, "system time changed", Toast.LENGTH_SHORT).show();
+                    break;
+                case Intent.ACTION_TIMEZONE_CHANGED:
+                    //设置了系统时区的action
+                  //  Toast.makeText(context, "system time zone changed", Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+    }
+
+
+
+
 
 }

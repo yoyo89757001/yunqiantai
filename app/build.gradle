@@ -69,4 +69,5 @@ dependencies {
     implementation 'tv.danmaku.ijk.media:ijkplayer-armv7a:0.8.8'
     implementation 'tv.danmaku.ijk.media:ijkplayer-exo:0.8.8'
     implementation 'org.greenrobot:eventbus:3.1.1'
+    implementation 'com.contrarywind:Android-PickerView:4.1.6'
 }
