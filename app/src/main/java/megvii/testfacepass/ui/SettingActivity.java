@@ -48,8 +48,8 @@ public class SettingActivity extends Activity implements View.OnClickListener {
                 editor.putInt("faceRotation", SettingVar.faceRotation);
                 editor.putInt("cameraPreviewRotation", SettingVar.cameraPreviewRotation);
                 editor.apply();
-                Intent intent = new Intent(SettingActivity.this, MainActivity.class);
-                startActivity(intent);
+//                Intent intent = new Intent(SettingActivity.this, SheZhiActivity.class);
+//                startActivity(intent);
                 SettingActivity.this.finish();
                 break;
             case R.id.cancel:
@@ -62,8 +62,8 @@ public class SettingActivity extends Activity implements View.OnClickListener {
                 edito.putInt("faceRotation", FacePassImageRotation.DEG270);
                 edito.putInt("cameraPreviewRotation", 90);
                 edito.apply();
-                Intent intent1 = new Intent(SettingActivity.this, MainActivity.class);
-                startActivity(intent1);
+//                Intent intent1 = new Intent(SettingActivity.this, SheZhiActivity.class);
+//                startActivity(intent1);
                 SettingActivity.this.finish();
                 break;
         }

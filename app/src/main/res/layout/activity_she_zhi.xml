@@ -172,7 +172,7 @@
                     android:layout_toRightOf="@+id/im4"
                     android:layout_marginLeft="16px"
                     android:textColor="@color/blake"
-                    android:text="识别距离"
+                    android:text="识别阀值"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -191,6 +191,7 @@
                     android:layout_alignParentBottom="true"
                     android:layout_height="1px"/>
             </RelativeLayout>
+
             <RelativeLayout
                 android:id="@+id/rl5"
                 android:background="@drawable/jiaohu31"
@@ -219,12 +220,102 @@
                     android:layout_width="wrap_content"
                     android:layout_height="60px"
                     android:textSize="20px"
+                    android:id="@+id/switchs"
                     style="@style/TextAppearance.AppCompat.Widget.Switch"
                     android:layout_marginRight="16px"
-                    android:layout_alignParentRight="true"
+                    android:layout_toLeftOf="@+id/ff3"
                     android:layout_centerVertical="true"
                     android:switchMinWidth="70px"
                     android:track="@drawable/zhongkong_tuhuang"/>
+
+                <ImageView
+                    android:src="@drawable/xiangyou"
+                    android:padding="10px"
+                    android:id="@+id/ff3"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="16px"
+                    android:layout_alignParentRight="true"
+                    android:layout_width="60px"
+                    android:layout_height="60px" />
+
+                <View
+                    android:background="@color/tabtextcolo"
+                    android:layout_width="match_parent"
+                    android:layout_alignParentBottom="true"
+                    android:layout_height="1px"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl6"
+                android:background="@drawable/jiaohu31"
+                android:layout_width="match_parent"
+                android:layout_height="90px">
+
+                <ImageView
+                    android:src="@drawable/fangxiang_bg"
+                    android:layout_width="60px"
+                    android:id="@+id/im6"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="20px"
+                    android:layout_height="60px" />
+
+                <TextView
+                    android:textSize="30px"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/im6"
+                    android:layout_marginLeft="16px"
+                    android:textColor="@color/blake"
+                    android:text="方向设置"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <ImageView
+                    android:src="@drawable/xiangyou"
+                    android:padding="10px"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="16px"
+                    android:layout_alignParentRight="true"
+                    android:layout_width="60px"
+                    android:layout_height="60px" />
+
+                <View
+                    android:background="@color/tabtextcolo"
+                    android:layout_width="match_parent"
+                    android:layout_alignParentBottom="true"
+                    android:layout_height="1px"/>
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/rl7"
+                android:background="@drawable/jiaohu31"
+                android:layout_width="match_parent"
+                android:layout_height="90px">
+
+                <ImageView
+                    android:src="@drawable/ruku_bgbg"
+                    android:layout_width="60px"
+                    android:id="@+id/im7"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="20px"
+                    android:layout_height="60px" />
+
+                <TextView
+                    android:textSize="30px"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/im7"
+                    android:layout_marginLeft="16px"
+                    android:textColor="@color/blake"
+                    android:text="入库阀值"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <ImageView
+                    android:src="@drawable/xiangyou"
+                    android:padding="10px"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="16px"
+                    android:layout_alignParentRight="true"
+                    android:layout_width="60px"
+                    android:layout_height="60px" />
 
                 <View
                     android:background="@color/tabtextcolo"

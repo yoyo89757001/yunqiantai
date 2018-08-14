@@ -1,4 +1,4 @@
-package megvii.testfacepass.tuisong_jg;//package com.ruitong.huiyi3.tuisong_jg;
+//package megvii.testfacepass.tuisong_jg;//package com.ruitong.huiyi3.tuisong_jg;
 //
 //
 //import android.content.BroadcastReceiver;

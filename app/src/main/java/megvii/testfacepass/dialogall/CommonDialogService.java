@@ -122,6 +122,8 @@ public class CommonDialogService extends Service implements CommonDialogListener
             tishi.setA(a);
             tishi.setP(p);
             tishi.setTishi(t);
+
+
             Message message= Message.obtain();
             message.what=111;
             message.obj=tishi;

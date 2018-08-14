@@ -401,7 +401,7 @@ public class MyReceiver extends BroadcastReceiver {
 //		manager.notify(0, builder.build());
 	}
 
-	private void jieya(String pathZip, String path222){
+	private void jieya(String pathZip, final String path222){
 
 		ZipFile zipFile=null;
 		List fileHeaderList=null;
@@ -415,14 +415,16 @@ public class MyReceiver extends BroadcastReceiver {
 
 			for (int i = 0; i < fileHeaderList.size(); i++) {
 				FileHeader fileHeader = (FileHeader) fileHeaderList.get(i);
-				FileHeader fileHeader2 = (FileHeader) fileHeaderList.get(0);
+			//	FileHeader fileHeader2 = (FileHeader) fileHeaderList.get(0);
 
-				Log.d(TAG, fileHeader2.getFileName());
+				//Log.d(TAG, fileHeader2.getFileName());
 
 				if (fileHeader.getFileName().contains(".xml")){
 					zipFile.extractFile( fileHeader.getFileName(), path222);
 					Log.d(TAG, "找到了"+i+"张照片");
 				}
+
+
 				// Various other properties are available in FileHeader. Please have a look at FileHeader
 				// class to see all the properties
 			}
@@ -443,7 +445,7 @@ public class MyReceiver extends BroadcastReceiver {
 		try {
 			FileInputStream fin=new FileInputStream(xmlList.get(0));
 			//Log.d("SheZhiActivity", "fin:" + fin);
-			List<Subject> subjectList=  pull2xml(fin);
+			final List<Subject> subjectList=  pull2xml(fin);
 			Log.d(TAG, "XMLList值:" + subjectList);
 			if (subjectList!=null && subjectList.size()>0){
 				//排序
@@ -456,7 +458,13 @@ public class MyReceiver extends BroadcastReceiver {
 				}
 
 				//先登录旷视
-					getOkHttpClient3(subjectList,path222);
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						getOkHttpClient3(subjectList,path222);
+					}
+				}).start();
+
 
 
 				final int size= subjectList.size();
@@ -491,14 +499,15 @@ public class MyReceiver extends BroadcastReceiver {
 							String filePath=null;
 							while (true){
 								try {
-									Thread.sleep(100);
+									Thread.sleep(300);
 									t++;
+								//	Log.d(TAG, "2循环");
 									// 获取后缀名
 									//String sname = name.substring(name.lastIindexOf("."));
 									filePath=trg+ File.separator+subjectList.get(j).getId()+(subjectList.get(j).getPhoto().
 											substring(subjectList.get(j).getPhoto().lastIndexOf(".")));
 									File file=new File(filePath);
-									if ((file.isFile() && file.length()>0)|| t==4000){
+									if ((file.isFile() && file.length()>0)|| t==100){
 										t=0;
 										Log.d(TAG, "file.length():" + file.length()+"   t:"+t);
 										break;
@@ -535,7 +544,13 @@ public class MyReceiver extends BroadcastReceiver {
 									e.printStackTrace();
 								}
 
-							}
+							}else {
+                                stringBuilder2.append("入库失败文件不存在:").append("ID:")
+                                        .append(subjectList.get(j).getId()).append("姓名:")
+                                        .append(subjectList.get(j).getName()).append("时间:")
+                                        .append(DateUtils.time(System.currentTimeMillis() + ""))
+                                        .append("\n");
+                            }
 
 //							//查询旷视
 //							synchronized (subjectList.get(j)) {
@@ -567,8 +582,6 @@ public class MyReceiver extends BroadcastReceiver {
 							showNotifictionIcon(context, 0,"入库完成","全部入库成功，没有失败记录");
 						}
 					}
-
-
 
 
 //	public static final int TIMEOUT2 = 1000 * 100;

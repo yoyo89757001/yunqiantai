@@ -22,7 +22,7 @@
     },
     {
       "id": "3:3840701619543301435",
-      "lastPropertyId": "24:5014994266454314267",
+      "lastPropertyId": "30:1824631388669148685",
       "name": "BaoCunBean",
       "properties": [
         {
@@ -120,6 +120,30 @@
         {
           "id": "24:5014994266454314267",
           "name": "zhanhuiBianMa"
+        },
+        {
+          "id": "25:4839593909910535562",
+          "name": "shibieFaZhi"
+        },
+        {
+          "id": "26:7924139921864971682",
+          "name": "shibieFaceSize"
+        },
+        {
+          "id": "27:5813042904718256351",
+          "name": "ruKuMoHuDu"
+        },
+        {
+          "id": "28:538777594787386497",
+          "name": "ruKuFaceSize"
+        },
+        {
+          "id": "29:2477866834115826907",
+          "name": "isHuoTi"
+        },
+        {
+          "id": "30:1824631388669148685",
+          "name": "huoTiFZ"
         }
       ],
       "relations": []

@@ -34,6 +34,60 @@ public class BaoCunBean {
     private String shiPingWeiZhi;
     private String zhanhuiId;
     private String zhanhuiBianMa;
+    private int shibieFaZhi;
+    private int shibieFaceSize;
+    private float ruKuMoHuDu;
+    private int ruKuFaceSize;
+    private boolean isHuoTi;
+    private int huoTiFZ;
+
+    public int getHuoTiFZ() {
+        return huoTiFZ;
+    }
+
+    public void setHuoTiFZ(int huoTiFZ) {
+        this.huoTiFZ = huoTiFZ;
+    }
+
+    public int getShibieFaZhi() {
+        return shibieFaZhi;
+    }
+
+    public void setShibieFaZhi(int shibieFaZhi) {
+        this.shibieFaZhi = shibieFaZhi;
+    }
+
+    public int getShibieFaceSize() {
+        return shibieFaceSize;
+    }
+
+    public void setShibieFaceSize(int shibieFaceSize) {
+        this.shibieFaceSize = shibieFaceSize;
+    }
+
+    public float getRuKuMoHuDu() {
+        return ruKuMoHuDu;
+    }
+
+    public void setRuKuMoHuDu(float ruKuMoHuDu) {
+        this.ruKuMoHuDu = ruKuMoHuDu;
+    }
+
+    public int getRuKuFaceSize() {
+        return ruKuFaceSize;
+    }
+
+    public void setRuKuFaceSize(int ruKuFaceSize) {
+        this.ruKuFaceSize = ruKuFaceSize;
+    }
+
+    public boolean isHuoTi() {
+        return isHuoTi;
+    }
+
+    public void setHuoTi(boolean huoTi) {
+        isHuoTi = huoTi;
+    }
 
     public Long getId() {
         return id;
