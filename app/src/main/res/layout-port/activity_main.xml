@@ -1,28 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main_rl"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ff000000"
-    tools:context="megvii.testfacepass.ui.MainActivity">
-
-
+    android:background="@drawable/dbg_1">
 
 
         <megvii.testfacepass.camera.CameraPreview
             android:id="@+id/preview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="1dp"
+            android:layout_height="1dp"
             android:visibility="visible"
             android:layout_gravity="center_vertical" />
 
 
-        <megvii.testfacepass.view.FaceView
-            android:id="@+id/fcview"
-            android:visibility="visible"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+        <!--<megvii.testfacepass.view.FaceView-->
+            <!--android:id="@+id/fcview"-->
+            <!--android:visibility="visible"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content" />-->
 
 
 
@@ -45,6 +41,155 @@
     <!--android:id="@+id/ijkplayview"-->
     <!--android:layout_width="wrap_content"-->
     <!--android:layout_height="300dp"/>-->
+
+        <RelativeLayout
+            android:id="@+id/rl1"
+            android:layout_marginTop="40px"
+            android:layout_marginLeft="46px"
+            android:layout_marginRight="46px"
+            android:layout_width="wrap_content"
+            android:layout_height="44px">
+
+                <ImageView
+                    android:src="@drawable/logologo"
+                    android:scaleType="fitXY"
+                    android:layout_width="200px"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:textColor="@color/white"
+                    android:textSize="20px"
+                    android:id="@+id/riqi"
+                    android:layout_centerInParent="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+
+                <TextView
+                    android:textColor="@color/white"
+                    android:textSize="40px"
+                    android:id="@+id/xiaoshi"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent" />
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl2"
+            android:background="#340000ff"
+            android:layout_marginTop="46px"
+            android:layout_marginLeft="36px"
+            android:layout_marginRight="36px"
+            android:layout_below="@+id/rl1"
+            android:layout_width="match_parent"
+            android:layout_height="300px">
+
+
+                <TextView
+                    android:id="@+id/ziwaixian"
+                    android:layout_marginLeft="40px"
+                    android:layout_marginTop="50px"
+                    android:textSize="40px"
+                    android:textColor="@color/white"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/shidu"
+                    android:layout_marginLeft="40px"
+                    android:layout_marginTop="10px"
+                    android:textSize="40px"
+                    android:layout_below="@+id/ziwaixian"
+                    android:textColor="@color/white"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <!--<ImageView-->
+                    <!--android:layout_width="370px" -->
+                    <!--android:layout_below="@+id/shidu"-->
+                    <!--android:layout_height="54px" />-->
+
+                <TextView
+                    android:id="@+id/jianyi"
+                    android:layout_below="@+id/shidu"
+                    android:layout_marginLeft="40px"
+                    android:layout_marginTop="20px"
+                    android:textSize="22px"
+                    android:textColor="@color/white"
+                    android:layout_width="370px"
+                    android:layout_height="wrap_content" />
+
+                <View
+                    android:layout_width="2px"
+                    android:layout_centerInParent="true"
+                    android:layout_marginTop="50px"
+                    android:id="@+id/v11"
+                    android:layout_marginBottom="50px"
+                    android:background="@color/white"
+                    android:layout_height="match_parent"/>
+
+                <TextView
+                    android:id="@+id/wendu"
+                    android:layout_toRightOf="@+id/v11"
+                    android:layout_marginLeft="80px"
+                    android:layout_marginTop="50px"
+                    android:textSize="40px"
+                    android:textColor="@color/white"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/tianqi"
+                    android:layout_toRightOf="@+id/v11"
+                    android:layout_marginLeft="80px"
+                    android:textSize="40px"
+                    android:layout_marginTop="10px"
+                    android:layout_below="@+id/wendu"
+                    android:textColor="@color/white"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/fengli"
+                    android:layout_toRightOf="@+id/v11"
+                    android:layout_marginLeft="80px"
+                    android:textSize="40px"
+                    android:layout_marginTop="10px"
+                    android:layout_below="@+id/tianqi"
+                    android:textColor="@color/white"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <ImageView
+                    android:scaleType="fitXY"
+                    android:id="@+id/tianqi_im"
+                    android:background="@drawable/duoyun"
+                    android:layout_marginTop="30px"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="50px"
+                    android:layout_width="156px"
+                    android:layout_height="126px" />
+
+
+        </RelativeLayout>
+
+
+
+        <RelativeLayout
+            android:orientation="horizontal"
+            android:id="@+id/root_layout"
+            android:layout_below="@+id/rl2"
+            android:layout_marginTop="30px"
+            android:gravity="center"
+            android:clipChildren="false"
+            android:layout_width="match_parent"
+            android:layout_height="430px">
+
+
+        </RelativeLayout>
 
 
 
