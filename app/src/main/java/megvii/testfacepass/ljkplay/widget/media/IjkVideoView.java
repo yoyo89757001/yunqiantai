@@ -20,6 +20,7 @@ package megvii.testfacepass.ljkplay.widget.media;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -323,7 +324,7 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
         try {
             mMediaPlayer = createPlayer(mSettings.getPlayer());
 
-            // TODO: create SubtitleController in MediaPlayer, but we need
+
             // a context for the subtitle renderers
             final Context context = getContext();
             // REMOVED: SubtitleController
@@ -378,6 +379,13 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
         }
     }
 
+//    @Override
+//    protected void onConfigurationChanged(Configuration newConfig) {
+//        super.onConfigurationChanged(newConfig);
+//
+//
+//    }
+
     public void setMediaController(IMediaController controller) {
         if (mMediaController != null) {
             mMediaController.hide();
@@ -405,6 +413,8 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
                     mVideoSarDen = mp.getVideoSarDen();
                     if (mVideoWidth != 0 && mVideoHeight != 0) {
                         if (mRenderView != null) {
+                            Log.d("IjkVideoView", "mVideoWidth2:" + mVideoWidth);
+                            Log.d("IjkVideoView", "mVideoHeight2:" + mVideoHeight);
                             mRenderView.setVideoSize(mVideoWidth, mVideoHeight);
                             mRenderView.setVideoSampleAspectRatio(mVideoSarNum, mVideoSarDen);
                         }
@@ -440,6 +450,8 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
                 //Log.i("@@@@", "video size: " + mVideoWidth +"/"+ mVideoHeight);
                 // REMOVED: getHolder().setFixedSize(mVideoWidth, mVideoHeight);
                 if (mRenderView != null) {
+                    Log.d("IjkVideoView", "mVideoWidth:" + mVideoWidth);
+                    Log.d("IjkVideoView", "mVideoHeight:" + mVideoHeight);
                     mRenderView.setVideoSize(mVideoWidth, mVideoHeight);
                     mRenderView.setVideoSampleAspectRatio(mVideoSarNum, mVideoSarDen);
                     if (!mRenderView.shouldWaitForResize() || mSurfaceWidth == mVideoWidth && mSurfaceHeight == mVideoHeight) {
@@ -766,55 +778,55 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
         if (isInPlaybackState() && mMediaController != null) {
             toggleMediaControlsVisiblity();
         }
-        if (this.isEnabled()) {
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    isDrag=false;
-                    downX = event.getX();
-                    downY = event.getY();
-                    break;
-                case MotionEvent.ACTION_MOVE:
-                    Log.e("kid","ACTION_MOVE");
-                    final float xDistance = event.getX() - downX;
-                    final float yDistance = event.getY() - downY;
-                    int l,r,t,b;
-                    //当水平或者垂直滑动距离大于10,才算拖动事件
-                    if (Math.abs(xDistance) >1 ||Math.abs(yDistance)>1) {
-                        Log.e("kid","Drag");
-                        isDrag=true;
-                        l = (int) (getLeft() + xDistance);
-                        r = l+width;
-                        t = (int) (getTop() + yDistance);
-                        b = t+height;
-                        //不划出边界判断,此处应按照项目实际情况,因为本项目需求移动的位置是手机全屏,
-                        // 所以才能这么写,如果是固定区域,要得到父控件的宽高位置后再做处理
-                        if(l<0){
-                            l=0;
-                            r=l+width;
-                        }else if(r>screenWidth){
-                            r=screenWidth;
-                            l=r-width;
-                        }
-                        if(t<0){
-                            t=0;
-                            b=t+height;
-                        }else if(b>screenHeight){
-                            b=screenHeight;
-                            t=b-height;
-                        }
-
-                        this.layout(l, t, r, b);
-                    }
-                    break;
-                case MotionEvent.ACTION_UP:
-                    setPressed(false);
-                    break;
-                case MotionEvent.ACTION_CANCEL:
-                    setPressed(false);
-                    break;
-            }
-            return true;
-        }
+//        if (this.isEnabled()) {
+//            switch (event.getAction()) {
+//                case MotionEvent.ACTION_DOWN:
+//                    isDrag=false;
+//                    downX = event.getX();
+//                    downY = event.getY();
+//                    break;
+//                case MotionEvent.ACTION_MOVE:
+//                    Log.e("kid","ACTION_MOVE");
+//                    final float xDistance = event.getX() - downX;
+//                    final float yDistance = event.getY() - downY;
+//                    int l,r,t,b;
+//                    //当水平或者垂直滑动距离大于10,才算拖动事件
+//                    if (Math.abs(xDistance) >1 ||Math.abs(yDistance)>1) {
+//                        Log.e("kid","Drag");
+//                        isDrag=true;
+//                        l = (int) (getLeft() + xDistance);
+//                        r = l+width;
+//                        t = (int) (getTop() + yDistance);
+//                        b = t+height;
+//                        //不划出边界判断,此处应按照项目实际情况,因为本项目需求移动的位置是手机全屏,
+//                        // 所以才能这么写,如果是固定区域,要得到父控件的宽高位置后再做处理
+//                        if(l<0){
+//                            l=0;
+//                            r=l+width;
+//                        }else if(r>screenWidth){
+//                            r=screenWidth;
+//                            l=r-width;
+//                        }
+//                        if(t<0){
+//                            t=0;
+//                            b=t+height;
+//                        }else if(b>screenHeight){
+//                            b=screenHeight;
+//                            t=b-height;
+//                        }
+//
+//                        this.layout(l, t, r, b);
+//                    }
+//                    break;
+//                case MotionEvent.ACTION_UP:
+//                    setPressed(false);
+//                    break;
+//                case MotionEvent.ACTION_CANCEL:
+//                    setPressed(false);
+//                    break;
+//            }
+//            return true;
+//        }
         return false;
     }
 
@@ -988,11 +1000,11 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
             IRenderView.AR_ASPECT_FIT_PARENT,
             IRenderView.AR_ASPECT_FILL_PARENT,
             IRenderView.AR_ASPECT_WRAP_CONTENT,
-            // IRenderView.AR_MATCH_PARENT,
+             IRenderView.AR_MATCH_PARENT,
             IRenderView.AR_16_9_FIT_PARENT,
             IRenderView.AR_4_3_FIT_PARENT};
     private int mCurrentAspectRatioIndex = 0;
-    private int mCurrentAspectRatio = s_allAspectRatio[0];
+    private int mCurrentAspectRatio = s_allAspectRatio[3]; //设置适配播放，屏幕是4：3 或16：9 或铺满屏幕
 
     public int toggleAspectRatio() {
         mCurrentAspectRatioIndex++;

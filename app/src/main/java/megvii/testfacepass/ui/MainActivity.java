@@ -13,7 +13,6 @@ import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.graphics.Typeface;
@@ -21,11 +20,11 @@ import android.graphics.YuvImage;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.text.SpannableString;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -35,10 +34,11 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,7 +47,6 @@ import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.ImageLoader;
@@ -57,6 +56,8 @@ import com.baidu.tts.client.SpeechSynthesizerListener;
 import com.baidu.tts.client.TtsMode;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.jude.rollviewpager.RollPagerView;
+import com.jude.rollviewpager.adapter.StaticPagerAdapter;
 import com.sdsmdg.tastytoast.TastyToast;
 import com.yatoooon.screenadaptation.ScreenAdapterTools;
 
@@ -71,6 +72,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
@@ -102,7 +104,6 @@ import megvii.testfacepass.camera.CameraPreviewData;
 import megvii.testfacepass.dialog.XiuGaiGaoKuanDialog;
 import megvii.testfacepass.dialogall.XiuGaiListener;
 import megvii.testfacepass.ljkplay.widget.media.IjkVideoView;
-import megvii.testfacepass.network.ByteRequest;
 import megvii.testfacepass.tts.control.InitConfig;
 import megvii.testfacepass.tts.control.MySyntherizer;
 import megvii.testfacepass.tts.control.NonBlockSyntherizer;
@@ -118,6 +119,7 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
+import tv.danmaku.ijk.media.player.IMediaPlayer;
 
 
 public class MainActivity extends Activity implements CameraManager.CameraListener, XiuGaiListener {
@@ -134,14 +136,14 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
     TextView ziwaixian;
     @BindView(R.id.shidu)
     TextView shidu;
-    @BindView(R.id.jianyi)
-    TextView jianyi;
     @BindView(R.id.fengli)
     TextView fengli;
     @BindView(R.id.tianqi_im)
     ImageView tianqiIm;
     @BindView(R.id.root_layout)
     RelativeLayout rootLayout;
+    @BindView(R.id.lunboview)
+    RollPagerView lunboview;
     private String appId = "11644783";
     private String appKey = "knGksRFLoFZ2fsjZaMC8OoC7";
     private String secretKey = "IXn1yrFezEo55LMkzHBGuTs1zOkXr9P4";
@@ -159,29 +161,19 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
     }
 
     private DBG_View dbg_view;
-    ;
     private static FacePassSDKMode SDK_MODE = FacePassSDKMode.MODE_OFFLINE;
-
     private static final String DEBUG_TAG = "FacePassDemo";
-
     private static final int MSG_SHOW_TOAST = 1;
-
     private static final int DELAY_MILLION_SHOW_TOAST = 2000;
-
     /* 识别服务器IP */
-
     private static final String serverIP_offline = "10.104.44.50";//offline
-
     private static final String serverIP_online = "10.199.1.14";
-
     private static String serverIP;
-
     //  private static final String authIP = "https://api-cn.faceplusplus.com";
     //  private static final String apiKey = "4gctI8NUJ2DbHDB5tkpYiidf2yEpVUIp";
     //  private static final String apiSecret = "7GpRwThibD29ld-UVoyue6aGkPhS7Py-";
     //  private static final String apiKey = "CKbSYQqAuc5AzCMoOK-kbo9KaabtEciQ";
     //  private static final String apiSecret = "HeZgW5ILE83nKkqF-QO5IqEEmeRxPgeI";
-
     private static String recognize_url;
     private LinkedBlockingQueue<String> linkedBlockingQueue;
     /* 人脸识别Group */
@@ -199,20 +191,15 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
     private WindowManager wm;
     /* SDK 实例对象 */
     public static FacePassHandler mFacePassHandler;
-
     /* 相机实例 */
     private CameraManager manager;
-
     /* 显示人脸位置角度信息 */
     private XiuGaiGaoKuanDialog dialog = null;
-
-
     /* 相机预览界面 */
     private CameraPreview cameraView;
     private boolean isAnXia = true;
     /* 在预览界面圈出人脸 */
     // private FaceView faceView;
-
     /* 相机是否使用前置摄像头 */
     private static boolean cameraFacingFront = true;
     /* 相机图片旋转角度，请根据实际情况来设置
@@ -229,10 +216,8 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
      * }
      */
     private int cameraRotation;
-
     private static final int cameraWidth = 1920;
     private static final int cameraHeight = 1080;
-
     private int mSecretNumber = 0;
     private static final long CLICK_INTERVAL = 500;
     private long mLastClickTime;
@@ -240,9 +225,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
 
     private int heightPixels;
     private int widthPixels;
-
     int screenState = 0;// 0 横 1 竖
-
     /* 网络请求队列*/
     RequestQueue requestQueue;
     //    private EditText gaodu,kuandu;
@@ -251,23 +234,16 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
 //    private View xiugaiView;
     /*Toast 队列*/
     LinkedBlockingQueue<Toast> mToastBlockQueue;
-
     /*DetectResult queue*/
     ArrayBlockingQueue<byte[]> mDetectResultQueue;
-
     ArrayBlockingQueue<FacePassImage> mFeedFrameQueue;
-
     /*recognize thread*/
     RecognizeThread mRecognizeThread;
-
     FeedFrameThread mFeedFrameThread;
-
     private int dw, dh;
     private LayoutInflater mInflater = null;
-
     /*图片缓存*/
     private FaceImageCache mImageCache;
-
     private Handler mAndroidHandler;
     private Box<BaoCunBean> baoCunBeanDao = null;
     private Box<TodayBean> todayBeanBox = null;
@@ -285,7 +261,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
         mFeedFrameQueue = new ArrayBlockingQueue<FacePassImage>(1);
         todayBeanBox = MyApplication.myApplication.getBoxStore().boxFor(TodayBean.class);
         todayBean = todayBeanBox.get(123456L);
-        initAndroidHandler();
+        // initAndroidHandler();
         baoCunBeanDao = MyApplication.myApplication.getBoxStore().boxFor(BaoCunBean.class);
         baoCunBean = baoCunBeanDao.get(123456L);
         //每分钟的广播
@@ -388,29 +364,29 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
     }
 
 
-    private void initAndroidHandler() {
-
-        mAndroidHandler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                switch (msg.what) {
-                    case MSG_SHOW_TOAST:
-                        if (mToastBlockQueue.size() > 0) {
-                            Toast toast = mToastBlockQueue.poll();
-                            if (toast != null) {
-                                toast.show();
-                            }
-                        }
-                        if (mToastBlockQueue.size() > 0) {
-                            removeMessages(MSG_SHOW_TOAST);
-                            sendEmptyMessageDelayed(MSG_SHOW_TOAST, DELAY_MILLION_SHOW_TOAST);
-                        }
-                        break;
-                }
-            }
-        };
-    }
+//    private void initAndroidHandler() {
+//
+//        mAndroidHandler = new Handler() {
+//            @Override
+//            public void handleMessage(Message msg) {
+//                super.handleMessage(msg);
+//                switch (msg.what) {
+//                    case MSG_SHOW_TOAST:
+//                        if (mToastBlockQueue.size() > 0) {
+//                            Toast toast = mToastBlockQueue.poll();
+//                            if (toast != null) {
+//                                toast.show();
+//                            }
+//                        }
+//                        if (mToastBlockQueue.size() > 0) {
+//                            removeMessages(MSG_SHOW_TOAST);
+//                            sendEmptyMessageDelayed(MSG_SHOW_TOAST, DELAY_MILLION_SHOW_TOAST);
+//                        }
+//                        break;
+//                }
+//            }
+//        };
+//    }
 
 
     @Override
@@ -460,7 +436,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                     FacePassDetectionResult detectionResult = null;
                     detectionResult = mFacePassHandler.feedFrame(image);
 
-//                    if (detectionResult == null || detectionResult.faceList.length == 0) {
+                    if (detectionResult == null || detectionResult.faceList.length == 0) {
 //                        faceView.clear();
 //                        runOnUiThread(new Runnable() {
 //                            @Override
@@ -468,9 +444,10 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
 //                                faceView.invalidate();
 //                            }
 //                        });
-//                    } else {
-//                        showFacePassFace(detectionResult.faceList);
-//                    }
+                    } else {
+                        //拿陌生人图片
+                        // showFacePassFace(detectionResult.faceList);
+                    }
 
                     if (SDK_MODE == FacePassSDKMode.MODE_ONLINE) {
                         /*抓拍版模式*/
@@ -559,10 +536,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
             while (!isInterrupt) {
                 try {
                     Log.d("RecognizeThread", "识别线程");
-                    //    Log.d(DEBUG_TAG, "2 mDetectResultQueue.size = " + mDetectResultQueue.size());
                     byte[] detectionResult = mDetectResultQueue.take();
-
-                    //   Log.d("ffffffffffffff", "mDetectResultQueue.recognize");
 
                     FacePassRecognitionResult[] recognizeResult = mFacePassHandler.recognize(group_name, detectionResult);
                     if (recognizeResult != null && recognizeResult.length > 0) {
@@ -570,7 +544,8 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                             String faceToken = new String(result.faceToken);
                             if (FacePassRecognitionResultType.RECOG_OK == result.facePassRecognitionResultType) {
                                 //识别的
-                                getFaceImageByFaceToken(result.trackId, faceToken);
+                                //  getFaceImageByFaceToken(result.trackId, faceToken);
+
 
                             } else {
                                 //未识别的
@@ -722,8 +697,13 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
         xiaoshi.setTypeface(tf);
         xiaoshi.setText(DateUtils.timeMinute(System.currentTimeMillis() + ""));
 
-//        TableLayout mHudView = findViewById(R.id.hud_view);
-//        shipingView=findViewById(R.id.ijkplayview);
+        TableLayout mHudView = findViewById(R.id.hud_view);
+        shipingView = findViewById(R.id.ijkplayview);
+        shipingView.setVisibility(View.GONE);
+        //轮播图
+        lunboview.setAdapter(new TestNomalAdapter());
+
+
 //        shipingView.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
@@ -752,24 +732,28 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
 //        });
 //
 //
-//        shipingView.setHudView(mHudView); //http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4
-//        shipingView.setVideoURI(Uri.parse("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"));
-//        shipingView.setOnCompletionListener(new IMediaPlayer.OnCompletionListener() {
-//            @Override
-//            public void onCompletion(IMediaPlayer iMediaPlayer) {
-//
-//             //   shipingView.start();
-//            }
-//        });
-//        shipingView.setOnErrorListener(new IMediaPlayer.OnErrorListener() {
-//            @Override
-//            public boolean onError(IMediaPlayer iMediaPlayer, int i, int i1) {
-//                TastyToast.makeText(MainActivity.this,"播放失败",TastyToast.LENGTH_SHORT,TastyToast.INFO).show();
-//                return false;
-//            }
-//        });
 
-        //  shipingView.start();
+
+        shipingView.setHudView(mHudView); //http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4
+        shipingView.setVideoPath(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "laowang.mp4");
+        // shipingView.setVideoURI(Uri.parse("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"));
+        shipingView.setOnCompletionListener(new IMediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(IMediaPlayer iMediaPlayer) {
+              //  shipingView.start();
+            }
+        });
+
+
+        shipingView.setOnErrorListener(new IMediaPlayer.OnErrorListener() {
+            @Override
+            public boolean onError(IMediaPlayer iMediaPlayer, int i, int i1) {
+                TastyToast.makeText(MainActivity.this, "播放视频失败", TastyToast.LENGTH_SHORT, TastyToast.INFO).show();
+                return false;
+            }
+        });
+
+      //  shipingView.start();
 
 
 //        dbg_view=findViewById(R.id.dabg);
@@ -838,10 +822,10 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
         if (todayBean != null) {
             //更新天气界面
             wendu.setTypeface(tf2);
-            tianqi.setTypeface(tf2);
-            fengli.setTypeface(tf2);
-            ziwaixian.setTypeface(tf2);
-            shidu.setTypeface(tf2);
+            //  tianqi.setTypeface(tf2);
+            //  fengli.setTypeface(tf2);
+            //  ziwaixian.setTypeface(tf2);
+            //  shidu.setTypeface(tf2);
             //  jianyi.setTypeface(tf3);
 
             wendu.setText(todayBean.getTemperature());
@@ -849,7 +833,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
             fengli.setText(todayBean.getWind());
             ziwaixian.setText("紫外线强度:" + todayBean.getUv_index());
             shidu.setText("湿度:" + todayBean.getHumidity());
-            jianyi.setText(todayBean.getDressing_advice());
+
 
             if (todayBean.getWeather().contains("晴")) {
                 tianqiIm.setBackgroundResource(R.drawable.qing);
@@ -863,6 +847,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
         }
 
     }
+
 
     //修改监听
     @Override
@@ -1097,44 +1082,44 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
 //
 //    }
 
-    public void showToast(CharSequence text, int duration, boolean isSuccess, Bitmap bitmap) {
-        LayoutInflater inflater = getLayoutInflater();
-        View toastView = inflater.inflate(R.layout.toast, null);
-        LinearLayout toastLLayout = (LinearLayout) toastView.findViewById(R.id.toastll);
-        if (toastLLayout == null) {
-            return;
-        }
-        toastLLayout.getBackground().setAlpha(100);
-        ImageView imageView = (ImageView) toastView.findViewById(R.id.toastImageView);
-        TextView idTextView = (TextView) toastView.findViewById(R.id.toastTextView);
-        TextView stateView = (TextView) toastView.findViewById(R.id.toastState);
-        SpannableString s;
-        if (isSuccess) {
-            s = new SpannableString("验证成功");
-            imageView.setImageResource(R.drawable.success);
-        } else {
-            s = new SpannableString("验证失败");
-            imageView.setImageResource(R.drawable.success);
-        }
-        if (bitmap != null) {
-            imageView.setImageBitmap(bitmap);
-        }
-        stateView.setText(s);
-        idTextView.setText(text);
-
-        Toast toast = new Toast(getApplicationContext());
-        toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-        toast.setDuration(duration);
-        toast.setView(toastView);
-
-        if (mToastBlockQueue.size() == 0) {
-            mAndroidHandler.removeMessages(MSG_SHOW_TOAST);
-            mAndroidHandler.sendEmptyMessage(MSG_SHOW_TOAST);
-            mToastBlockQueue.offer(toast);
-        } else {
-            mToastBlockQueue.offer(toast);
-        }
-    }
+//    public void showToast(CharSequence text, int duration, boolean isSuccess, Bitmap bitmap) {
+//        LayoutInflater inflater = getLayoutInflater();
+//        View toastView = inflater.inflate(R.layout.toast, null);
+//        LinearLayout toastLLayout = (LinearLayout) toastView.findViewById(R.id.toastll);
+//        if (toastLLayout == null) {
+//            return;
+//        }
+//        toastLLayout.getBackground().setAlpha(100);
+//        ImageView imageView = (ImageView) toastView.findViewById(R.id.toastImageView);
+//        TextView idTextView = (TextView) toastView.findViewById(R.id.toastTextView);
+//        TextView stateView = (TextView) toastView.findViewById(R.id.toastState);
+//        SpannableString s;
+//        if (isSuccess) {
+//            s = new SpannableString("验证成功");
+//            imageView.setImageResource(R.drawable.success);
+//        } else {
+//            s = new SpannableString("验证失败");
+//            imageView.setImageResource(R.drawable.success);
+//        }
+//        if (bitmap != null) {
+//            imageView.setImageBitmap(bitmap);
+//        }
+//        stateView.setText(s);
+//        idTextView.setText(text);
+//
+//        Toast toast = new Toast(getApplicationContext());
+//        toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+//        toast.setDuration(duration);
+//        toast.setView(toastView);
+//
+//        if (mToastBlockQueue.size() == 0) {
+//            mAndroidHandler.removeMessages(MSG_SHOW_TOAST);
+//            mAndroidHandler.sendEmptyMessage(MSG_SHOW_TOAST);
+//            mToastBlockQueue.offer(toast);
+//        } else {
+//            mToastBlockQueue.offer(toast);
+//        }
+//    }
 
     private static final int REQUEST_CODE_CHOOSE_PICK = 1;
 
@@ -1177,61 +1162,61 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
         }
     }
 
-    private void getFaceImageByFaceToken(final long trackId, String faceToken) {
-        if (TextUtils.isEmpty(faceToken)) {
-            return;
-        }
-
-        final String faceUrl = "http://" + serverIP + ":8080/api/image/v1/query?face_token=" + faceToken;
-
-        final Bitmap cacheBmp = mImageCache.getBitmap(faceUrl);
-        if (cacheBmp != null) {
-            mAndroidHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Log.i(DEBUG_TAG, "getFaceImageByFaceToken cache not null");
-                    showToast("ID = " + String.valueOf(trackId), Toast.LENGTH_SHORT, true, cacheBmp);
-                }
-            });
-            return;
-        } else {
-            try {
-                final Bitmap bitmap = mFacePassHandler.getFaceImage(faceToken.getBytes());
-                mAndroidHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Log.i(DEBUG_TAG, "getFaceImageByFaceToken cache is null");
-                        showToast("ID = " + String.valueOf(trackId), Toast.LENGTH_SHORT, true, bitmap);
-                    }
-                });
-                if (bitmap != null) {
-                    return;
-                }
-            } catch (FacePassException e) {
-                e.printStackTrace();
-            }
-
-        }
-        ByteRequest request = new ByteRequest(Request.Method.GET, faceUrl, new Response.Listener<byte[]>() {
-            @Override
-            public void onResponse(byte[] response) {
-
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inJustDecodeBounds = false;
-                Bitmap bitmap = BitmapFactory.decodeByteArray(response, 0, response.length, options);
-                mImageCache.putBitmap(faceUrl, bitmap);
-                showToast("ID = " + String.valueOf(trackId), Toast.LENGTH_SHORT, true, bitmap);
-                Log.i(DEBUG_TAG, "getFaceImageByFaceToken response ");
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.i(DEBUG_TAG, "image load failed ! ");
-            }
-        });
-        request.setTag("load_image_request_tag");
-        requestQueue.add(request);
-    }
+//    private void getFaceImageByFaceToken(final long trackId, String faceToken) {
+//        if (TextUtils.isEmpty(faceToken)) {
+//            return;
+//        }
+//
+//        final String faceUrl = "http://" + serverIP + ":8080/api/image/v1/query?face_token=" + faceToken;
+//
+//        final Bitmap cacheBmp = mImageCache.getBitmap(faceUrl);
+//        if (cacheBmp != null) {
+//            mAndroidHandler.post(new Runnable() {
+//                @Override
+//                public void run() {
+//                    Log.i(DEBUG_TAG, "getFaceImageByFaceToken cache not null");
+//                    showToast("ID = " + String.valueOf(trackId), Toast.LENGTH_SHORT, true, cacheBmp);
+//                }
+//            });
+//            return;
+//        } else {
+//            try {
+//                final Bitmap bitmap = mFacePassHandler.getFaceImage(faceToken.getBytes());
+//                mAndroidHandler.post(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        Log.i(DEBUG_TAG, "getFaceImageByFaceToken cache is null");
+//                        showToast("ID = " + String.valueOf(trackId), Toast.LENGTH_SHORT, true, bitmap);
+//                    }
+//                });
+//                if (bitmap != null) {
+//                    return;
+//                }
+//            } catch (FacePassException e) {
+//                e.printStackTrace();
+//            }
+//
+//        }
+//        ByteRequest request = new ByteRequest(Request.Method.GET, faceUrl, new Response.Listener<byte[]>() {
+//            @Override
+//            public void onResponse(byte[] response) {
+//
+//                BitmapFactory.Options options = new BitmapFactory.Options();
+//                options.inJustDecodeBounds = false;
+//                Bitmap bitmap = BitmapFactory.decodeByteArray(response, 0, response.length, options);
+//                mImageCache.putBitmap(faceUrl, bitmap);
+//                showToast("ID = " + String.valueOf(trackId), Toast.LENGTH_SHORT, true, bitmap);
+//                Log.i(DEBUG_TAG, "getFaceImageByFaceToken response ");
+//            }
+//        }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                Log.i(DEBUG_TAG, "image load failed ! ");
+//            }
+//        });
+//        request.setTag("load_image_request_tag");
+//        requestQueue.add(request);
+//    }
 
 
 //    /*同步底库操作*/
@@ -2000,10 +1985,10 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                                                 String riqi2 = DateUtils.timesTwo(System.currentTimeMillis() + "") + "   " + DateUtils.getWeek(System.currentTimeMillis());
 
                                                 wendu.setTypeface(tf2);
-                                                tianqi.setTypeface(tf2);
-                                                fengli.setTypeface(tf2);
-                                                ziwaixian.setTypeface(tf2);
-                                                shidu.setTypeface(tf2);
+                                                //  tianqi.setTypeface(tf2);
+                                                //  fengli.setTypeface(tf2);
+                                                //  ziwaixian.setTypeface(tf2);
+                                                // shidu.setTypeface(tf2);
 //                                                jianyi.setTypeface(tf2);
 
                                                 wendu.setText(todayBean.getTemperature());
@@ -2011,7 +1996,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                                                 fengli.setText(todayBean.getWind());
                                                 ziwaixian.setText("紫外线强度:" + todayBean.getUv_index());
                                                 shidu.setText("湿度:" + todayBean.getHumidity());
-                                                jianyi.setText(todayBean.getDressing_advice());
+
                                                 if (todayBean.getWeather().contains("晴")) {
                                                     tianqiIm.setBackgroundResource(R.drawable.qing);
                                                 } else if (todayBean.getWeather().contains("雨")) {
@@ -2056,5 +2041,27 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
         }
     }
 
+
+    private class TestNomalAdapter extends StaticPagerAdapter {
+        private int[] imgs = {
+                R.drawable.dbg_1,
+                R.drawable.ceshi,
+                R.drawable.ceshi3,
+        };
+
+        @Override
+        public View getView(ViewGroup container, int position) {
+            ImageView view = new ImageView(container.getContext());
+            view.setImageResource(imgs[position]);
+            view.setScaleType(ImageView.ScaleType.FIT_XY);
+            view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            return view;
+        }
+
+        @Override
+        public int getCount() {
+            return imgs.length;
+        }
+    }
 
 }
