@@ -45,9 +45,11 @@ public class CommonDialogService extends Service implements CommonDialogListener
             if (msg.what==111){
                 Tishi tishi1= (Tishi) msg.obj;
               //  Log.d("CommonDialogService", "a1:" + a1);
-                a1.setText(tishi1.getA());
-                tishi.setText(tishi1.getTishi());
-                progressBar.setProgress(tishi1.getP());
+                if (a1!=null){
+                    a1.setText(tishi1.getA());
+                    tishi.setText(tishi1.getTishi());
+                    progressBar.setProgress(tishi1.getP());
+                }
             }
 
             return false;

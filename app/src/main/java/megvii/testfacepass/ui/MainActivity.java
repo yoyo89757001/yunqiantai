@@ -51,6 +51,7 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
+import com.badoo.mobile.util.WeakHandler;
 import com.baidu.tts.client.SpeechSynthesizer;
 import com.baidu.tts.client.SpeechSynthesizerListener;
 import com.baidu.tts.client.TtsMode;
@@ -80,6 +81,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -96,6 +98,8 @@ import megvii.facepass.types.FacePassRecognitionResultType;
 import megvii.testfacepass.MyApplication;
 import megvii.testfacepass.R;
 import megvii.testfacepass.beans.BaoCunBean;
+import megvii.testfacepass.beans.Subject;
+import megvii.testfacepass.beans.Subject_;
 import megvii.testfacepass.beans.TianQiBean;
 import megvii.testfacepass.beans.TodayBean;
 import megvii.testfacepass.camera.CameraManager;
@@ -117,7 +121,10 @@ import megvii.testfacepass.utils.SettingVar;
 import megvii.testfacepass.view.DBG_View;
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 
@@ -144,6 +151,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
     RelativeLayout rootLayout;
     @BindView(R.id.lunboview)
     RollPagerView lunboview;
+    private Box<Subject> subjectBox=null;
     private String appId = "11644783";
     private String appKey = "knGksRFLoFZ2fsjZaMC8OoC7";
     private String secretKey = "IXn1yrFezEo55LMkzHBGuTs1zOkXr9P4";
@@ -251,6 +259,8 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
     private TodayBean todayBean = null;
     private IntentFilter intentFilter;
     private TimeChangeReceiver timeChangeReceiver;
+    private WeakHandler mHandler;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -263,7 +273,16 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
         todayBean = todayBeanBox.get(123456L);
         // initAndroidHandler();
         baoCunBeanDao = MyApplication.myApplication.getBoxStore().boxFor(BaoCunBean.class);
+        mainHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+            }
+
+        };
         baoCunBean = baoCunBeanDao.get(123456L);
+        subjectBox = MyApplication.myApplication.getBoxStore().boxFor(Subject.class);
+
         //每分钟的广播
         intentFilter = new IntentFilter();
         intentFilter.addAction(Intent.ACTION_TIME_TICK);//每分钟变化
@@ -271,17 +290,26 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
         intentFilter.addAction(Intent.ACTION_TIME_CHANGED);//设置了系统时间
         timeChangeReceiver = new TimeChangeReceiver();
         registerReceiver(timeChangeReceiver, intentFilter);
+        mHandler=new WeakHandler(new Handler.Callback() {
+            @Override
+            public boolean handleMessage(Message msg) {
+                switch (msg.what){
+                    case 111:
+
+                        break;
+                    case 222:
+
+                        break;
+
+                }
+                return false;
+            }
+        });
+
 
         linkedBlockingQueue = new LinkedBlockingQueue<>();
 
-        mainHandler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                //Log.d(TAG, "msg:" + msg);
-            }
 
-        };
 
 //        Glide.with(MainActivity.this).asBitmap().load("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1533547984004&di=a3ba6be979df968cadab9adbd37e8972&imgtype=0&src=http%3A%2F%2Fwww.777moto.com%2Fwp-content%2Fuploads%2F2014%2F09%2Fcvo_street_glide.jpg").into(new SimpleTarget<Bitmap>() {
 //            @Override
@@ -546,7 +574,12 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                                 //识别的
                                 //  getFaceImageByFaceToken(result.trackId, faceToken);
 
-
+                                Subject subject = subjectBox.query().equal(Subject_.teZhengMa, new String(result.faceToken)).build().findUnique();
+                                if (subject!=null)
+                                link_shangchuanjilu(subject);
+                                else
+                                    Log.d("RecognizeThread", "没查到本地人员信息");
+                                Log.d("RecognizeThread", "识别");
                             } else {
                                 //未识别的
                                 // ConcurrentHashMap 建议用他去重
@@ -2063,5 +2096,97 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
             return imgs.length;
         }
     }
+
+
+    //上传识别记录
+    private void link_shangchuanjilu(Subject subject){
+            final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+            OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                    .writeTimeout(100000, TimeUnit.MILLISECONDS)
+                    .connectTimeout(100000, TimeUnit.MILLISECONDS)
+                    .readTimeout(100000, TimeUnit.MILLISECONDS)
+//				    .cookieJar(new CookiesManager())
+                    .retryOnConnectionFailure(true)
+                    .build();
+        RequestBody body=null;
+        if (subject.getPeopleType()!=null && subject.getPeopleType().equals("员工")){
+            body = new FormBody.Builder()
+                  //  .add("name", subject.getName()+"") //
+                   // .add("companyId", subject.getCompanyId()+"") //公司di
+                    //.add("companyName",subject.getCompanyName()+"") //公司名称
+                    //.add("storeId", subject.getStoreId()+"") //门店id
+                    //.add("storeName", subject.getStoreName()+"") //门店名称
+                    .add("employeeId", subject.getId()+"") //员工ID
+                    .add("subjectType", subject.getPeopleType()) //人员类型
+                   // .add("department", subject.getDepartmentName()+"") //部门
+                    .add("discernPlace", FileUtil.getSerialNumber(this)==null?FileUtil.getIMSI():FileUtil.getSerialNumber(this))//识别地点
+                  //  .add("discernAvatar",  "") //头像
+                    .add("identificationTime",DateUtils.time(System.currentTimeMillis()+""))//时间
+                    .build();
+                }else {
+            String fangkeType="";
+                switch (subject.getQuitType()){
+                    case 0:
+                        fangkeType="普通访客";
+                        break;
+                    case 1:
+                        fangkeType="VIP";
+                        break;
+                    case 2:
+                        fangkeType="工作人员";
+                        break;
+
+                }
+            body = new FormBody.Builder()
+                    //.add("name", subject.getName()) //
+                    //.add("companyId", subject.getCompanyId()+"") //公司di
+                    //.add("companyName",subject.getCompanyName()+"") //公司名称
+                    //.add("storeId", subject.getStoreId()+"") //门店id
+                    //.add("storeName", subject.getStoreName()+"") //门店名称
+                    .add("subjectId", subject.getId()+"") //员工ID
+                    .add("subjectType", fangkeType) //人员类型
+                   // .add("department", subject.getPosition()+"") //部门
+                    .add("discernPlace", FileUtil.getSerialNumber(this)==null?FileUtil.getIMSI():FileUtil.getSerialNumber(this))//识别地点
+                   // .add("discernAvatar",  "") //头像
+                    .add("identificationTime", DateUtils.time(System.currentTimeMillis()+""))//时间
+                    .build();
+
+        }
+
+            okhttp3.Request.Builder requestBuilder = new okhttp3.Request.Builder()
+                    .header("Content-Type", "application/json")
+                    .post(body)
+                    .url(baoCunBean.getHoutaiDiZhi() + "/app/historySave");
+
+            // step 3：创建 Call 对象
+            Call call = okHttpClient.newCall(requestBuilder.build());
+
+            //step 4: 开始异步请求
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.d("AllConnects", "请求失败" + e.getMessage());
+
+                }
+
+                @Override
+                public void onResponse(Call call, okhttp3.Response response) throws IOException {
+                    Log.d("AllConnects", "请求成功" + call.request().toString());
+                    //获得返回体
+                    try {
+                        ResponseBody body = response.body();
+                        String ss=body.string().trim();
+                        Log.d("AllConnects", "上传识别记录"+ss);
+
+
+                    } catch (Exception e) {
+                        Log.d("WebsocketPushMsg", e.getMessage() + "gggg");
+                    }
+                }
+            });
+        }
+
+
+
 
 }

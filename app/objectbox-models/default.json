@@ -362,7 +362,7 @@
     },
     {
       "id": "6:6103979508013334038",
-      "lastPropertyId": "20:3022264192727558730",
+      "lastPropertyId": "21:124005554396561220",
       "name": "Subject",
       "properties": [
         {
@@ -444,6 +444,10 @@
         {
           "id": "20:3022264192727558730",
           "name": "teZhengMa"
+        },
+        {
+          "id": "21:124005554396561220",
+          "name": "departmentName"
         }
       ],
       "relations": []

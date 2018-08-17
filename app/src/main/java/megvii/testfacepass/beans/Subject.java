@@ -31,6 +31,15 @@ public class Subject implements Comparator<Subject> {
     private String entryTime; // 入职时间
     private String birthday; // 生日
     private String teZhengMa;
+    private String departmentName;
+
+    public String getDepartmentName() {
+        return departmentName;
+    }
+
+    public void setDepartmentName(String departmentName) {
+        this.departmentName = departmentName;
+    }
 
     public String getTeZhengMa() {
         return teZhengMa;

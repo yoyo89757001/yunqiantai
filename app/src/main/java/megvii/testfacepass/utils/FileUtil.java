@@ -588,7 +588,7 @@ public class FileUtil {
 
         for (File _file : files) {//遍历目录
             if(_file.isFile() && (_file.getName().endsWith("xml") )){
-                String _name=_file.getName();
+              //  String _name=_file.getName();
                 String filePath = _file.getAbsolutePath();//获取文件路径
                 //  String fileName = _file.getName().substring(0,_name.length()-4);//获取文件名
                 //  Log.d("LOGCAT","fileName:"+fileName);

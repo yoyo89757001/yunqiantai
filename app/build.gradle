@@ -71,4 +71,5 @@ dependencies {
     implementation 'org.greenrobot:eventbus:3.1.1'
     implementation 'com.contrarywind:Android-PickerView:4.1.6'
     implementation 'com.jude:rollviewpager:1.4.6'//轮播图
+    implementation 'com.badoo.mobile:android-weak-handler:1.1'
 }

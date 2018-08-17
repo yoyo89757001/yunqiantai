@@ -188,7 +188,6 @@ public class SheZhiActivity extends Activity {
                     }
                 });
                 bangDingDialog.show();
-
                 break;
             case R.id.rl3:
                 YuYingDialog yuYingDialog = new YuYingDialog(SheZhiActivity.this);

@@ -176,7 +176,7 @@ public class MyReceiver extends BroadcastReceiver {
 					context.sendBroadcast(intent2);
 					Log.d(TAG, "推送过去");
 				}
-				if (jsonObject.get("title").getAsString().equals("人员入库")){
+				if (jsonObject.get("title").getAsString().equals("人员入库") || jsonObject.get("title").getAsString().equals("访客入库")){
 					FileDownloader.setup(context);
 					isDW=true;
 					Thread.sleep(1200);
@@ -266,9 +266,10 @@ public class MyReceiver extends BroadcastReceiver {
 										//出错
 										if (task.getUrl().equals(path2)){
 											isDW=true;
-											showNotifictionIcon(context,0,"下载失败",""+e);
+
 											Log.d(TAG, "task.isRunning():" + task.getFilename()+"失败"+e);
 										}
+										showNotifictionIcon(context,0,"下载失败",""+e);
 									}
 
 									@Override
@@ -285,10 +286,9 @@ public class MyReceiver extends BroadcastReceiver {
 				TuiSongBean renShu=gson.fromJson(jsonObject,TuiSongBean.class);
 				//1 新增 2修改//3是删除
 				switch (renShu.getTitle()){
-					case "绑定激活":
-						//先从老黄哪里拿主机数据。
-//						link_getHouTaiZhuJi(renShu.getContent().getId(),context,renShu.getContent().getStatus());
-                        //link_bangding(renShu.getId(),renShu.getUrl());
+					case "访客入库":
+
+
 						break;
 					case "设备管理":
 						//先从老黄哪里拿门禁数据。
@@ -439,6 +439,7 @@ public class MyReceiver extends BroadcastReceiver {
 		List<String> xmls=new ArrayList<>();
 		final List<String> xmlList= FileUtil.getAllFileXml(path222,xmls);
 		if (xmlList==null || xmlList.size()==0){
+			showNotifictionIcon(context,0,"没有找到Xml文件","没有找到Xml文件。。。。");
 			return;
 		}
 		//解析XML
@@ -526,6 +527,7 @@ public class MyReceiver extends BroadcastReceiver {
 							showNotifictionIcon(context, (int) ((j / (float) size) * 100),"入库中","入库中"+(int) ((j / (float) size) * 100)+"%");
 							if (filePath!=null){
 								try {
+
 									FacePassAddFaceResult faceResult= facePassHandler.addFace(BitmapFactory.decodeFile(filePath));
 									if (faceResult.result==0){
 										facePassHandler.bindGroup(group_name,faceResult.faceToken);
@@ -542,6 +544,11 @@ public class MyReceiver extends BroadcastReceiver {
 
 								} catch (FacePassException e) {
 									e.printStackTrace();
+									stringBuilder2.append("入库添加图片失败:").append("ID:")
+											.append(subjectList.get(j).getId()).append("姓名:")
+											.append(subjectList.get(j).getName()).append("时间:")
+											.append(DateUtils.time(System.currentTimeMillis() + ""))
+											.append("错误码:").append(e.getMessage()).append("\n");
 								}
 
 							}else {
@@ -856,6 +863,13 @@ public class MyReceiver extends BroadcastReceiver {
 						String nickName = parser.nextText();
 						if (nickName!=null){
 							student.setBirthday(URLDecoder.decode(nickName, "UTF-8"));
+						}
+					}
+					else if ("departmentName".equals(parser.getName())) {
+						//获取nickName值
+						String nickName = parser.nextText();
+						if (nickName!=null){
+							student.setDepartmentName(URLDecoder.decode(nickName, "UTF-8"));
 						}
 					}
 
