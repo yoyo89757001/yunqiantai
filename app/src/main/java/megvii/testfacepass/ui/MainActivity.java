@@ -2109,34 +2109,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                     .retryOnConnectionFailure(true)
                     .build();
         RequestBody body=null;
-        if (subject.getPeopleType()!=null && subject.getPeopleType().equals("员工")){
-            body = new FormBody.Builder()
-                  //  .add("name", subject.getName()+"") //
-                   // .add("companyId", subject.getCompanyId()+"") //公司di
-                    //.add("companyName",subject.getCompanyName()+"") //公司名称
-                    //.add("storeId", subject.getStoreId()+"") //门店id
-                    //.add("storeName", subject.getStoreName()+"") //门店名称
-                    .add("employeeId", subject.getId()+"") //员工ID
-                    .add("subjectType", subject.getPeopleType()) //人员类型
-                   // .add("department", subject.getDepartmentName()+"") //部门
-                    .add("discernPlace", FileUtil.getSerialNumber(this)==null?FileUtil.getIMSI():FileUtil.getSerialNumber(this))//识别地点
-                  //  .add("discernAvatar",  "") //头像
-                    .add("identificationTime",DateUtils.time(System.currentTimeMillis()+""))//时间
-                    .build();
-                }else {
-            String fangkeType="";
-                switch (subject.getQuitType()){
-                    case 0:
-                        fangkeType="普通访客";
-                        break;
-                    case 1:
-                        fangkeType="VIP";
-                        break;
-                    case 2:
-                        fangkeType="工作人员";
-                        break;
 
-                }
             body = new FormBody.Builder()
                     //.add("name", subject.getName()) //
                     //.add("companyId", subject.getCompanyId()+"") //公司di
@@ -2144,14 +2117,13 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                     //.add("storeId", subject.getStoreId()+"") //门店id
                     //.add("storeName", subject.getStoreName()+"") //门店名称
                     .add("subjectId", subject.getId()+"") //员工ID
-                    .add("subjectType", fangkeType) //人员类型
+                    .add("subjectType", subject.getPeopleType()) //人员类型
                    // .add("department", subject.getPosition()+"") //部门
                     .add("discernPlace", FileUtil.getSerialNumber(this)==null?FileUtil.getIMSI():FileUtil.getSerialNumber(this))//识别地点
                    // .add("discernAvatar",  "") //头像
                     .add("identificationTime", DateUtils.time(System.currentTimeMillis()+""))//时间
                     .build();
 
-        }
 
             okhttp3.Request.Builder requestBuilder = new okhttp3.Request.Builder()
                     .header("Content-Type", "application/json")
