@@ -553,21 +553,25 @@
       "relations": []
     }
   ],
-  "lastEntityId": "8:3815921873990213489",
-  "lastIndexId": "2:2826412698374206834",
+  "lastEntityId": "9:3560583560038097656",
+  "lastIndexId": "3:324718905160782965",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
   "modelVersion": 4,
   "modelVersionParserMinimum": 4,
   "retiredEntityUids": [
-    6635212646208842270
+    6635212646208842270,
+    3560583560038097656
   ],
   "retiredIndexUids": [
-    2526526740458929187
+    2526526740458929187,
+    324718905160782965
   ],
   "retiredPropertyUids": [
     3936260554882782058,
-    2949828315280744710
+    2949828315280744710,
+    6222309782175954152,
+    3235394652428207375
   ],
   "retiredRelationUids": [],
   "version": 1

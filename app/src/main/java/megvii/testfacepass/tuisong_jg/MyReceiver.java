@@ -531,8 +531,10 @@ public class MyReceiver extends BroadcastReceiver {
 									FacePassAddFaceResult faceResult= facePassHandler.addFace(BitmapFactory.decodeFile(filePath));
 									if (faceResult.result==0){
 										facePassHandler.bindGroup(group_name,faceResult.faceToken);
-										subjectList.get(j).setTeZhengMa(new String(faceResult.faceToken));
+										subjectList.get(j).setTeZhengMa(faceResult.faceToken);
 										subjectBox.put(subjectList.get(j));
+										Log.d(TAG,"入库成功："+ subjectList.get(j).getName());
+
 
 									}else {
 										stringBuilder2.append("入库添加图片失败:").append("ID:")

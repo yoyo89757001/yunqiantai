@@ -1,9 +1,12 @@
 package megvii.testfacepass.beans;
 
+import android.view.View;
+
 import java.util.Comparator;
 
 import io.objectbox.annotation.Entity;
 import io.objectbox.annotation.Id;
+import io.objectbox.annotation.Transient;
 
 /**
  * Created by Administrator on 2018/5/31.
@@ -30,8 +33,18 @@ public class Subject implements Comparator<Subject> {
     private String storeName;// 门店名称
     private String entryTime; // 入职时间
     private String birthday; // 生日
-    private String teZhengMa;
+    private byte[] teZhengMa;
     private String departmentName;
+    @Transient
+    private View view;
+
+    public View getView() {
+        return view;
+    }
+
+    public void setView(View view) {
+        this.view = view;
+    }
 
     public String getDepartmentName() {
         return departmentName;
@@ -41,11 +54,11 @@ public class Subject implements Comparator<Subject> {
         this.departmentName = departmentName;
     }
 
-    public String getTeZhengMa() {
+    public byte[] getTeZhengMa() {
         return teZhengMa;
     }
 
-    public void setTeZhengMa(String teZhengMa) {
+    public void setTeZhengMa(byte[] teZhengMa) {
         this.teZhengMa = teZhengMa;
     }
 
