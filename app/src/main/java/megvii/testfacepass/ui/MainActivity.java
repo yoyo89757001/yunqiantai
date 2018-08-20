@@ -412,10 +412,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                         yuangongList.add(bean);
                         lingdaoList.add(0, bean);
 
-//                        if (lingdaoList.size()>5){
-//                            yuangongList.remove(0);
-//                            lingdaoList.remove(0);
-//                        }
+
 
                         //入场动画(从右往左)
                         ValueAnimator anim = ValueAnimator.ofInt(dw, 30);
@@ -491,13 +488,11 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                                 @Override
                                 public void onAnimationUpdate(ValueAnimator animation) {
 
-                                    if (animation.getCurrentPlayTime() >= 600 && kk[0]) {
+                                    if (animation.getCurrentPlayTime() >= 700 && kk[0]) {
                                         //onAnimationUpdate一直执行，所以需要一个标志 让他只执行一次
                                         kk[0] = false;
                                         //底部列表的
-                                        if (lingdaoList.size() > 5) {
-                                            lingdaoList.remove(lingdaoList.size() - 1);
-                                        }
+
                                         Subject subject = lingdaoList.get(0);
                                         if (subject == null)
                                             return;
@@ -517,7 +512,28 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                                             e.printStackTrace();
                                         }
                                         boton_ll.addView(view1);
-                                        scrollView.fullScroll(ScrollView.FOCUS_RIGHT);
+                                        new Thread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                try {
+                                                    final View vv= view1;
+                                                    Thread.sleep(25000);
+                                                    runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            boton_ll.removeView(vv);
+                                                        }
+                                                    });
+
+                                                    Message message = new Message();
+                                                    message.what = 333;
+                                                    mHandler.sendMessage(message);
+                                                } catch (InterruptedException e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+                                        }).start();
+                                      //  scrollView.fullScroll(ScrollView.FOCUS_RIGHT);
 
                                         // lingdaoList.add(0, yuangongList.get(0));
 //                                        adapter.notifyItemInserted(0);
@@ -551,7 +567,6 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                                     if (linkedBlockingQueue.size() == 0) {
                                         isOne = true;
                                     }
-
                                 }
 
                                 @Override
@@ -575,7 +590,113 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
 
                         break;
                     case 222:
-                        //销毁弹窗
+                        //后面没人的时候
+                        final View view = yuangongList.get(0).getView();
+                        final boolean[] kk = {true};
+                        List<Animator> animators = new ArrayList<>();//设置一个装动画的集合
+                        ObjectAnimator alphaAnim0 = ObjectAnimator.ofFloat(view, "translationY", 0, 630f);//设置透明度改变
+                        alphaAnim0.setDuration(800);//设置持续时间
+                        ObjectAnimator alphaAnim1 = ObjectAnimator.ofFloat(view, "translationX", 0, -430f);//设置透明度改变
+                        alphaAnim1.setDuration(800);//设置持续时间
+                        final ObjectAnimator alphaAnim = ObjectAnimator.ofFloat(view, "scaleX", 1f, 0.15f);//设置透明度改变
+                        alphaAnim.setDuration(800);//设置持续时间
+                        //alphaAnim.start();
+                        ObjectAnimator alphaAnim2 = ObjectAnimator.ofFloat(view, "scaleY", 1f, 0.2f);//设置透明度改变
+                        alphaAnim2.setDuration(720);//设置持续时间
+                        alphaAnim2.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                            @Override
+                            public void onAnimationUpdate(ValueAnimator animation) {
+                                //Log.d(TAG, "animation.getCurrentPlayTime():" + animation.getCurrentPlayTime());
+                                if (animation.getCurrentPlayTime() >= 580 && kk[0]) {
+                                    kk[0] = false;
+                                    //底部列表的
+                                    kk[0] = false;
+                                    //底部列表的
+                                    Subject subject = lingdaoList.get(0);
+                                    if (subject == null)
+                                        return;
+                                    final View view1 = View.inflate(MainActivity.this, R.layout.boton_item, null);
+                                    ScreenAdapterTools.getInstance().loadView(view1);
+                                    TextView name1 = view1.findViewById(R.id.db_name);
+                                    ImageView touxiang1 = view1.findViewById(R.id.db_touxiang);
+                                    name1.setText(subject.getName());
+                                    try {
+                                        Bitmap bitmap = mFacePassHandler.getFaceImage(subject.getTeZhengMa());
+                                        Drawable drawable = new BitmapDrawable(getResources(), bitmap);
+                                        Glide.with(MainActivity.this)
+                                                .load(drawable)
+                                                .apply(myOptions2)
+                                                .into(touxiang1);
+                                    } catch (FacePassException e) {
+                                        e.printStackTrace();
+                                    }
+                                    boton_ll.addView(view1);
+                                    new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            try {
+                                                final View vv= view1;
+                                                Thread.sleep(25000);
+                                                runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        boton_ll.removeView(vv);
+                                                    }
+                                                });
+
+                                                Message message = new Message();
+                                                message.what = 333;
+                                                mHandler.sendMessage(message);
+                                            } catch (InterruptedException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    }).start();
+                                   // scrollView.fullScroll(ScrollView.FOCUS_RIGHT);
+
+                                }
+                            }
+                        });
+                        alphaAnim2.addListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animation) {
+                            }
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                try {
+                                    view.setVisibility(View.GONE);
+                                    rootLayout.removeViewAt(0);
+                                    yuangongList.remove(0);
+                                } catch (Exception e) {
+                                    Log.d("ff", e.getMessage() + "");
+                                }
+                                if (linkedBlockingQueue.size()==0)
+                                    isOne = true;
+                            }
+
+                            @Override
+                            public void onAnimationCancel(Animator animation) {
+                            }
+                            @Override
+                            public void onAnimationRepeat(Animator animation) {
+                            }
+                        });
+                        //alphaAnim.start();\
+                        animators.add(alphaAnim0);
+                        animators.add(alphaAnim1);
+                        animators.add(alphaAnim);
+                        animators.add(alphaAnim2);
+                        AnimatorSet btnSexAnimatorSet = new AnimatorSet();//动画集
+                        btnSexAnimatorSet.playTogether(animators);//设置一起播放
+                        btnSexAnimatorSet.start();//开始播放
+
+                        break;
+                    case 333:
+
+                        Log.d("MainActivity", "删除view");
+                     //   boton_ll.removeView(lingdaoList.get(lingdaoList.size()-1).getView());
+
+                        lingdaoList.remove(lingdaoList.size()-1);
 
                         break;
 
