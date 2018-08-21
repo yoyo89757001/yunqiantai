@@ -9,6 +9,8 @@ import android.widget.Toast;
 
 import com.sdsmdg.tastytoast.TastyToast;
 
+import org.greenrobot.eventbus.EventBus;
+
 import megvii.facepass.FacePassException;
 import megvii.facepass.FacePassHandler;
 import megvii.facepass.types.FacePassConfig;
@@ -99,7 +101,9 @@ public class FacePassUtil {
                                         Toast tastyToast= TastyToast.makeText(context,"识别模块初始化成功",TastyToast.LENGTH_LONG,TastyToast.INFO);
                                         tastyToast.setGravity(Gravity.CENTER,0,0);
                                         tastyToast.show();
-                                      MainActivity.mFacePassHandler=mFacePassHandler;
+                                       MyApplication.myApplication.setFacePassHandler(mFacePassHandler);
+                                        EventBus.getDefault().post("mFacePassHandler");
+
                                     }
                                 });
 

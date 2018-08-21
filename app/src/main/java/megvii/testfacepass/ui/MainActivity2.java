@@ -50,7 +50,6 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -138,6 +137,7 @@ import megvii.testfacepass.utils.FacePassUtil;
 import megvii.testfacepass.utils.FileUtil;
 import megvii.testfacepass.utils.GsonUtil;
 import megvii.testfacepass.utils.SettingVar;
+import megvii.testfacepass.view.ClockView;
 import megvii.testfacepass.view.DBG_View;
 import megvii.testfacepass.view.GlideCircleTransform;
 import megvii.testfacepass.view.GlideRoundTransform;
@@ -151,10 +151,9 @@ import okhttp3.ResponseBody;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 
 
-public class MainActivity extends Activity implements CameraManager.CameraListener, XiuGaiListener {
+public class MainActivity2 extends Activity implements CameraManager.CameraListener, XiuGaiListener {
     protected Handler mainHandler;
-    @BindView(R.id.riqi)
-    TextView riqi;
+
     @BindView(R.id.xiaoshi)
     TextView xiaoshi;
     @BindView(R.id.wendu)
@@ -175,6 +174,10 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
     RollPagerView lunboview;
     @BindView(R.id.da_bg)
     ImageView daBg;
+    @BindView(R.id.xingqi)
+    TextView xingqi;
+    @BindView(R.id.riqi)
+    TextView riqi;
     private Box<Subject> subjectBox = null;
     private String appId = "11644783";
     private String appKey = "knGksRFLoFZ2fsjZaMC8OoC7";
@@ -199,7 +202,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
             .fitCenter()
             .error(R.drawable.erroy_bg)
             //   .transform(new GlideCircleTransform(MyApplication.myApplication, 2, Color.parseColor("#ffffffff")));
-            .transform(new GlideRoundTransform(MainActivity.this, 20));
+            .transform(new GlideRoundTransform(MainActivity2.this, 20));
 
     private enum FacePassSDKMode {
         MODE_ONLINE,
@@ -264,8 +267,8 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
      * }
      */
     private int cameraRotation;
-    private static final int cameraWidth = 1920;
-    private static final int cameraHeight = 1080;
+    private static final int cameraWidth = 1280;
+    private static final int cameraHeight = 720;
     private int mSecretNumber = 0;
     private static final long CLICK_INTERVAL = 500;
     private long mLastClickTime;
@@ -301,7 +304,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
     private TimeChangeReceiver timeChangeReceiver;
     private WeakHandler mHandler;
     private HorizontalScrollView scrollView;
-
+    private ClockView clockView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -309,7 +312,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
         mImageCache = new FaceImageCache();
         mToastBlockQueue = new LinkedBlockingQueue<>();
         mDetectResultQueue = new ArrayBlockingQueue<byte[]>(5);
-        mFeedFrameQueue = new ArrayBlockingQueue<FacePassImage>(1);
+        mFeedFrameQueue = new ArrayBlockingQueue<FacePassImage>(10);
         todayBeanBox = MyApplication.myApplication.getBoxStore().boxFor(TodayBean.class);
         todayBean = todayBeanBox.get(123456L);
         // initAndroidHandler();
@@ -340,7 +343,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                         //弹窗
                         Subject bean = (Subject) msg.obj;
 
-                        final View view1 = View.inflate(MainActivity.this, R.layout.baoaoshang_item, null);
+                        final View view1 = View.inflate(MainActivity2.this, R.layout.baoaoshang_item, null);
                         ScreenAdapterTools.getInstance().loadView(view1);
                         TextView name1 = (TextView) view1.findViewById(R.id.name);
                         ImageView touxiang1 = (ImageView) view1.findViewById(R.id.touxiang);
@@ -368,10 +371,9 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                         try {
                             Bitmap bitmap = mFacePassHandler.getFaceImage(bean.getTeZhengMa());
                             Drawable drawable = new BitmapDrawable(getResources(), bitmap);
-                            Glide.with(MainActivity.this)
+                            Glide.with(MainActivity2.this)
                                     .load(drawable)
                                     .apply(myOptions)
-                                    //  .transform(new GlideCircleTransform(MyApplication.getAppContext(), 2, Color.parseColor("#ffffffff")))
                                     .into(touxiang1);
 
                         } catch (FacePassException e) {
@@ -411,8 +413,6 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
 
                         yuangongList.add(bean);
                         lingdaoList.add(0, bean);
-
-
 
                         //入场动画(从右往左)
                         ValueAnimator anim = ValueAnimator.ofInt(dw, 30);
@@ -496,7 +496,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                                         Subject subject = lingdaoList.get(0);
                                         if (subject == null)
                                             return;
-                                        final View view1 = View.inflate(MainActivity.this, R.layout.boton_item, null);
+                                        final View view1 = View.inflate(MainActivity2.this, R.layout.boton_item, null);
                                         ScreenAdapterTools.getInstance().loadView(view1);
                                         TextView name1 = view1.findViewById(R.id.db_name);
                                         ImageView touxiang1 = view1.findViewById(R.id.db_touxiang);
@@ -504,7 +504,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                                         try {
                                             Bitmap bitmap = mFacePassHandler.getFaceImage(subject.getTeZhengMa());
                                             Drawable drawable = new BitmapDrawable(getResources(), bitmap);
-                                            Glide.with(MainActivity.this)
+                                            Glide.with(MainActivity2.this)
                                                     .load(drawable)
                                                     .apply(myOptions2)
                                                     .into(touxiang1);
@@ -516,7 +516,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                                             @Override
                                             public void run() {
                                                 try {
-                                                    final View vv= view1;
+                                                    final View vv = view1;
                                                     Thread.sleep(25000);
                                                     runOnUiThread(new Runnable() {
                                                         @Override
@@ -533,7 +533,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                                                 }
                                             }
                                         }).start();
-                                      //  scrollView.fullScroll(ScrollView.FOCUS_RIGHT);
+                                        //  scrollView.fullScroll(ScrollView.FOCUS_RIGHT);
 
                                         // lingdaoList.add(0, yuangongList.get(0));
 //                                        adapter.notifyItemInserted(0);
@@ -615,7 +615,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                                     Subject subject = lingdaoList.get(0);
                                     if (subject == null)
                                         return;
-                                    final View view1 = View.inflate(MainActivity.this, R.layout.boton_item, null);
+                                    final View view1 = View.inflate(MainActivity2.this, R.layout.boton_item, null);
                                     ScreenAdapterTools.getInstance().loadView(view1);
                                     TextView name1 = view1.findViewById(R.id.db_name);
                                     ImageView touxiang1 = view1.findViewById(R.id.db_touxiang);
@@ -623,7 +623,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                                     try {
                                         Bitmap bitmap = mFacePassHandler.getFaceImage(subject.getTeZhengMa());
                                         Drawable drawable = new BitmapDrawable(getResources(), bitmap);
-                                        Glide.with(MainActivity.this)
+                                        Glide.with(MainActivity2.this)
                                                 .load(drawable)
                                                 .apply(myOptions2)
                                                 .into(touxiang1);
@@ -635,7 +635,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                                         @Override
                                         public void run() {
                                             try {
-                                                final View vv= view1;
+                                                final View vv = view1;
                                                 Thread.sleep(25000);
                                                 runOnUiThread(new Runnable() {
                                                     @Override
@@ -652,7 +652,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                                             }
                                         }
                                     }).start();
-                                   // scrollView.fullScroll(ScrollView.FOCUS_RIGHT);
+                                    // scrollView.fullScroll(ScrollView.FOCUS_RIGHT);
 
                                 }
                             }
@@ -661,6 +661,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                             @Override
                             public void onAnimationStart(Animator animation) {
                             }
+
                             @Override
                             public void onAnimationEnd(Animator animation) {
                                 try {
@@ -670,13 +671,14 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                                 } catch (Exception e) {
                                     Log.d("ff", e.getMessage() + "");
                                 }
-                                if (linkedBlockingQueue.size()==0)
+                                if (linkedBlockingQueue.size() == 0)
                                     isOne = true;
                             }
 
                             @Override
                             public void onAnimationCancel(Animator animation) {
                             }
+
                             @Override
                             public void onAnimationRepeat(Animator animation) {
                             }
@@ -694,9 +696,9 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                     case 333:
 
                         Log.d("MainActivity", "删除view");
-                     //   boton_ll.removeView(lingdaoList.get(lingdaoList.size()-1).getView());
+                        //   boton_ll.removeView(lingdaoList.get(lingdaoList.size()-1).getView());
 
-                        lingdaoList.remove(lingdaoList.size()-1);
+                        lingdaoList.remove(lingdaoList.size() - 1);
 
                         break;
 
@@ -749,9 +751,9 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
             initialTts();
 
         if (baoCunBean != null) {
-            FacePassUtil.init(MainActivity.this, getApplicationContext(), cameraRotation, baoCunBean);
+            FacePassUtil.init(MainActivity2.this, getApplicationContext(), cameraRotation, baoCunBean);
         } else {
-            Toast tastyToast = TastyToast.makeText(MainActivity.this, "获取本地设置失败,请进入设置界面设置基本信息", TastyToast.LENGTH_LONG, TastyToast.INFO);
+            Toast tastyToast = TastyToast.makeText(MainActivity2.this, "获取本地设置失败,请进入设置界面设置基本信息", TastyToast.LENGTH_LONG, TastyToast.INFO);
             tastyToast.setGravity(Gravity.CENTER, 0, 0);
             tastyToast.show();
         }
@@ -789,31 +791,6 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
     }
 
 
-//    private void initAndroidHandler() {
-//
-//        mAndroidHandler = new Handler() {
-//            @Override
-//            public void handleMessage(Message msg) {
-//                super.handleMessage(msg);
-//                switch (msg.what) {
-//                    case MSG_SHOW_TOAST:
-//                        if (mToastBlockQueue.size() > 0) {
-//                            Toast toast = mToastBlockQueue.poll();
-//                            if (toast != null) {
-//                                toast.show();
-//                            }
-//                        }
-//                        if (mToastBlockQueue.size() > 0) {
-//                            removeMessages(MSG_SHOW_TOAST);
-//                            sendEmptyMessageDelayed(MSG_SHOW_TOAST, DELAY_MILLION_SHOW_TOAST);
-//                        }
-//                        break;
-//                }
-//            }
-//        };
-//    }
-
-
     @Override
     protected void onResume() {
 
@@ -827,16 +804,16 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
     }
 
 
+
     /* 相机回调函数 */
     @Override
     public void onPictureTaken(CameraPreviewData cameraPreviewData) {
-
         /* 如果SDK实例还未创建，则跳过 */
+
         if (mFacePassHandler == null) {
             return;
         }
         /* 将相机预览帧转成SDK算法所需帧的格式 FacePassImage */
-
         FacePassImage image;
         try {
             image = new FacePassImage(cameraPreviewData.nv21Data, cameraPreviewData.width, cameraPreviewData.height, cameraRotation, FacePassImageType.NV21);
@@ -844,23 +821,24 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
             e.printStackTrace();
             return;
         }
-
         mFeedFrameQueue.offer(image);
+
     }
 
     private class FeedFrameThread extends Thread {
         boolean isIterrupt;
-
         @Override
         public void run() {
             while (!isIterrupt) {
                 try {
 
                     FacePassImage image = mFeedFrameQueue.take();
+                    long l1=System.currentTimeMillis();
                     /* 将每一帧FacePassImage 送入SDK算法， 并得到返回结果 */
                     FacePassDetectionResult detectionResult = null;
                     detectionResult = mFacePassHandler.feedFrame(image);
-
+                    long l2=System.currentTimeMillis();
+                    Log.d("FeedFrameThread", "l2-l1:" + (l2 - l1));
                     if (detectionResult == null || detectionResult.faceList.length == 0) {
 //                        faceView.clear();
 //                        runOnUiThread(new Runnable() {
@@ -872,6 +850,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                     } else {
                         //拿陌生人图片
                         // showFacePassFace(detectionResult.faceList);
+                     //   Log.d("FeedFrameThread", "detectionResult.images.length:" + image.width+"  "+image.height);
                     }
 
                     if (SDK_MODE == FacePassSDKMode.MODE_ONLINE) {
@@ -1130,7 +1109,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
         } else if (mCurrentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
             screenState = 0;
         }
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main2);
         ScreenAdapterTools.getInstance().loadView(getWindow().getDecorView());
         ButterKnife.bind(this);
         boton_ll = findViewById(R.id.boton_ll);
@@ -1139,9 +1118,11 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
         Typeface tf = Typeface.createFromAsset(mgr, "fonts/Univers LT 57 Condensed.ttf");
         Typeface tf2 = Typeface.createFromAsset(mgr, "fonts/hua.ttf");
         Typeface tf3 = Typeface.createFromAsset(mgr, "fonts/kai.ttf");
-        String riqi2 = DateUtils.timesTwo(System.currentTimeMillis() + "") + "   " + DateUtils.getWeek(System.currentTimeMillis());
+       // String riqi2 = DateUtils.timesTwo(System.currentTimeMillis() + "") + "   " + DateUtils.getWeek(System.currentTimeMillis());
         //  riqi.setTypeface(tf);
-        riqi.setText(riqi2);
+        //    riqi.setText(riqi2);
+        xingqi.setText(DateUtils.getWeek(System.currentTimeMillis()));
+        riqi.setText(DateUtils.timesTwodian(System.currentTimeMillis() + ""));
         xiaoshi.setTypeface(tf);
         xiaoshi.setText(DateUtils.timeMinute(System.currentTimeMillis() + ""));
         scrollView = findViewById(R.id.scrollview);
@@ -1151,7 +1132,10 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
         //轮播图
         lunboview.setAdapter(new TestNomalAdapter());
         //背景
-        daBg.setBackgroundResource(R.drawable.dbg_1);
+        daBg.setBackgroundResource(R.drawable.d_bg2);
+        clockView=findViewById(R.id.clockview);
+        clockView.setTimeMills(System.currentTimeMillis());
+        clockView.start();
 
 
 //        shipingView.setOnClickListener(new View.OnClickListener() {
@@ -1198,7 +1182,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
         shipingView.setOnErrorListener(new IMediaPlayer.OnErrorListener() {
             @Override
             public boolean onError(IMediaPlayer iMediaPlayer, int i, int i1) {
-                TastyToast.makeText(MainActivity.this, "播放视频失败", TastyToast.LENGTH_SHORT, TastyToast.INFO).show();
+                TastyToast.makeText(MainActivity2.this, "播放视频失败", TastyToast.LENGTH_SHORT, TastyToast.INFO).show();
                 return false;
             }
         });
@@ -1251,23 +1235,6 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
         /* 注册相机回调函数 */
         manager.setListener(this);
 
-//        mSDKModeBtn = (Button) findViewById(R.id.btn_mode_switch);
-//        mSDKModeBtn.setText(SDK_MODE.toString());
-//        mSDKModeBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (SDK_MODE == FacePassSDKMode.MODE_OFFLINE) {
-//                    SDK_MODE = FacePassSDKMode.MODE_ONLINE;
-//                    recognize_url = "http://" + serverIP_online + ":8080/api/service/recognize/v1";
-//                    serverIP = serverIP_online;
-//                    mSDKModeBtn.setText(SDK_MODE.toString());
-//                } else {
-//                    SDK_MODE = FacePassSDKMode.MODE_OFFLINE;
-//                    serverIP = serverIP_offline;
-//                    mSDKModeBtn.setText(SDK_MODE.toString());
-//                }
-//            }
-//        });
 
         if (todayBean != null) {
             //更新天气界面
@@ -1282,11 +1249,11 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
             tianqi.setText(todayBean.getWeather());
             fengli.setText(todayBean.getWind());
             ziwaixian.setText("紫外线强度");
-            if (todayBean.getUv_index().contains("强")){
+            if (todayBean.getUv_index().contains("强")) {
                 qiangdu_bg.setBackgroundResource(R.drawable.qiang_tq);
-            }else if (todayBean.getUv_index().contains("弱")){
+            } else if (todayBean.getUv_index().contains("弱")) {
                 qiangdu_bg.setBackgroundResource(R.drawable.ruo_tq);
-            }else if (todayBean.getUv_index().contains("中等")){
+            } else if (todayBean.getUv_index().contains("中等")) {
                 qiangdu_bg.setBackgroundResource(R.drawable.zhongdeng_tq);
             }
 
@@ -2148,7 +2115,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
 //    }
 
     private void toast(String msg) {
-        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+        Toast.makeText(MainActivity2.this, msg, Toast.LENGTH_SHORT).show();
     }
 
 
@@ -2234,7 +2201,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
             }
             StringBody sbody = null;
             try {
-                sbody = new StringBody(MainActivity.group_name, ContentType.TEXT_PLAIN.withCharset(CharsetUtils.get("UTF-8")));
+                sbody = new StringBody(MainActivity2.group_name, ContentType.TEXT_PLAIN.withCharset(CharsetUtils.get("UTF-8")));
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
@@ -2269,7 +2236,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
             if (keyCode == KeyEvent.KEYCODE_MENU) {
-                startActivity(new Intent(MainActivity.this, SheZhiActivity.class));
+                startActivity(new Intent(MainActivity2.this, SheZhiActivity.class));
                 finish();
             }
 
@@ -2292,7 +2259,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
         if (isAnXia) {
             if (ev.getPointerCount() == 4) {
                 isAnXia = false;
-                startActivity(new Intent(MainActivity.this, SheZhiActivity.class));
+                startActivity(new Intent(MainActivity2.this, SheZhiActivity.class));
                 finish();
             }
         }
@@ -2360,13 +2327,14 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
 
     @Subscribe(threadMode = ThreadMode.MAIN) //在ui线程执行
     public void onDataSynEvent(String event) {
-        if (event.equals("mFacePassHandler")){
-            mFacePassHandler=MyApplication.myApplication.getFacePassHandler();
+        if (event.equals("mFacePassHandler")) {
+            mFacePassHandler = MyApplication.myApplication.getFacePassHandler();
             return;
         }
-        Toast tastyToast = TastyToast.makeText(MainActivity.this, event, TastyToast.LENGTH_LONG, TastyToast.INFO);
+        Toast tastyToast = TastyToast.makeText(MainActivity2.this, event, TastyToast.LENGTH_LONG, TastyToast.INFO);
         tastyToast.setGravity(Gravity.CENTER, 0, 0);
         tastyToast.show();
+
     }
 
 
@@ -2382,17 +2350,19 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                     Typeface tf3 = Typeface.createFromAsset(mgr, "fonts/kai.ttf");
                     String riqi2 = DateUtils.timesTwo(System.currentTimeMillis() + "") + "   " + DateUtils.getWeek(System.currentTimeMillis());
                     //  riqi.setTypeface(tf);
-                    riqi.setText(riqi2);
+                    //  riqi.setText(riqi2);
                     xiaoshi.setTypeface(tf);
                     xiaoshi.setText(DateUtils.timeMinute(System.currentTimeMillis() + ""));
 
 
                     //每过一分钟 触发
                     if (baoCunBean != null && !baoCunBean.getDangqianShiJian().equals(DateUtils.timesTwo(System.currentTimeMillis() + ""))) {
+                        clockView.setTimeMills(System.currentTimeMillis());
+                        clockView.start();
                         //请求一次
                         try {
                             if (baoCunBean.getDangqianChengShi2() == null) {
-                                Toast tastyToast = TastyToast.makeText(MainActivity.this, "获取天气失败,没有设置当前城市", TastyToast.LENGTH_LONG, TastyToast.INFO);
+                                Toast tastyToast = TastyToast.makeText(MainActivity2.this, "获取天气失败,没有设置当前城市", TastyToast.LENGTH_LONG, TastyToast.INFO);
                                 tastyToast.setGravity(Gravity.CENTER, 0, 0);
                                 tastyToast.show();
                                 return;
@@ -2452,15 +2422,18 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                                                 // shidu.setTypeface(tf2);
 //                                                jianyi.setTypeface(tf2);
 
+                                                xingqi.setText(DateUtils.getWeek(System.currentTimeMillis()));
+                                                riqi.setText(DateUtils.timesTwodian(System.currentTimeMillis() + ""));
+
                                                 wendu.setText(todayBean.getTemperature());
                                                 tianqi.setText(todayBean.getWeather());
                                                 fengli.setText(todayBean.getWind());
                                                 ziwaixian.setText("紫外线强度");
-                                                if (todayBean.getUv_index().contains("强")){
+                                                if (todayBean.getUv_index().contains("强")) {
                                                     qiangdu_bg.setBackgroundResource(R.drawable.qiang_tq);
-                                                }else if (todayBean.getUv_index().contains("弱")){
+                                                } else if (todayBean.getUv_index().contains("弱")) {
                                                     qiangdu_bg.setBackgroundResource(R.drawable.ruo_tq);
-                                                }else if (todayBean.getUv_index().contains("中等")){
+                                                } else if (todayBean.getUv_index().contains("中等")) {
                                                     qiangdu_bg.setBackgroundResource(R.drawable.zhongdeng_tq);
                                                 }
 
@@ -2485,7 +2458,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                             });
                         } catch (Exception e) {
                             e.printStackTrace();
-                            Toast tastyToast = TastyToast.makeText(MainActivity.this, "获取天气失败,没有设置当前城市", TastyToast.LENGTH_LONG, TastyToast.INFO);
+                            Toast tastyToast = TastyToast.makeText(MainActivity2.this, "获取天气失败,没有设置当前城市", TastyToast.LENGTH_LONG, TastyToast.INFO);
                             tastyToast.setGravity(Gravity.CENTER, 0, 0);
                             tastyToast.show();
                             return;
@@ -2509,6 +2482,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
     }
 
 
+    //轮播适配器
     private class TestNomalAdapter extends StaticPagerAdapter {
         private int[] imgs = {
                 R.drawable.dbg_1,

@@ -69,6 +69,8 @@ public class SheZhiActivity extends Activity {
     RelativeLayout rl8;
     @BindView(R.id.chengshi)
     TextView chengshi;
+    @BindView(R.id.rl9)
+    RelativeLayout rl9;
 
     private Box<BaoCunBean> baoCunBeanDao = null;
     private BaoCunBean baoCunBean = null;
@@ -103,10 +105,10 @@ public class SheZhiActivity extends Activity {
             baoCunBean.setTianQi(false);
 
             baoCunBeanDao.put(baoCunBean);
-        }else {
-            if (baoCunBean.getDangqianChengShi2()==null){
+        } else {
+            if (baoCunBean.getDangqianChengShi2() == null) {
                 chengshi.setText("");
-            }else {
+            } else {
                 chengshi.setText(baoCunBean.getDangqianChengShi2());
             }
 
@@ -145,7 +147,7 @@ public class SheZhiActivity extends Activity {
     }
 
 
-    @OnClick({R.id.rl1, R.id.rl2, R.id.rl3, R.id.rl4, R.id.rl5, R.id.rl6, R.id.rl7, R.id.rl8})
+    @OnClick({R.id.rl1, R.id.rl2, R.id.rl3, R.id.rl4, R.id.rl5, R.id.rl6, R.id.rl7, R.id.rl8,R.id.rl9})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.rl1:
@@ -280,7 +282,11 @@ public class SheZhiActivity extends Activity {
                     tastyToast.setGravity(Gravity.CENTER, 0, 0);
                     tastyToast.show();
                 }
+                break;
 
+            case R.id.rl9:
+
+                startActivity(new Intent(SheZhiActivity.this, YuLanActivity.class));
 
                 break;
 
@@ -297,7 +303,7 @@ public class SheZhiActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);//解除订阅
-        startActivity(new Intent(SheZhiActivity.this, MainActivity.class));
+        startActivity(new Intent(SheZhiActivity.this, MainActivity2.class));
     }
 
 //    //绑定
@@ -469,12 +475,12 @@ public class SheZhiActivity extends Activity {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        String bidui=tx;
-                        List<ChengShiIDBean> shiIDBeanList=chengShiIDBeanBox.getAll();
-                        int size=shiIDBeanList.size();
-                        for ( int i=0;i<size;i++){
-                            ChengShiIDBean bean=shiIDBeanList.get(i);
-                            if (bidui.contains(bean.getProvince()) && bidui.contains(bean.getCity()) && bidui.contains(bean.getDistrict())){
+                        String bidui = tx;
+                        List<ChengShiIDBean> shiIDBeanList = chengShiIDBeanBox.getAll();
+                        int size = shiIDBeanList.size();
+                        for (int i = 0; i < size; i++) {
+                            ChengShiIDBean bean = shiIDBeanList.get(i);
+                            if (bidui.contains(bean.getProvince()) && bidui.contains(bean.getCity()) && bidui.contains(bean.getDistrict())) {
                                 baoCunBean.setDangqianChengShi(bean.getId());
                                 baoCunBeanDao.put(baoCunBean);
                                 Log.d("SheZhiActivity", "找到了城市id");
@@ -482,7 +488,7 @@ public class SheZhiActivity extends Activity {
                             }
 
                         }
-                        if (baoCunBean.getDangqianChengShi()==null){
+                        if (baoCunBean.getDangqianChengShi() == null) {
                             baoCunBean.setDangqianChengShi("1");
                             baoCunBeanDao.put(baoCunBean);
                         }
@@ -491,7 +497,7 @@ public class SheZhiActivity extends Activity {
                     }
                 }).start();
 
-              //  Toast.makeText(SheZhiActivity.this, options3Items.get(options1).get(options2).get(options3), Toast.LENGTH_SHORT).show();
+                //  Toast.makeText(SheZhiActivity.this, options3Items.get(options1).get(options2).get(options3), Toast.LENGTH_SHORT).show();
             }
         })
 
@@ -506,5 +512,6 @@ public class SheZhiActivity extends Activity {
         pvOptions.setPicker(options1Items, options2Items, options3Items);//三级选择器
         pvOptions.show();
     }
+
 
 }
