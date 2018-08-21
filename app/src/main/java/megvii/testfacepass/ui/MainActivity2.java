@@ -153,7 +153,6 @@ import tv.danmaku.ijk.media.player.IMediaPlayer;
 
 public class MainActivity2 extends Activity implements CameraManager.CameraListener, XiuGaiListener {
     protected Handler mainHandler;
-
     @BindView(R.id.xiaoshi)
     TextView xiaoshi;
     @BindView(R.id.wendu)
@@ -273,7 +272,7 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
     private static final long CLICK_INTERVAL = 500;
     private long mLastClickTime;
     private IjkVideoView shipingView;
-    private LinearLayout boton_ll;
+
     private int heightPixels;
     private int widthPixels;
     int screenState = 0;// 0 横 1 竖
@@ -303,7 +302,6 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
     private IntentFilter intentFilter;
     private TimeChangeReceiver timeChangeReceiver;
     private WeakHandler mHandler;
-    private HorizontalScrollView scrollView;
     private ClockView clockView;
 
     @Override
@@ -511,7 +509,7 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
                                         } catch (FacePassException e) {
                                             e.printStackTrace();
                                         }
-                                        boton_ll.addView(view1);
+
                                         new Thread(new Runnable() {
                                             @Override
                                             public void run() {
@@ -521,7 +519,7 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
                                                     runOnUiThread(new Runnable() {
                                                         @Override
                                                         public void run() {
-                                                            boton_ll.removeView(vv);
+
                                                         }
                                                     });
 
@@ -630,7 +628,7 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
                                     } catch (FacePassException e) {
                                         e.printStackTrace();
                                     }
-                                    boton_ll.addView(view1);
+//                                    boton_ll.addView(view1);
                                     new Thread(new Runnable() {
                                         @Override
                                         public void run() {
@@ -640,7 +638,7 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
                                                 runOnUiThread(new Runnable() {
                                                     @Override
                                                     public void run() {
-                                                        boton_ll.removeView(vv);
+                                                      //  boton_ll.removeView(vv);
                                                     }
                                                 });
 
@@ -1112,7 +1110,6 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
         setContentView(R.layout.activity_main2);
         ScreenAdapterTools.getInstance().loadView(getWindow().getDecorView());
         ButterKnife.bind(this);
-        boton_ll = findViewById(R.id.boton_ll);
         AssetManager mgr = getAssets();
         //Univers LT 57 Condensed
         Typeface tf = Typeface.createFromAsset(mgr, "fonts/Univers LT 57 Condensed.ttf");
@@ -1125,7 +1122,6 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
         riqi.setText(DateUtils.timesTwodian(System.currentTimeMillis() + ""));
         xiaoshi.setTypeface(tf);
         xiaoshi.setText(DateUtils.timeMinute(System.currentTimeMillis() + ""));
-        scrollView = findViewById(R.id.scrollview);
         TableLayout mHudView = findViewById(R.id.hud_view);
         shipingView = findViewById(R.id.ijkplayview);
         shipingView.setVisibility(View.GONE);
