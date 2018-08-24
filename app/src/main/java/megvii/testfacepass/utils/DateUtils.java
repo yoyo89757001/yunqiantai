@@ -280,6 +280,15 @@ public class DateUtils {
         return times;
     }
 
+    public static String xiaoshi(String time) {
+        SimpleDateFormat sdr = new SimpleDateFormat("HH-mm", Locale.CHINA);
+        @SuppressWarnings("unused")
+        long lcc = Long.valueOf(time);
+        //  int i = Integer.parseInt(time);
+        String times = sdr.format(new Date(lcc));
+        return times;
+    }
+
     public static String timesTwodian(String time) {
         SimpleDateFormat sdr = new SimpleDateFormat("yyyy.MM.dd", Locale.CHINA);
         @SuppressWarnings("unused")

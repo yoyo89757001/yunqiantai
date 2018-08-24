@@ -44,7 +44,24 @@ public class BaoCunBean {
     private String dangqianChengShi2;
     private String dangqianShiJian;
     private boolean isTianQi;
+    private String shangBanTime;
+    private String xiaBanTime;
 
+    public String getShangBanTime() {
+        return shangBanTime;
+    }
+
+    public void setShangBanTime(String shangBanTime) {
+        this.shangBanTime = shangBanTime;
+    }
+
+    public String getXiaBanTime() {
+        return xiaBanTime;
+    }
+
+    public void setXiaBanTime(String xiaBanTime) {
+        this.xiaBanTime = xiaBanTime;
+    }
 
     public String getDangqianShiJian() {
         return dangqianShiJian;

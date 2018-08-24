@@ -35,6 +35,25 @@ public class Subject implements Comparator<Subject> {
     private String birthday; // 生日
     private byte[] teZhengMa;
     private String departmentName;
+    private int daka;
+    private String shijian;
+
+    public String getShijian() {
+        return shijian;
+    }
+
+    public void setShijian(String shijian) {
+        this.shijian = shijian;
+    }
+
+    public int getDaka() {
+        return daka;
+    }
+
+    public void setDaka(int daka) {
+        this.daka = daka;
+    }
+
     @Transient
     private View view;
 

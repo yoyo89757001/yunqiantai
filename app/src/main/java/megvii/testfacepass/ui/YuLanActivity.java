@@ -423,12 +423,12 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
             while (!isIterrupt) {
                 try {
                     FacePassImage image = mFeedFrameQueue.take();
-                    long l1=System.currentTimeMillis();
+                 //   long l1=System.currentTimeMillis();
                     /* 将每一帧FacePassImage 送入SDK算法， 并得到返回结果 */
                     FacePassDetectionResult detectionResult = null;
                     detectionResult = mFacePassHandler.feedFrame(image);
-                    long l2=System.currentTimeMillis();
-                    Log.d("YuLan", "l2-l1:" + (l2 - l1));
+                  //  long l2=System.currentTimeMillis();
+                  //  Log.d("YuLan", "l2-l1:" + (l2 - l1));
                     if (detectionResult == null || detectionResult.faceList.length == 0) {
                         faceView.clear();
                         runOnUiThread(new Runnable() {

@@ -167,7 +167,6 @@
                     android:layout_marginTop="10px"
                     android:textSize="26px"
                     android:text="考勤:10/30"
-                    android:elevation="4dp"
                     android:textColor="@color/white"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
@@ -246,32 +245,62 @@
             android:layout_height="1px"/>
 
         <LinearLayout
+            android:orientation="vertical"
             android:layout_marginTop="251px"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <!--公告-->
+            <TextView
+                android:textColor="@color/white"
+                android:text="公告通知"
+                android:textSize="36px"
+                android:layout_marginTop="12px"
+                android:layout_marginLeft="12px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
-            
 
+            <com.sunfusheng.marqueeview.MarqueeView
+                android:textColor="@color/tabtextcolo"
+                android:text="明天12点开会"
+                app:mvAnimDuration="1000"
+                app:mvDirection="bottom_to_top"
+                app:mvInterval="3000"
+                app:mvTextColor="@color/white"
+                app:mvTextSize="26px"
+                app:mvSingleLine="false"
+                android:id="@+id/marqueeView"
+                android:layout_marginTop="10px"
+                android:layout_marginLeft="26px"
+                android:layout_marginRight="26px"
+                android:layout_marginBottom="10px"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
 
         </LinearLayout>
 
 
     </android.support.v7.widget.CardView>
 
+    <LinearLayout
+        android:orientation="vertical"
+        android:id="@+id/rl22"
+        android:layout_below="@+id/rl2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
     <!--第二块-->
     <android.support.v7.widget.CardView
-        android:id="@+id/rl22"
         app:cardBackgroundColor="#c1000000"
-        android:layout_below="@+id/rl2"
         android:layout_marginTop="30px"
         android:layout_marginLeft="36px"
         android:layout_marginRight="36px"
         app:cardElevation="6dp"
-        app:contentPadding="10px"
+        app:contentPadding="4px"
         app:cardCornerRadius="10dp"
+        android:layout_weight="3"
         android:layout_width="match_parent"
-        android:layout_height="952px">
+        android:layout_height="0dp">
 
         <megvii.testfacepass.ljkplay.widget.media.IjkVideoView
             android:id="@+id/ijkplayview"
@@ -290,21 +319,57 @@
 
     </android.support.v7.widget.CardView>
 
-
-
-    <!--底部列表-->
-    <android.support.v7.widget.RecyclerView
-        android:layout_below="@+id/rl22"
-        android:layout_marginTop="30px"
-        android:background="@color/colorBar_bg"
+    <android.support.v7.widget.CardView
+        android:layout_marginTop="36px"
+        android:layout_marginBottom="20px"
+        android:layout_marginLeft="36px"
+        app:cardElevation="6dp"
+        app:contentPadding="4px"
+        app:cardCornerRadius="10dp"
+        app:cardBackgroundColor="#c3000000"
+        android:layout_marginRight="30px"
         android:layout_width="match_parent"
-        android:layout_height="308px">
+        android:layout_weight="1"
+        android:layout_height="0dp">
+        <!--底部列表-->
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/dibuliebiao"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </android.support.v7.widget.RecyclerView>
+
+    </android.support.v7.widget.CardView>
+    </LinearLayout>
+
+    <!--阴影-->
+    <ImageView
+        android:background="#94000000"
+        android:elevation="7dp"
+        android:visibility="gone"
+        android:id="@+id/toumingbeijing"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!--//竖向列表-->
+    <megvii.testfacepass.view.SlowScrollView
+        android:id="@+id/scrollView"
+        android:elevation="7dp"
+        android:layout_marginTop="350px"
+        android:layout_marginBottom="340px"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:id="@+id/shu_liebiao"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </LinearLayout>
+    </megvii.testfacepass.view.SlowScrollView>
 
 
-    </android.support.v7.widget.RecyclerView>
-    
-
-
+    <!--一个列表-->
     <RelativeLayout
         android:orientation="horizontal"
         android:id="@+id/root_layout"
@@ -314,7 +379,7 @@
         android:layout_marginTop="30px"
         android:gravity="center"
         android:layout_width="match_parent"
-        android:layout_height="1000px">
+        android:layout_height="650px">
 
     </RelativeLayout>
 
