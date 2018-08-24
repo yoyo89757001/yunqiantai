@@ -138,7 +138,12 @@ public class CameraManager implements CameraPreview.CameraPreviewListener {
                         int count = Camera.getNumberOfCameras();
                         if (count > 0) {
                             cameraId = 0;
-                            camera = Camera.open(cameraId);
+                            try {
+                                camera = Camera.open(cameraId);
+                            }catch (Exception ee){
+                                ee.printStackTrace();
+                            }
+
                         } else {
                             cameraId = -1;
                             camera = null;

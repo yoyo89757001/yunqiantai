@@ -16,4 +16,6 @@ public class CommonData {
     public static Context mNowContext;
     public static MyApplication applicationContext;
     public static int ScreenWidth;
+
+
 }

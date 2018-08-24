@@ -78,39 +78,46 @@ public class CommonDialogService extends Service implements CommonDialogListener
     }
 
     private void showDialog(String a, String t, int p){
-        Log.d("CommonDialogService", "显示");
+        Log.d("CommonDialogService", "显示弹窗");
+
         if(dialog==null&&CommonData.mNowContext!=null){
           //  Log.d("CommonDialogService", "显示2");
-            dialog = new Dialog(CommonData.mNowContext,R.style.dialog_style);
-            view = LayoutInflater.from(this).inflate(R.layout.alldialog,null,false);
-            a1 =  view.findViewById(R.id.a1);
-            tishi =  view.findViewById(R.id.tishi);
-            button =  view.findViewById(R.id.guanbi);
-            button.setOnClickListener(new View.OnClickListener() {
+            handler.post(new Runnable() {
                 @Override
-                public void onClick(View v) {
-                    dialog.dismiss();
-                    dialog=null;
+                public void run() {
+                    dialog = new Dialog(CommonData.mNowContext,R.style.dialog_style);
+                    view = LayoutInflater.from(CommonData.mNowContext).inflate(R.layout.alldialog,null,false);
+                    a1 =  view.findViewById(R.id.a1);
+                    tishi =  view.findViewById(R.id.tishi);
+                    button =  view.findViewById(R.id.guanbi);
+                    button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                            dialog=null;
+                        }
+                    });
+
+
+                    progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
+                    dialog.setContentView(view);
+                    dialog.setCanceledOnTouchOutside(false);
+
+                    dialog.show();
+
+                    Window window= dialog.getWindow();
+                    if ( window != null) {
+                        WindowManager.LayoutParams attr = window.getAttributes();
+                        if (attr != null) {
+                            attr.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                            attr.width = ViewGroup.LayoutParams.WRAP_CONTENT;
+                            attr.gravity = Gravity.CENTER;//设置dialog 在布局中的位置
+                            dialog.getWindow().setAttributes(attr);
+                        }
+                    }
+
                 }
             });
-
-
-            progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
-            dialog.setContentView(view);
-            dialog.setCanceledOnTouchOutside(false);
-
-            dialog.show();
-
-            Window window= dialog.getWindow();
-            if ( window != null) {
-                WindowManager.LayoutParams attr = window.getAttributes();
-                if (attr != null) {
-                    attr.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-                    attr.width = ViewGroup.LayoutParams.WRAP_CONTENT;
-                    attr.gravity = Gravity.CENTER;//设置dialog 在布局中的位置
-                    dialog.getWindow().setAttributes(attr);
-                }
-            }
 
 //            WindowManager.LayoutParams lp = dialog.getWindow()
 //                    .getAttributes();
@@ -136,7 +143,7 @@ public class CommonDialogService extends Service implements CommonDialogListener
 
     @Override
     public void show(String a, String t, int p) {
-        Log.d("CommonDialogService", "机那里");
+       // Log.d("CommonDialogService", "机那里");
        showDialog(a,t,p);
     }
 

@@ -33,6 +33,7 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -69,6 +70,9 @@ import com.baidu.tts.client.SpeechSynthesizerListener;
 import com.baidu.tts.client.TtsMode;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.request.transition.Transition;
 import com.facebook.rebound.SimpleSpringListener;
 import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringConfig;
@@ -106,6 +110,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -133,6 +138,8 @@ import megvii.testfacepass.camera.CameraManager;
 import megvii.testfacepass.camera.CameraPreview;
 import megvii.testfacepass.camera.CameraPreviewData;
 import megvii.testfacepass.dialog.XiuGaiGaoKuanDialog;
+import megvii.testfacepass.dialogall.CommonDialogService;
+import megvii.testfacepass.dialogall.ToastUtils;
 import megvii.testfacepass.dialogall.XiuGaiListener;
 import megvii.testfacepass.ljkplay.widget.media.IjkVideoView;
 import megvii.testfacepass.tts.control.InitConfig;
@@ -358,19 +365,6 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
         registerReceiver(timeChangeReceiver, intentFilter);
         linkedBlockingQueue = new LinkedBlockingQueue<>();
 
-//        Glide.with(MainActivity.this).asBitmap().load("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1533547984004&di=a3ba6be979df968cadab9adbd37e8972&imgtype=0&src=http%3A%2F%2Fwww.777moto.com%2Fwp-content%2Fuploads%2F2014%2F09%2Fcvo_street_glide.jpg").into(new SimpleTarget<Bitmap>() {
-//            @Override
-//            public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
-//                Log.d("MainActivity", "resource:" + resource);
-//            }
-//
-//            @Override
-//            public void onLoadFailed(@Nullable Drawable errorDrawable) {
-//                super.onLoadFailed(errorDrawable);
-//                Log.d("MainActivity", "失败");
-//
-//            }
-//        });
         EventBus.getDefault().register(this);//订阅
         /* 初始化界面 */
         initView();
@@ -675,43 +669,42 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
                         break;
                     case 222: {
                         //后面没人的时候
-
-                        final View view = vipList.get(0).getView();
-
-                        final boolean[] kk = {true};
-                        List<Animator> animators = new ArrayList<>();//设置一个装动画的集合
-                        ObjectAnimator alphaAnim0 = ObjectAnimator.ofFloat(view, "translationY", 0, 600f);//设置透明度改变
-                        alphaAnim0.setDuration(800);//设置持续时间
-                        ObjectAnimator alphaAnim1 = ObjectAnimator.ofFloat(view, "translationX", 0, -400f);//设置透明度改变
-                        alphaAnim1.setDuration(800);//设置持续时间
-                        final ObjectAnimator alphaAnim = ObjectAnimator.ofFloat(view, "scaleX", 1f, 0.2f);//设置透明度改变
-                        alphaAnim.setDuration(800);//设置持续时间
-                        //alphaAnim.start();
-                        ObjectAnimator alphaAnim2 = ObjectAnimator.ofFloat(view, "scaleY", 1f, 0.15f);//设置透明度改变
-                        alphaAnim2.setDuration(720);//设置持续时间
-                        alphaAnim2.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                            @Override
-                            public void onAnimationUpdate(ValueAnimator animation) {
-                                //Log.d(TAG, "animation.getCurrentPlayTime():" + animation.getCurrentPlayTime());
-                                if (animation.getCurrentPlayTime() >= 580 && kk[0]) {
-                                    kk[0] = false;
-                                    //底部列表的
-                                    kk[0] = false;
-                                    //底部列表的
-                                    Subject s = vipList.get(0);
-                                    s.setShijian(DateUtils.timesTwodian(System.currentTimeMillis() + "") + "-" + DateUtils.timeMinute(System.currentTimeMillis() + ""));
-                                    dibuList.add(0, s);
-                                    diBuAdapter.notifyItemInserted(0);
-                                    gridLayoutManager.scrollToPosition(0);
-                                    if (dibuList.size() > 8) {
-                                        int si = dibuList.size() - 1;
-                                        dibuList.remove(si);
-                                        diBuAdapter.notifyItemRemoved(si);
-                                        //adapter.notifyItemChanged(1);
-                                        //adapter.notifyItemRangeChanged(1,tanchuangList.size());
-                                        //adapter.notifyDataSetChanged();
+                        if (vipList.size() > 0) {
+                            final View view = vipList.get(0).getView();
+                            final boolean[] kk = {true};
+                            List<Animator> animators = new ArrayList<>();//设置一个装动画的集合
+                            ObjectAnimator alphaAnim0 = ObjectAnimator.ofFloat(view, "translationY", 0, 600f);//设置透明度改变
+                            alphaAnim0.setDuration(800);//设置持续时间
+                            ObjectAnimator alphaAnim1 = ObjectAnimator.ofFloat(view, "translationX", 0, -400f);//设置透明度改变
+                            alphaAnim1.setDuration(800);//设置持续时间
+                            final ObjectAnimator alphaAnim = ObjectAnimator.ofFloat(view, "scaleX", 1f, 0.2f);//设置透明度改变
+                            alphaAnim.setDuration(800);//设置持续时间
+                            //alphaAnim.start();
+                            ObjectAnimator alphaAnim2 = ObjectAnimator.ofFloat(view, "scaleY", 1f, 0.15f);//设置透明度改变
+                            alphaAnim2.setDuration(720);//设置持续时间
+                            alphaAnim2.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                                @Override
+                                public void onAnimationUpdate(ValueAnimator animation) {
+                                    //Log.d(TAG, "animation.getCurrentPlayTime():" + animation.getCurrentPlayTime());
+                                    if (animation.getCurrentPlayTime() >= 580 && kk[0]) {
+                                        kk[0] = false;
+                                        //底部列表的
+                                        kk[0] = false;
+                                        //底部列表的
+                                        Subject s = vipList.get(0);
+                                        s.setShijian(DateUtils.timesTwodian(System.currentTimeMillis() + "") + "-" + DateUtils.timeMinute(System.currentTimeMillis() + ""));
+                                        dibuList.add(0, s);
+                                        diBuAdapter.notifyItemInserted(0);
                                         gridLayoutManager.scrollToPosition(0);
-                                    }
+                                        if (dibuList.size() > 8) {
+                                            int si = dibuList.size() - 1;
+                                            dibuList.remove(si);
+                                            diBuAdapter.notifyItemRemoved(si);
+                                            //adapter.notifyItemChanged(1);
+                                            //adapter.notifyItemRangeChanged(1,tanchuangList.size());
+                                            //adapter.notifyDataSetChanged();
+                                            gridLayoutManager.scrollToPosition(0);
+                                        }
 //                                    Subject subject = dibuList.get(0);
 //                                    if (subject == null)
 //                                        return;
@@ -730,44 +723,45 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
 //                                    } catch (FacePassException e) {
 //                                        e.printStackTrace();
 //                                    }
-                                    // scrollView.fullScroll(ScrollView.FOCUS_RIGHT);
-                                }
-                            }
-                        });
-                        alphaAnim2.addListener(new Animator.AnimatorListener() {
-                            @Override
-                            public void onAnimationStart(Animator animation) {
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-                                try {
-                                    view.setVisibility(View.GONE);
-                                    rootLayout.removeViewAt(0);
-                                    vipList.remove(0);
-                                    if (rootLayout.getChildCount()==0){
-                                        toumingbeijing.setVisibility(View.GONE);
+                                        // scrollView.fullScroll(ScrollView.FOCUS_RIGHT);
                                     }
-                                } catch (Exception e) {
-                                    Log.d("ggg", e.getMessage() + "");
                                 }
-                            }
+                            });
+                            alphaAnim2.addListener(new Animator.AnimatorListener() {
+                                @Override
+                                public void onAnimationStart(Animator animation) {
+                                }
 
-                            @Override
-                            public void onAnimationCancel(Animator animation) {
-                            }
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+                                    try {
+                                        view.setVisibility(View.GONE);
+                                        rootLayout.removeViewAt(0);
+                                        vipList.remove(0);
+                                        if (rootLayout.getChildCount() == 0) {
+                                            toumingbeijing.setVisibility(View.GONE);
+                                        }
+                                    } catch (Exception e) {
+                                        Log.d("ggg", e.getMessage() + "");
+                                    }
+                                }
 
-                            @Override
-                            public void onAnimationRepeat(Animator animation) {
-                            }
-                        });
-                        animators.add(alphaAnim0);
-                        animators.add(alphaAnim1);
-                        animators.add(alphaAnim);
-                        animators.add(alphaAnim2);
-                        AnimatorSet btnSexAnimatorSet = new AnimatorSet();//动画集
-                        btnSexAnimatorSet.playTogether(animators);//设置一起播放
-                        btnSexAnimatorSet.start();//开始播放
+                                @Override
+                                public void onAnimationCancel(Animator animation) {
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animator animation) {
+                                }
+                            });
+                            animators.add(alphaAnim0);
+                            animators.add(alphaAnim1);
+                            animators.add(alphaAnim);
+                            animators.add(alphaAnim2);
+                            AnimatorSet btnSexAnimatorSet = new AnimatorSet();//动画集
+                            btnSexAnimatorSet.playTogether(animators);//设置一起播放
+                            btnSexAnimatorSet.start();//开始播放
+                        }
 
                         break;
                     }
@@ -1440,7 +1434,7 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
 
 
                                 break;
-                            case "访客":{
+                            case "普通访客":{
                                 //普通访客
                                 Message message2 = Message.obtain();
                                 message2.what = 666;
@@ -1476,7 +1470,7 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
         @Override
         public void interrupt() {
             isRing = true;
-            Log.d("RecognizeThread", "中断了弹窗线程");
+           // Log.d("RecognizeThread", "中断了弹窗线程");
             super.interrupt();
         }
     }
@@ -2987,8 +2981,6 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
                         }
 
                     }
-
-
                     //  Toast.makeText(context, "1 min passed", Toast.LENGTH_SHORT).show();
                     break;
                 case Intent.ACTION_TIME_CHANGED:

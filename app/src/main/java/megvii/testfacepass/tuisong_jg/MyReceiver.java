@@ -63,11 +63,13 @@ import megvii.testfacepass.MyApplication;
 import megvii.testfacepass.beans.BaoCunBean;
 import megvii.testfacepass.beans.BenDiMBbean;
 import megvii.testfacepass.beans.BenDiMBbean_;
+import megvii.testfacepass.beans.FangKeBean;
 import megvii.testfacepass.beans.MOBan;
 import megvii.testfacepass.beans.RenYuanInFo;
 import megvii.testfacepass.beans.Subject;
 import megvii.testfacepass.beans.TuiSongBean;
 
+import megvii.testfacepass.dialogall.CommonData;
 import megvii.testfacepass.dialogall.ToastUtils;
 import megvii.testfacepass.utils.DateUtils;
 import megvii.testfacepass.utils.FileUtil;
@@ -108,7 +110,7 @@ public class MyReceiver extends BroadcastReceiver {
 	private Context context;
 	private final String SDPATH = Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator+"ruitongzip";
 	public static boolean isDW=true;
-
+	private FacePassHandler  facePassHandler;
 
 	@Override
 	public void onReceive(final Context context, Intent intent) {
@@ -122,7 +124,7 @@ public class MyReceiver extends BroadcastReceiver {
 			benDiMBbeanDao = MyApplication.myApplication.getBoxStore().boxFor(BenDiMBbean.class);
 			baoCunBean = baoCunBeanDao.get(123456L);
 			renYuanInFoDao = MyApplication.myApplication.getBoxStore().boxFor(RenYuanInFo.class);
-
+			facePassHandler=MyApplication.myApplication.getFacePassHandler();
 			Bundle bundle = intent.getExtras();
 		//	Logger.d(TAG, "[MyReceiver] onReceive - " + intent.getAction() + ", extras: " + printBundle(bundle));
 
@@ -286,10 +288,19 @@ public class MyReceiver extends BroadcastReceiver {
 				TuiSongBean renShu=gson.fromJson(jsonObject,TuiSongBean.class);
 				//1 新增 2修改//3是删除
 				switch (renShu.getTitle()){
-					case "访客入库":
-
-
+					case "单个访客入库":
+						link_dangeFangke(renShu.getId(),renShu.getStatus(),renShu.getUrl());
 						break;
+					case "单个访客删除":
+						link_dangeFangke(renShu.getId(),renShu.getStatus(),renShu.getUrl());
+						break;
+					case "单个访客修改":
+						link_dangeFangke(renShu.getId(),renShu.getStatus(),renShu.getUrl());
+						break;
+					case "单个人员入库"://员工
+						link_dangeYuanGong(renShu.getId(),renShu.getStatus(),renShu.getUrl());
+						break;
+
 					case "设备管理":
 						//先从老黄哪里拿门禁数据。
 						//link_getHouTaiMenJin(renShu.getContent().getId(),context,renShu.getContent().getStatus());
@@ -486,7 +497,7 @@ public class MyReceiver extends BroadcastReceiver {
 	//入库
 	public void getOkHttpClient3(final List<Subject> subjectList, final String trg){
 
-		                FacePassHandler  facePassHandler=MyApplication.myApplication.getFacePassHandler();
+
 		        		if (facePassHandler==null){
 							showNotifictionIcon(context,0,"识别模块初始化失败","识别模块初始化失败无法入库");
 		        			return;
@@ -891,7 +902,6 @@ public class MyReceiver extends BroadcastReceiver {
 
 
 
-
 	//从老黄后台拿单人信息
 	private void link_getHouTaiDanRen(int id, final Context context, final int status){
 		final MediaType JSON=MediaType.parse("application/json; charset=utf-8");
@@ -1052,10 +1062,191 @@ public class MyReceiver extends BroadcastReceiver {
 	}
 
 
+	//单个访客
+	private void link_dangeFangke(final String id, final int status, final String url){
+
+		//	final MediaType JSON=MediaType.parse("application/json; charset=utf-8");
+		OkHttpClient okHttpClient= new OkHttpClient();
+		//RequestBody requestBody = RequestBody.create(JSON, json);
+		RequestBody body = new FormBody.Builder()
+				.add("id",id)
+			//	.add("downloads","1")
+				.build();
+		Request.Builder requestBuilder = new Request.Builder()
+//				.header("Content-Type", "application/json")
+//				.header("user-agent","Koala Admin")
+				//.post(requestBody)
+				//.get()
+				.post(body)
+				.url(baoCunBean.getHoutaiDiZhi()+url);
+
+		// step 3：创建 Call 对象
+		Call call = okHttpClient.newCall(requestBuilder.build());
+		//step 4: 开始异步请求
+		call.enqueue(new Callback() {
+			@Override
+			public void onFailure(Call call, IOException e) {
+				Log.d("AllConnects", "请求失败"+e.getMessage());
+			}
+
+			@Override
+			public void onResponse(Call call, Response response) throws IOException {
+				Log.d("AllConnects", "请求成功"+call.request().toString());
+				//获得返回体
+				try{
+
+					ResponseBody body = response.body();
+					final String ss=body.string().trim();
+					Log.d("AllConnects", "单个访客"+ss);
+
+					JsonObject jsonObject= GsonUtil.parse(ss).getAsJsonObject();
+					Gson gson=new Gson();
+					final FangKeBean renShu=gson.fromJson(jsonObject,FangKeBean.class);
+					if (status!=3){
+						Bitmap bitmap=null;
+						try {
+							bitmap = Glide.with(context).asBitmap()
+									.load(baoCunBean.getHoutaiDiZhi().replace("/js/f","")+renShu.getPhoto())
+									// .sizeMultiplier(0.5f)
+									.submit(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+									.get();
+						} catch (InterruptedException | ExecutionException e) {
+							e.printStackTrace();
+						}
+						if (bitmap!=null) {
+							FacePassAddFaceResult faceResult = null;
+							try {
+								faceResult = facePassHandler.addFace(bitmap);
+								if (faceResult.result == 0) {
+									facePassHandler.bindGroup(group_name, faceResult.faceToken);
+									Subject subject = new Subject();
+									subject.setTeZhengMa(faceResult.faceToken);
+									subject.setId(Long.valueOf(renShu.getId()));
+									subject.setPeopleType(renShu.getPeopleType());
+									subject.setDaka(0);
+									subject.setBirthday(renShu.getBirthday());//访客的过期时间
+									subject.setName(renShu.getName());
+									subject.setEntryTime(renShu.getEntryTime());//访客的进入时间
+									subject.setPhone(renShu.getPhone());
+									subject.setEmail(renShu.getEmail());
+									subject.setRemark(renShu.getRemark());
+									subject.setPosition(renShu.getPosition());
+									subject.setWorkNumber(renShu.getWorkNumber());
+									subject.setStoreId(renShu.getStoreId());
+									subject.setStoreName(renShu.getStoreName());
+									subject.setCompanyId(renShu.getCompanyId());
+									subjectBox.put(subject);
+								}else {
+									showNotifictionIcon(context,0,"入库失败","图片不符合入库要求");
+								}
+
+								} catch(FacePassException e){
+									e.printStackTrace();
+								}
+						}else {
+							showNotifictionIcon(context,0,"入库失败","下载图片失败");
+						}
+
+					}else {
+						//删除
+						facePassHandler.deleteFace(subjectBox.get(Long.valueOf(id)).getTeZhengMa());
+						subjectBox.remove(Long.valueOf(id));
+					}
+
+				}catch (Exception e){
+					showNotifictionIcon(context, 0,"入库出错","出现异常"+e.getMessage());
+				}
+
+			}
+		});
+	}
 
 
-	//	<----------------------------------------------------------------------------------------------------------------------->
-	//批量人员操作
+	//单个员工
+	private void link_dangeYuanGong(final String id, final int status, final String url){
+
+		//	final MediaType JSON=MediaType.parse("application/json; charset=utf-8");
+		OkHttpClient okHttpClient= new OkHttpClient();
+		//RequestBody requestBody = RequestBody.create(JSON, json);
+		RequestBody body = new FormBody.Builder()
+				.add("id",id)
+				//	.add("downloads","1")
+				.build();
+		Request.Builder requestBuilder = new Request.Builder()
+//				.header("Content-Type", "application/json")
+//				.header("user-agent","Koala Admin")
+				//.post(requestBody)
+				//.get()
+				.post(body)
+				.url(baoCunBean.getHoutaiDiZhi()+url);
+
+		// step 3：创建 Call 对象
+		Call call = okHttpClient.newCall(requestBuilder.build());
+		//step 4: 开始异步请求
+		call.enqueue(new Callback() {
+			@Override
+			public void onFailure(Call call, IOException e) {
+				Log.d("AllConnects", "请求失败"+e.getMessage());
+			}
+
+			@Override
+			public void onResponse(Call call, Response response) throws IOException {
+				Log.d("AllConnects", "请求成功"+call.request().toString());
+				//获得返回体
+				try{
+
+					ResponseBody body = response.body();
+					final String ss=body.string().trim();
+					Log.d("AllConnects", "单个员工"+ss);
+
+					JsonObject jsonObject= GsonUtil.parse(ss).getAsJsonObject();
+					Gson gson=new Gson();
+					final Subject renShu=gson.fromJson(jsonObject,Subject.class);
+					if (status!=3){
+						Bitmap bitmap=null;
+						try {
+							bitmap = Glide.with(context).asBitmap()
+									.load(baoCunBean.getHoutaiDiZhi().replace("/js/f","")+renShu.getPhoto())
+									// .sizeMultiplier(0.5f)
+									.submit(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+									.get();
+						} catch (InterruptedException | ExecutionException e) {
+							e.printStackTrace();
+						}
+						if (bitmap!=null) {
+							FacePassAddFaceResult faceResult = null;
+							try {
+								faceResult = facePassHandler.addFace(bitmap);
+								if (faceResult.result == 0) {
+									facePassHandler.bindGroup(group_name, faceResult.faceToken);
+									renShu.setTeZhengMa(faceResult.faceToken);
+									renShu.setDaka(0);
+									subjectBox.put(renShu);
+								}else {
+									showNotifictionIcon(context,0,"入库失败","图片不符合入库要求");
+								}
+
+							} catch(FacePassException e){
+								e.printStackTrace();
+							}
+						}else {
+							showNotifictionIcon(context,0,"入库失败","下载图片失败");
+						}
+
+					}else {
+						//删除
+						facePassHandler.deleteFace(subjectBox.get(Long.valueOf(id)).getTeZhengMa());
+						subjectBox.remove(Long.valueOf(id));
+					}
+
+				}catch (Exception e){
+					showNotifictionIcon(context, 0,"入库出错","出现异常"+e.getMessage());
+				}
+
+			}
+		});
+	}
+
 
 	//从老黄后台拿批量信息
 	private void link_getHouTaiPiLiang(final int id, final Context context, final int status){
@@ -1176,9 +1367,8 @@ public class MyReceiver extends BroadcastReceiver {
 		try {
 			  bitmap = Glide.with(context).asBitmap()
 					.load(baoCunBean.getHoutaiDiZhi()+"/upload/compare/"+renYuanInFo.getPhoto_ids())
-
 					// .sizeMultiplier(0.5f)
-					.into(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+					.submit(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
 					.get();
 		} catch (InterruptedException | ExecutionException e) {
 			e.printStackTrace();
