@@ -332,7 +332,9 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
     private ClockView clockView;
     private DiBuAdapter diBuAdapter = null;
     private GridLayoutManager gridLayoutManager = new GridLayoutManager(MainActivity2.this, 2, LinearLayoutManager.HORIZONTAL, false);
-
+    private static final String authIP = "https://api-cn.faceplusplus.com";
+    private static final String apiKey = "CKbSYQqAuc5AzCMoOK-kbo9KaabtEciQ";
+    private static final String apiSecret = "HeZgW5ILE83nKkqF-QO5IqEEmeRxPgeI";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -383,8 +385,10 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
             requestPermission();
         } else {
             //初始化
-            FaceInit init = new FaceInit(getApplicationContext());
-            init.initFacePass();
+            FacePassHandler.getAuth(authIP, apiKey, apiSecret);
+            FacePassHandler.initSDK(getApplicationContext());
+           // FaceInit init = new FaceInit(getApplicationContext());
+           // init.initFacePass();
         }
 
         if (baoCunBean != null)
@@ -2866,8 +2870,7 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
                     int t = calendar.get(Calendar.HOUR_OF_DAY);
 
                     //每过一分钟 触发
-                    if (baoCunBean != null && !baoCunBean.getDangqianShiJian().equals(DateUtils.timesTwo(System.currentTimeMillis() + "")) && t >= 6) {
-
+                    if (baoCunBean != null && baoCunBean.getDangqianShiJian()!=null && !baoCunBean.getDangqianShiJian().equals(DateUtils.timesTwo(System.currentTimeMillis() + "")) && t >= 6) {
 
                         //一天请求一次
                         try {

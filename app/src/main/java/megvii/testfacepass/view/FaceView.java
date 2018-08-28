@@ -113,6 +113,9 @@ public class FaceView extends View {
         genders.clear();
     }
 
+
+
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
