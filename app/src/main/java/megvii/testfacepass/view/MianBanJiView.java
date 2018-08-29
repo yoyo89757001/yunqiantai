@@ -75,7 +75,8 @@ public class MianBanJiView extends View{
     private int mDensity=40;
     private int sqrtNumber;
     private Bitmap bitmap=null;
-
+    private String wenhou="";
+    private String name;
 
     public MianBanJiView(Context context) {
         super(context);
@@ -103,8 +104,9 @@ public class MianBanJiView extends View{
         this.time=time;
     }
 
-    public void setBitmap(Bitmap bitmap){
+    public void setBitmap(Bitmap bitmap,String name){
         this.bitmap=bitmap;
+        this.name=name;
     }
 
     private void initData(){
@@ -149,21 +151,23 @@ public class MianBanJiView extends View{
         paintYuanHuan.setAntiAlias(true);
 
         paintYuanHuan2.setStrokeWidth(2f);
-        paintYuanHuan2.setStyle(Paint.Style.STROKE);
-        paintYuanHuan2.setColor(Color.parseColor("#69ffffff"));
+        paintYuanHuan2.setStyle(Paint.Style.FILL);
+        paintYuanHuan2.setColor(Color.parseColor("#111111"));
 //        paintYuanHuan2.setStrokeCap(Paint.Cap.ROUND);
         paintYuanHuan2.setAntiAlias(true);
+      //  PorterDuffXfermode xfermode=new PorterDuffXfermode(PorterDuff.Mode.SRC_IN);
+      //  paintYuanHuan2.setXfermode(xfermode);
 
         // 添加第一个圆圈
         mRipples = new ArrayList<>();
         Circle c = new Circle(100, 255);
         mRipples.add(c);
 
-        paintBitmap.setARGB(255, 255, 255, 255);
-        paintBitmap.setStyle(Paint.Style.FILL);
+      //  paintBitmap.setARGB(255, 255, 255, 255);
+      //  paintBitmap.setStyle(Paint.Style.FILL);
         //  paint.setStrokeWidth(10.0f);
-        PorterDuffXfermode xfermode=new PorterDuffXfermode(PorterDuff.Mode.DST);
-        paintBitmap.setXfermode(xfermode);
+       // PorterDuffXfermode xfermode2=new PorterDuffXfermode(PorterDuff.Mode.SRC_IN);
+        //paintBitmap.setXfermode(xfermode2);
 
 
 
@@ -175,7 +179,7 @@ public class MianBanJiView extends View{
      * @param canvas
      */
     private void drawInCircle(Canvas canvas) {
-      //  canvas.save();
+        //canvas.save();
 
         // 处理每个圆的宽度和透明度
         for (int i = 0; i < mRipples.size(); i++) {
@@ -208,10 +212,10 @@ public class MianBanJiView extends View{
                 }
             }
         }
-        Log.d("MianBanJiView", "mRipples.size():" + mRipples.size());
+      //  Log.d("MianBanJiView", "mRipples.size():" + mRipples.size());
       //  invalidate();
 
-     //   canvas.restore();
+     //  canvas.restore();
     }
 
 
@@ -358,6 +362,20 @@ public class MianBanJiView extends View{
         });
         // 设置动画结束值
         spring3.setEndValue(1f);
+        //判断时间
+        int t= Integer.parseInt((time.split(" ")[1]).split(":")[0]);
+        if (t<10){
+            wenhou="早上好!";
+        }else if (t < 12){
+            wenhou="上午好!";
+        }else if (t < 14){
+            wenhou="中午好!";
+        }else if (t<18){
+            wenhou="下午好!";
+        }else {
+            wenhou="晚上好!";
+        }
+
 
     }
 
@@ -386,8 +404,19 @@ public class MianBanJiView extends View{
                     //识别模式
                  //   drawOutCircle(canvas);
                     drawInCircle(canvas);
-                    canvas.drawBitmap(bitmap,null,rectBitmap,paintBitmap);
-                    canvas.drawCircle(viewW / 2, (viewH / 2)+100, 100, paintYuanHuan2);
+                    ziPaint.setColor(Color.parseColor("#ffffff"));
+                    kuangPaint2.setColor(Color.parseColor("#69ffffff"));
+                    rectF3.set(0,0,viewW,200);
+                    canvas.drawRect(rectF3,kuangPaint3);
+                    //  canvas.drawRect(rectF,kuangPaint);
+                    canvas.drawRect(rectF2,kuangPaint2);
+                    float ss= ziPaint.measureText(wenhou+" 欢饮您 "+name);
+                    canvas.drawText(wenhou+" 欢饮您 "+name,(viewW/2)-(ss/2),120,ziPaint);
+                    float ss2= ziPaint.measureText("刷脸成功");
+                    ziPaint.setColor(Color.parseColor("#0d2cf9"));
+                    canvas.drawText("刷脸成功",(viewW/2)-(ss2/2),300,ziPaint);
+                    canvas.drawBitmap(bitmap,null,rectBitmap,null);
+
 
                     break;
                 case 2:
@@ -397,11 +426,11 @@ public class MianBanJiView extends View{
                     kuangPaint2.setColor(Color.parseColor("#eeffffff"));
                     canvas.drawRect(rectF2,kuangPaint2);
                     ziPaint.setColor(Color.parseColor("#FF4081"));
-                    float ss=ziPaint.measureText("无权限，请联系工作人员!!!");
-                    canvas.drawText("无权限，请联系工作人员!!!",(viewW/2)-(ss/2),120,ziPaint);
+                    float sss=ziPaint.measureText("无权限，请联系工作人员!!!");
+                    canvas.drawText("无权限，请联系工作人员!!!",(viewW/2)-(sss/2),120,ziPaint);
                     canvas.drawLine(10,jiaodu,viewW-10,jiaodu,paintSaoMiao);
 
-                    // 保存画布状态
+                    // 缩放动画会影响其他的界面，所以保存画布状态
                     canvas.save();
                     canvas.scale(yuanBanJing, yuanBanJing,viewW/2,(viewH/2+100));
                     canvas.drawCircle(viewW/2,(viewH/2+100),viewW/3,yuanPaint);
