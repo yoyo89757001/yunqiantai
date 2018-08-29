@@ -265,7 +265,7 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
 
     private WindowManager wm;
     /* SDK 实例对象 */
-    public static FacePassHandler mFacePassHandler;
+    public  FacePassHandler mFacePassHandler;
     /* 相机实例 */
     private CameraManager manager;
     /* 显示人脸位置角度信息 */
@@ -395,7 +395,8 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
             initialTts();
 
         if (baoCunBean != null) {
-            FacePassUtil.init(MainActivity2.this, getApplicationContext(), cameraRotation, baoCunBean);
+            FacePassUtil util=new FacePassUtil();
+            util.init(MainActivity2.this, getApplicationContext(), cameraRotation, baoCunBean);
         } else {
             Toast tastyToast = TastyToast.makeText(MainActivity2.this, "获取本地设置失败,请进入设置界面设置基本信息", TastyToast.LENGTH_LONG, TastyToast.INFO);
             tastyToast.setGravity(Gravity.CENTER, 0, 0);

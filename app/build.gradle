@@ -2,6 +2,11 @@ apply plugin: 'com.android.application'
 apply plugin: 'io.objectbox'
 android {
     compileSdkVersion 26
+    aaptOptions {
+                 cruncherEnabled = false
+                 useNewCruncher = false
+
+             }
     defaultConfig {
         applicationId "com.ruitong.yunqiantai"
         minSdkVersion 19
@@ -18,18 +23,18 @@ android {
                 cppFlags "-std=c++11 -frtti -fexceptions"
             }
         }
-        dexOptions {
-            preDexLibraries false
-
-            javaMaxHeapSize "3072m"
-        }
+//        dexOptions {
+//            preDexLibraries false
+//
+//            javaMaxHeapSize "3072m"
+//        }
     }
 
 
     buildTypes {
         release {
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled false
+          //  shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -54,11 +59,11 @@ dependencies {
     // implementation fileTree(dir: 'libs', include: ['*.jar'])
     //  implementation(name: 'FacePassAndroidSDK-trial', ext: 'aar')
     implementation(name: 'mylibrary-release', ext: 'aar')
-    implementation 'com.android.support:appcompat-v7:26.1.0'
+    //implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.liulishuo.filedownloader:library:1.7.4'
     //文件下载库
     implementation 'com.jakewharton:butterknife:8.8.1'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
+   // implementation 'com.android.support.constraint:constraint-layout:1.1.2'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     implementation 'com.google.code.gson:gson:2.8.0'
     implementation 'com.android.volley:volley:1.0.0'

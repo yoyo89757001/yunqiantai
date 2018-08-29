@@ -636,7 +636,7 @@ public class FileUtil {
         Log.d("FileUtil", "文件夹个数" + files.length);
 
         for (File _file : files) {//遍历目录
-            if(_file.isFile() && (_file.getName().endsWith("zip") )){
+            if(_file.isFile() && ((_file.getName().endsWith("jpg") )||(_file.getName().endsWith("png") || (_file.getName().endsWith("jpeg") )))){
                 String _name=_file.getName();
                 String filePath = _file.getAbsolutePath();//获取文件路径
                 //  String fileName = _file.getName().substring(0,_name.length()-4);//获取文件名

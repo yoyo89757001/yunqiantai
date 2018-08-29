@@ -39,7 +39,7 @@ import okhttp3.ResponseBody;
  */
 
 public class MyApplication extends Application implements Application.ActivityLifecycleCallbacks {
-    public FacePassHandler facePassHandler=null;
+    public  FacePassHandler facePassHandler=null;
     private static BoxStore mBoxStore;
     public static MyApplication myApplication;
     private Box<ChengShiIDBean> chengShiIDBeanBox;

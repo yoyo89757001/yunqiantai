@@ -17,9 +17,9 @@
 
         <megvii.testfacepass.camera.CameraPreview
             android:id="@+id/preview"
+            android:layout_centerInParent="true"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="visible"
             android:layout_gravity="center_vertical" />
 
 

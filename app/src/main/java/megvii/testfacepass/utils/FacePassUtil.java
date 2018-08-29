@@ -1,5 +1,6 @@
 package megvii.testfacepass.utils;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Environment;
@@ -22,19 +23,20 @@ import megvii.testfacepass.ui.MainActivity;
 
 
 public class FacePassUtil {
-   static FacePassModel trackModel;
-   static   FacePassModel poseModel;
-   static FacePassModel blurModel;
-   static FacePassModel livenessModel;
-   static   FacePassModel searchModel;
-   static FacePassModel detectModel;
-   static   FacePassModel ageGenderModel;
+  private   FacePassModel trackModel;
+  private     FacePassModel poseModel;
+ private    FacePassModel blurModel;
+private     FacePassModel livenessModel;
+   private    FacePassModel searchModel;
+   private FacePassModel detectModel;
+  private     FacePassModel ageGenderModel;
     /* SDK 实例对象 */
-  static   FacePassHandler mFacePassHandler;  /* 人脸识别Group */
-    private static final String group_name = "face-pass-test-x";
-    private static boolean isLocalGroupExist = false;
 
-    public static void init(final Activity activity , final Context context, final int cameraRotation, final BaoCunBean baoCunBean){
+ private    FacePassHandler mFacePassHandler;  /* 人脸识别Group */
+    private  final String group_name = "face-pass-test-x";
+    private  boolean isLocalGroupExist = false;
+
+    public  void init(final Activity activity , final Context context, final int cameraRotation, final BaoCunBean baoCunBean){
 
             new Thread() {
                 @Override
@@ -55,7 +57,7 @@ public class FacePassUtil {
                             boolean livenessEnabled = baoCunBean.isHuoTi();
                             int faceMinThreshold =baoCunBean.getShibieFaceSize();
                             FacePassPose poseThreshold = new FacePassPose(30f, 30f, 30f);
-                            float blurThreshold = 0.2f;
+                            float blurThreshold = 0.3f;
                             float lowBrightnessThreshold = 70f;
                             float highBrightnessThreshold = 210f;
                             float brightnessSTDThreshold = 60f;
@@ -129,7 +131,7 @@ public class FacePassUtil {
         }
 
 
-    private static void checkGroup(Activity activity, final Context context) {
+    private  void checkGroup(Activity activity, final Context context) {
         if (mFacePassHandler == null) {
             return;
         }

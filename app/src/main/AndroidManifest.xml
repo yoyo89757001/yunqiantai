@@ -196,7 +196,14 @@
             android:label="@string/app_name" >
         </service>
         <service android:name=".dialogall.CommonDialogService"/>
+        <receiver android:name=".ui.SheZhiActivity$UsbBroadCastReceiver">
+            <intent-filter android:priority="1000" >
+                <action android:name="android.intent.action.MEDIA_MOUNTED"/>
+                <action android:name="android.intent.action.MEDIA_EJECT" />
+                <data android:scheme="file"/>
+            </intent-filter>
 
+        </receiver>
     </application>
 
 </manifest>

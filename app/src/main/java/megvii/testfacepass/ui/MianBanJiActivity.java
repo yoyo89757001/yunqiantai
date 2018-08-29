@@ -23,7 +23,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 
@@ -252,7 +251,7 @@ public class MianBanJiActivity extends Activity implements CameraManager.CameraL
 
   //  private WindowManager wm;
     /* SDK 实例对象 */
-    public static FacePassHandler mFacePassHandler;
+    public  FacePassHandler mFacePassHandler;
     /* 相机实例 */
     private CameraManager manager;
     /* 显示人脸位置角度信息 */
@@ -278,8 +277,8 @@ public class MianBanJiActivity extends Activity implements CameraManager.CameraL
      * }
      */
     private int cameraRotation;
-    private static final int cameraWidth = 1280;
-    private static final int cameraHeight = 720;
+    private static final int cameraWidth = 1920;
+    private static final int cameraHeight = 1080;
     // private int mSecretNumber = 0;
     // private static final long CLICK_INTERVAL = 500;
     //  private long mLastClickTime;
@@ -382,7 +381,8 @@ public class MianBanJiActivity extends Activity implements CameraManager.CameraL
             initialTts();
 
         if (baoCunBean != null) {
-            FacePassUtil.init(MianBanJiActivity.this, getApplicationContext(), cameraRotation, baoCunBean);
+            FacePassUtil util=new FacePassUtil();
+            util.init(MianBanJiActivity.this, getApplicationContext(), cameraRotation, baoCunBean);
         } else {
             Toast tastyToast = TastyToast.makeText(MianBanJiActivity.this, "获取本地设置失败,请进入设置界面设置基本信息", TastyToast.LENGTH_LONG, TastyToast.INFO);
             tastyToast.setGravity(Gravity.CENTER, 0, 0);
@@ -1312,15 +1312,15 @@ public class MianBanJiActivity extends Activity implements CameraManager.CameraL
                                                // linkedBlockingQueue.offer(subject);
                                                 mianBanJiView.setBitmap(FileUtil.toRoundBitmap(mFacePassHandler.getFaceImage(result.faceToken)),subject.getName());
                                                 mianBanJiView.setType(1);
-                                                link_shangchuanjilu(subject);
+                                              //  link_shangchuanjilu(subject);
                                             } else {
                                                 EventBus.getDefault().post("没有查询到人员信息");
-                                                Subject subject1 = new Subject();
-                                                subject1.setId(12345);
-                                                subject1.setName("测试");
-                                                subject1.setTeZhengMa(result.faceToken);
-                                                subject1.setPeopleType("白名单");
-                                                subjectBox.put(subject1);
+//                                                Subject subject1 = new Subject();
+//                                                subject1.setId(12345);
+//                                                subject1.setName("测试");
+//                                                subject1.setTeZhengMa(result.faceToken);
+//                                                subject1.setPeopleType("白名单");
+//                                                subjectBox.put(subject1);
                                             }
 
                                         } catch (FacePassException e) {
@@ -1329,8 +1329,6 @@ public class MianBanJiActivity extends Activity implements CameraManager.CameraL
 
                                     }
                                 });
-
-
 
                             } else {
                                 //未识别的
@@ -1893,7 +1891,7 @@ public class MianBanJiActivity extends Activity implements CameraManager.CameraL
 
         super.onDestroy();
     }
-
+//3753
 
     private void showFacePassFace(FacePassFace[] detectResult) {
         final FacePassFace[] result = detectResult;

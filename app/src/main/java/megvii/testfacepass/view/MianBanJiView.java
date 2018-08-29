@@ -110,9 +110,9 @@ public class MianBanJiView extends View{
     }
 
     private void initData(){
-        paintSaoMiao.setColor(Color.parseColor("#566af2"));
+        paintSaoMiao.setColor(Color.parseColor("#661b37d6"));
         paintSaoMiao.setStyle(Paint.Style.FILL);
-        paintSaoMiao.setStrokeWidth(3.0f);
+        paintSaoMiao.setStrokeWidth(14.0f);
 
         kuangPaint.setColor(Color.parseColor("#ffffff"));
         kuangPaint.setStyle(Paint.Style.STROKE);
@@ -298,7 +298,7 @@ public class MianBanJiView extends View{
         rectF.set(10,50,viewW-10,150);
         rectF2.set(0,50,viewW,150);
         rectF3.set(0,0,viewW,200);
-        rectBitmap.set(viewW / 2-100,(viewH / 2),viewW / 2+100,(viewH / 2)+200);
+        rectBitmap.set(viewW / 2-150,(viewH / 2)-50,viewW / 2+150,(viewH / 2)+250);
         tanhao1.set(viewW/2-26,(viewH/2+100)-viewW/3+50,viewW/2+26,(viewH/2+100)+viewW/3-140);
         tanhao2.set(viewW/2-26,(viewH/2+100)+viewW/3-122,viewW/2+26,(viewH/2+100)+viewW/3-70);
         tishiRect.set(0,viewH-140,viewW,viewH-40);
@@ -396,7 +396,7 @@ public class MianBanJiView extends View{
                   //  canvas.drawRect(rectF,kuangPaint);
                     canvas.drawRect(rectF2,kuangPaint2);
                     canvas.drawText(time,(viewW/2)-(ziWith/2),120,ziPaint);
-                    canvas.drawLine(10,jiaodu,viewW-10,jiaodu,paintSaoMiao);
+                    canvas.drawLine(0,jiaodu,viewW,jiaodu,paintSaoMiao);
 
 
                     break;
@@ -428,7 +428,7 @@ public class MianBanJiView extends View{
                     ziPaint.setColor(Color.parseColor("#FF4081"));
                     float sss=ziPaint.measureText("无权限，请联系工作人员!!!");
                     canvas.drawText("无权限，请联系工作人员!!!",(viewW/2)-(sss/2),120,ziPaint);
-                    canvas.drawLine(10,jiaodu,viewW-10,jiaodu,paintSaoMiao);
+                    canvas.drawLine(0,jiaodu,viewW,jiaodu,paintSaoMiao);
 
                     // 缩放动画会影响其他的界面，所以保存画布状态
                     canvas.save();

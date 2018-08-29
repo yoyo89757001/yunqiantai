@@ -1,7 +1,10 @@
 package megvii.testfacepass.ui;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,6 +28,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONArray;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,19 +36,26 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.objectbox.Box;
+import megvii.facepass.FacePassException;
+import megvii.facepass.FacePassHandler;
 import megvii.facepass.ruitong.FaceInit;
+import megvii.facepass.types.FacePassAddFaceResult;
 import megvii.testfacepass.MyApplication;
 import megvii.testfacepass.R;
 import megvii.testfacepass.beans.BaoCunBean;
 import megvii.testfacepass.beans.ChengShiIDBean;
 import megvii.testfacepass.beans.JsonBean;
+import megvii.testfacepass.beans.Subject;
 import megvii.testfacepass.dialog.BangDingDialog;
 import megvii.testfacepass.dialog.XiuGaiDiZhiDialog;
 import megvii.testfacepass.dialog.XiuGaiHuoTiFZDialog;
 import megvii.testfacepass.dialog.XiuGaiRuKuFZDialog;
 import megvii.testfacepass.dialog.XiuGaiSBFZDialog;
 import megvii.testfacepass.dialog.YuYingDialog;
+import megvii.testfacepass.dialogall.ToastUtils;
+import megvii.testfacepass.utils.FacePassUtil;
 import megvii.testfacepass.utils.FileUtil;
+import megvii.testfacepass.utils.SettingVar;
 import okhttp3.OkHttpClient;
 
 
@@ -71,7 +82,11 @@ public class SheZhiActivity extends Activity {
     TextView chengshi;
     @BindView(R.id.rl9)
     RelativeLayout rl9;
+    @BindView(R.id.r20)
+    RelativeLayout r20;
 
+    private int cameraRotation;
+    private static final String group_name = "face-pass-test-x";
     private Box<BaoCunBean> baoCunBeanDao = null;
     private BaoCunBean baoCunBean = null;
     public OkHttpClient okHttpClient = null;
@@ -79,6 +94,9 @@ public class SheZhiActivity extends Activity {
     private ArrayList<ArrayList<String>> options2Items = new ArrayList<>();//市
     private ArrayList<ArrayList<ArrayList<String>>> options3Items = new ArrayList<>();//区
     private Box<ChengShiIDBean> chengShiIDBeanBox;
+    private static String usbPath = null;
+    private int shibai;
+    private Box<Subject> subjectBox=MyApplication.myApplication.getBoxStore().boxFor(Subject.class);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,11 +161,16 @@ public class SheZhiActivity extends Activity {
             }
         }).start();
 
+        if (SettingVar.isSettingAvailable) {
+            cameraRotation = SettingVar.faceRotation;
+        }
 
+        FacePassUtil util=new FacePassUtil();
+        util.init(SheZhiActivity.this, getApplicationContext(), cameraRotation, baoCunBean);
     }
 
 
-    @OnClick({R.id.rl1, R.id.rl2, R.id.rl3, R.id.rl4, R.id.rl5, R.id.rl6, R.id.rl7, R.id.rl8,R.id.rl9})
+    @OnClick({R.id.rl1, R.id.rl2, R.id.rl3, R.id.rl4, R.id.rl5, R.id.rl6, R.id.rl7, R.id.rl8, R.id.rl9,R.id.r20})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.rl1:
@@ -290,6 +313,56 @@ public class SheZhiActivity extends Activity {
 
                 break;
 
+            case R.id.r20:
+                if (usbPath!=null){
+
+                    ToastUtils.getInstances().showDialog("获取图片","获取图片",0);
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            List<String> strings=new ArrayList<>();
+                            FileUtil.getAllFiles(usbPath+ File.separator+"入库照片2",strings);
+                            FacePassHandler facePassHandler=MyApplication.myApplication.getFacePassHandler();
+                            Log.d("SheZhiActivity", "facePassHandler:" + facePassHandler);
+                            int size=strings.size();
+                            for (int i=0;i<size;i++){
+
+                                try {
+                                    String sp=strings.get(i);
+                                    Log.d("SheZhiActivity", sp);
+                                    Log.d("SheZhiActivity", "BitmapFactory.decodeFile(sp):" + BitmapFactory.decodeFile(sp));
+                                    FacePassAddFaceResult result= facePassHandler.addFace(BitmapFactory.decodeFile(sp));
+                                    if (result.result==0){
+                                        facePassHandler.bindGroup(group_name,result.faceToken);
+                                        Subject subject=new Subject();
+                                        int oo=sp.length();
+                                        subject.setName(sp.substring(oo-6,oo-1));
+                                        subject.setTeZhengMa(result.faceToken);
+                                        subject.setId(System.currentTimeMillis());
+                                        subjectBox.put(subject);
+
+                                    }else {
+                                        shibai++;
+                                    }
+
+                                    ToastUtils.getInstances().showDialog("入库中","失败了:"+shibai,(i/size)*100);
+                                } catch (FacePassException e) {
+                                    e.printStackTrace();
+                                }
+
+                            }
+
+
+                        }
+
+                    }).start();
+
+
+
+                }
+
+                break;
+
         }
     }
 
@@ -303,7 +376,7 @@ public class SheZhiActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);//解除订阅
-        startActivity(new Intent(SheZhiActivity.this, MainActivity2.class));
+        startActivity(new Intent(SheZhiActivity.this, MianBanJiActivity.class));
     }
 
 //    //绑定
@@ -511,6 +584,36 @@ public class SheZhiActivity extends Activity {
         pvOptions.setPicker(options1Items, options2Items);//二级选择器*/
         pvOptions.setPicker(options1Items, options2Items, options3Items);//三级选择器
         pvOptions.show();
+    }
+
+
+
+
+    public static class UsbBroadCastReceiver extends BroadcastReceiver {
+
+        public UsbBroadCastReceiver() {
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            if (intent.getAction() != null && intent.getAction().equals("android.intent.action.MEDIA_MOUNTED")) {
+                usbPath = intent.getData().getPath();
+                List<String> sss = FileUtil.getMountPathList();
+                int size = sss.size();
+                for (int i = 0; i < size; i++) {
+
+                    if (sss.get(i).contains(usbPath)) {
+                        usbPath = sss.get(i);
+                    }
+
+                }
+
+                Log.d("UsbBroadCastReceiver", usbPath);
+            }
+
+
+        }
     }
 
 
