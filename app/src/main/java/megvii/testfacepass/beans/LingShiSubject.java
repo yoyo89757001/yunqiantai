@@ -1,49 +1,7 @@
 package megvii.testfacepass.beans;
 
-import android.view.View;
+public class LingShiSubject {
 
-import java.util.Comparator;
-
-import io.objectbox.annotation.Entity;
-import io.objectbox.annotation.Id;
-import io.objectbox.annotation.Transient;
-
-/**
- * Created by Administrator on 2018/5/31.
- */
-@Entity
-public class Subject implements Comparator<Subject> {
-    public Subject() {
-    }
-
-    public Subject(long id, String sid, String name, String companyId, String companyName, String workNumber, String sex, String phone, String peopleType, String email, String position, int employeeStatus, int quitType, String remark, String photo, String storeId, String storeName, String entryTime, String birthday, byte[] teZhengMa, String departmentName, int daka, String shijian, View view) {
-        this.id = id;
-        this.sid = sid;
-        this.name = name;
-        this.companyId = companyId;
-        this.companyName = companyName;
-        this.workNumber = workNumber;
-        this.sex = sex;
-        this.phone = phone;
-        this.peopleType = peopleType;
-        this.email = email;
-        this.position = position;
-        this.employeeStatus = employeeStatus;
-        this.quitType = quitType;
-        this.remark = remark;
-        this.photo = photo;
-        this.storeId = storeId;
-        this.storeName = storeName;
-        this.entryTime = entryTime;
-        this.birthday = birthday;
-        this.teZhengMa = teZhengMa;
-        this.departmentName = departmentName;
-        this.daka = daka;
-        this.shijian = shijian;
-        this.view = view;
-    }
-
-    @Id(assignable = true)
     private long id;
     private String sid;
     private String name;// 姓名
@@ -68,47 +26,12 @@ public class Subject implements Comparator<Subject> {
     private int daka;
     private String shijian;
 
-    public String getShijian() {
-        return shijian;
+    public long getId() {
+        return id;
     }
 
-    public void setShijian(String shijian) {
-        this.shijian = shijian;
-    }
-
-    public int getDaka() {
-        return daka;
-    }
-
-    public void setDaka(int daka) {
-        this.daka = daka;
-    }
-
-    @Transient
-    private View view;
-
-    public View getView() {
-        return view;
-    }
-
-    public void setView(View view) {
-        this.view = view;
-    }
-
-    public String getDepartmentName() {
-        return departmentName;
-    }
-
-    public void setDepartmentName(String departmentName) {
-        this.departmentName = departmentName;
-    }
-
-    public byte[] getTeZhengMa() {
-        return teZhengMa;
-    }
-
-    public void setTeZhengMa(byte[] teZhengMa) {
-        this.teZhengMa = teZhengMa;
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getSid() {
@@ -117,14 +40,6 @@ public class Subject implements Comparator<Subject> {
 
     public void setSid(String sid) {
         this.sid = sid;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -263,8 +178,35 @@ public class Subject implements Comparator<Subject> {
         this.birthday = birthday;
     }
 
-    @Override
-    public int compare(Subject o1, Subject o2) {
-        return o1.getSid().compareTo(o2.getSid());
+    public byte[] getTeZhengMa() {
+        return teZhengMa;
+    }
+
+    public void setTeZhengMa(byte[] teZhengMa) {
+        this.teZhengMa = teZhengMa;
+    }
+
+    public String getDepartmentName() {
+        return departmentName;
+    }
+
+    public void setDepartmentName(String departmentName) {
+        this.departmentName = departmentName;
+    }
+
+    public int getDaka() {
+        return daka;
+    }
+
+    public void setDaka(int daka) {
+        this.daka = daka;
+    }
+
+    public String getShijian() {
+        return shijian;
+    }
+
+    public void setShijian(String shijian) {
+        this.shijian = shijian;
     }
 }

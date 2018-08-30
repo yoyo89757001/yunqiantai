@@ -1,6 +1,6 @@
 package megvii.testfacepass.utils;
 
-import android.annotation.SuppressLint;
+
 import android.app.Activity;
 import android.content.Context;
 import android.os.Environment;
@@ -19,7 +19,7 @@ import megvii.facepass.types.FacePassModel;
 import megvii.facepass.types.FacePassPose;
 import megvii.testfacepass.MyApplication;
 import megvii.testfacepass.beans.BaoCunBean;
-import megvii.testfacepass.ui.MainActivity;
+
 
 
 public class FacePassUtil {

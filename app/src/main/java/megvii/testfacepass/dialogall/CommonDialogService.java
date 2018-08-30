@@ -31,9 +31,9 @@ import megvii.testfacepass.beans.Tishi;
 public class CommonDialogService extends Service implements CommonDialogListener {
 
     private static Dialog dialog;
-    private static TextView a1,tishi;
+    private  TextView a1,tishi;
 //    private static ImageView img_loading;
-    private static View view;
+    private  View view;
 //    private static AnimationDrawable animationDrawable;
     private ProgressBar progressBar;
     private Button button;
@@ -51,7 +51,6 @@ public class CommonDialogService extends Service implements CommonDialogListener
                     progressBar.setProgress(tishi1.getP());
                 }
             }
-
             return false;
         }
     });
@@ -78,7 +77,7 @@ public class CommonDialogService extends Service implements CommonDialogListener
     }
 
     private void showDialog(String a, String t, int p){
-        Log.d("CommonDialogService", "显示弹窗");
+      //  Log.d("CommonDialogService", "显示弹窗");
 
         if(dialog==null&&CommonData.mNowContext!=null){
           //  Log.d("CommonDialogService", "显示2");
@@ -98,11 +97,9 @@ public class CommonDialogService extends Service implements CommonDialogListener
                         }
                     });
 
-
                     progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
                     dialog.setContentView(view);
                     dialog.setCanceledOnTouchOutside(false);
-
                     dialog.show();
 
                     Window window= dialog.getWindow();
@@ -126,12 +123,22 @@ public class CommonDialogService extends Service implements CommonDialogListener
 //
 //            lp.height = ViewGroup.LayoutParams.WRAP_CONTENT;
 
-        }else {
             Tishi tishi=new Tishi();
             tishi.setA(a);
             tishi.setP(p);
             tishi.setTishi(t);
 
+            Message message= Message.obtain();
+            message.what=111;
+            message.obj=tishi;
+            handler.sendMessage(message);
+
+        }else {
+
+            Tishi tishi=new Tishi();
+            tishi.setA(a);
+            tishi.setP(p);
+            tishi.setTishi(t);
 
             Message message= Message.obtain();
             message.what=111;

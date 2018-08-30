@@ -33,7 +33,7 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -70,9 +70,6 @@ import com.baidu.tts.client.SpeechSynthesizerListener;
 import com.baidu.tts.client.TtsMode;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.target.Target;
-import com.bumptech.glide.request.transition.Transition;
 import com.facebook.rebound.SimpleSpringListener;
 import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringConfig;
@@ -110,7 +107,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ExecutionException;
+
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -138,8 +135,6 @@ import megvii.testfacepass.camera.CameraManager;
 import megvii.testfacepass.camera.CameraPreview;
 import megvii.testfacepass.camera.CameraPreviewData;
 import megvii.testfacepass.dialog.XiuGaiGaoKuanDialog;
-import megvii.testfacepass.dialogall.CommonDialogService;
-import megvii.testfacepass.dialogall.ToastUtils;
 import megvii.testfacepass.dialogall.XiuGaiListener;
 import megvii.testfacepass.ljkplay.widget.media.IjkVideoView;
 import megvii.testfacepass.tts.control.InitConfig;
@@ -333,8 +328,7 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
     private DiBuAdapter diBuAdapter = null;
     private GridLayoutManager gridLayoutManager = new GridLayoutManager(MainActivity2.this, 2, LinearLayoutManager.HORIZONTAL, false);
     private static final String authIP = "https://api-cn.faceplusplus.com";
-    private static final String apiKey = "CKbSYQqAuc5AzCMoOK-kbo9KaabtEciQ";
-    private static final String apiSecret = "HeZgW5ILE83nKkqF-QO5IqEEmeRxPgeI";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -387,7 +381,8 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
             //初始化
             FacePassHandler.getAuth(authIP, apiKey, apiSecret);
             FacePassHandler.initSDK(getApplicationContext());
-           // FaceInit init = new FaceInit(getApplicationContext());
+            Log.d("MainActivity2", FacePassHandler.getVersion());
+          //  FaceInit init = new FaceInit(getApplicationContext());
            // init.initFacePass();
         }
 

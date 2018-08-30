@@ -64,12 +64,12 @@ import megvii.testfacepass.beans.BaoCunBean;
 import megvii.testfacepass.beans.BenDiMBbean;
 import megvii.testfacepass.beans.BenDiMBbean_;
 import megvii.testfacepass.beans.FangKeBean;
+import megvii.testfacepass.beans.LingShiSubject;
 import megvii.testfacepass.beans.MOBan;
 import megvii.testfacepass.beans.RenYuanInFo;
 import megvii.testfacepass.beans.Subject;
 import megvii.testfacepass.beans.TuiSongBean;
 
-import megvii.testfacepass.dialogall.CommonData;
 import megvii.testfacepass.dialogall.ToastUtils;
 import megvii.testfacepass.utils.DateUtils;
 import megvii.testfacepass.utils.FileUtil;
@@ -221,7 +221,7 @@ public class MyReceiver extends BroadcastReceiver {
 										isDW=false;
 										if (task.getUrl().equals(path2)){
 										//	Log.d(TAG, totalBytes+"KB");
-											showNotifictionIcon(context,((float)soFarBytes/(float) totalBytes)*100,"下载中","下载人脸库中"+((float)soFarBytes/(float) totalBytes)*100+"%");
+											showNotifictionIcon(((float)soFarBytes/(float) totalBytes)*100,"下载中","下载人脸库中"+((float)soFarBytes/(float) totalBytes)*100+"%");
 										}
 									}
 
@@ -249,7 +249,7 @@ public class MyReceiver extends BroadcastReceiver {
 											if (!file.exists()) {
 												Log.d(TAG, "创建文件状态:" + file.mkdir());
 											}
-											showNotifictionIcon(context,0,"解压中","解压人脸库中");
+											showNotifictionIcon(0,"解压中","解压人脸库中");
 											jieya(SDPATH+ File.separator+task.getFilename(),ss);
 
 											Log.d(TAG, "task.isRunning():" + task.isRunning()+ task.getFilename());
@@ -271,7 +271,7 @@ public class MyReceiver extends BroadcastReceiver {
 
 											Log.d(TAG, "task.isRunning():" + task.getFilename()+"失败"+e);
 										}
-										showNotifictionIcon(context,0,"下载失败",""+e);
+										showNotifictionIcon(0,"下载失败",""+e);
 									}
 
 									@Override
@@ -389,7 +389,7 @@ public class MyReceiver extends BroadcastReceiver {
 //	}
 
 
-	public static void showNotifictionIcon(Context context, float p, String title, String contextss) {
+	public static void showNotifictionIcon(float p, String title, String contextss) {
 		//Log.d(TAG, "尽量");
 
 		ToastUtils.getInstances().showDialog(title,contextss, (int) p);
@@ -441,16 +441,16 @@ public class MyReceiver extends BroadcastReceiver {
 			}
 		} catch (final ZipException e) {
 
-			showNotifictionIcon(context,0,"解压失败",e.getMessage()+"");
+			showNotifictionIcon(0,"解压失败",e.getMessage()+"");
 		}
 		//   UnZipfile.getInstance(SheZhiActivity.this).unZip(zz,trg,zipHandler);
 
 		//拿到XML
-		showNotifictionIcon(context,0,"解析XML中","解析XML中。。。。");
+		showNotifictionIcon(0,"解析XML中","解析XML中。。。。");
 		List<String> xmls=new ArrayList<>();
 		final List<String> xmlList= FileUtil.getAllFileXml(path222,xmls);
 		if (xmlList==null || xmlList.size()==0){
-			showNotifictionIcon(context,0,"没有找到Xml文件","没有找到Xml文件。。。。");
+			showNotifictionIcon(0,"没有找到Xml文件","没有找到Xml文件。。。。");
 			return;
 		}
 		//解析XML
@@ -483,12 +483,12 @@ public class MyReceiver extends BroadcastReceiver {
 				Log.d("ffffff", "size:" + size);
 
 			}else {
-				showNotifictionIcon(context,0,"解析失败","人脸库XML解析失败");
+				showNotifictionIcon(0,"解析失败","人脸库XML解析失败");
 
 			}
 
 		} catch (Exception e) {
-			showNotifictionIcon(context,0,"解析失败","人脸库XML解析异常");
+			showNotifictionIcon(0,"解析失败","人脸库XML解析异常");
 			Log.d("SheZhiActivity", e.getMessage()+"解析XML异常");
 		}
 
@@ -499,7 +499,7 @@ public class MyReceiver extends BroadcastReceiver {
 
 
 		        		if (facePassHandler==null){
-							showNotifictionIcon(context,0,"识别模块初始化失败","识别模块初始化失败无法入库");
+							showNotifictionIcon(0,"识别模块初始化失败","识别模块初始化失败无法入库");
 		        			return;
 						}
 						final int size=subjectList.size();
@@ -535,17 +535,28 @@ public class MyReceiver extends BroadcastReceiver {
 
 							//  Log.d("SheZhiActivity", "循环到"+j);
 
-							showNotifictionIcon(context, (int) ((j / (float) size) * 100),"入库中","入库中"+(int) ((j / (float) size) * 100)+"%");
+							showNotifictionIcon((int) ((j / (float) size) * 100),"入库中","入库中"+(int) ((j / (float) size) * 100)+"%");
 							if (filePath!=null){
 								try {
 
 									FacePassAddFaceResult faceResult= facePassHandler.addFace(BitmapFactory.decodeFile(filePath));
 									if (faceResult.result==0){
+										//先查询有没有
+										Subject ee= subjectBox.get(subjectList.get(j).getId());
+										if (ee!=null){
+											//重复编辑会导致旷视底库图片增多，所以先删除旷视的
+											if (ee.getTeZhengMa()!=null){
+											boolean bb=facePassHandler.deleteFace(ee.getTeZhengMa());
+												Log.d("MyRecriver", "批量入库中,删除已有的底库" + bb);
+											}
+
+										}
 										facePassHandler.bindGroup(group_name,faceResult.faceToken);
 										subjectList.get(j).setTeZhengMa(faceResult.faceToken);
 										subjectList.get(j).setDaka(0);
 										subjectBox.put(subjectList.get(j));
-										Log.d(TAG,"入库成功："+ subjectList.get(j).getName());
+
+										Log.d(TAG,"批量入库成功："+ subjectList.get(j).getId());
 
 									}else {
 										stringBuilder2.append("入库添加图片失败:").append("ID:")
@@ -592,14 +603,14 @@ public class MyReceiver extends BroadcastReceiver {
 
 							try {
 								FileUtil.savaFileToSD("失败记录"+DateUtils.timesOne(System.currentTimeMillis()+"")+".txt",ss);
-								showNotifictionIcon(context, 0,"入库完成","有失败的记录,已保存到本地根目录");
+								showNotifictionIcon(0,"入库完成","有失败的记录,已保存到本地根目录");
 								stringBuilder2.delete(0, stringBuilder2.length());
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
 
 						}else {
-							showNotifictionIcon(context, 0,"入库完成","全部入库成功，没有失败记录");
+							showNotifictionIcon(0,"入库完成","全部入库成功，没有失败记录");
 						}
 					}
 
@@ -731,7 +742,7 @@ public class MyReceiver extends BroadcastReceiver {
 
 
 	public List<Subject> pull2xml(InputStream is) throws Exception {
-		Log.d(TAG, "jiexi 111");
+		//Log.d(TAG, "jiexi 111");
 		List<Subject> list  = new ArrayList<>();;
 		Subject student = null;
 		//创建xmlPull解析器
@@ -1118,6 +1129,14 @@ public class MyReceiver extends BroadcastReceiver {
 							try {
 								faceResult = facePassHandler.addFace(bitmap);
 								if (faceResult.result == 0) {
+									//先查询有没有
+									Subject ee= subjectBox.get(Long.valueOf(renShu.getId()));
+									if (ee!=null){
+										//重复编辑会导致旷视底库图片增多，所以先删除旷视的
+										if (ee.getTeZhengMa()!=null)
+										Log.d("MyReceiver", "删除已有的访客底库"+facePassHandler.deleteFace(ee.getTeZhengMa()));
+									}
+
 									facePassHandler.bindGroup(group_name, faceResult.faceToken);
 									Subject subject = new Subject();
 									subject.setTeZhengMa(faceResult.faceToken);
@@ -1136,25 +1155,27 @@ public class MyReceiver extends BroadcastReceiver {
 									subject.setStoreName(renShu.getStoreName());
 									subject.setCompanyId(renShu.getCompanyId());
 									subjectBox.put(subject);
+									Log.d("MyReceiver", "单个访客入库成功");
 								}else {
-									showNotifictionIcon(context,0,"入库失败","图片不符合入库要求");
+									showNotifictionIcon(0,"入库失败","图片不符合入库要求 "+renShu.getName());
 								}
 
 								} catch(FacePassException e){
 									e.printStackTrace();
 								}
 						}else {
-							showNotifictionIcon(context,0,"入库失败","下载图片失败");
+							showNotifictionIcon(0,"入库失败","下载图片失败 "+renShu.getName());
 						}
 
 					}else {
 						//删除
 						facePassHandler.deleteFace(subjectBox.get(Long.valueOf(id)).getTeZhengMa());
 						subjectBox.remove(Long.valueOf(id));
+						Log.d("MyReceiver", "单个访客删除成功");
 					}
 
 				}catch (Exception e){
-					showNotifictionIcon(context, 0,"入库出错","出现异常"+e.getMessage());
+					showNotifictionIcon(0,"入库出错","出现异常"+e.getMessage());
 				}
 
 			}
@@ -1201,7 +1222,7 @@ public class MyReceiver extends BroadcastReceiver {
 
 					JsonObject jsonObject= GsonUtil.parse(ss).getAsJsonObject();
 					Gson gson=new Gson();
-					final Subject renShu=gson.fromJson(jsonObject,Subject.class);
+					final LingShiSubject renShu=gson.fromJson(jsonObject,LingShiSubject.class);
 					if (status!=3){
 						Bitmap bitmap=null;
 						try {
@@ -1218,29 +1239,53 @@ public class MyReceiver extends BroadcastReceiver {
 							try {
 								faceResult = facePassHandler.addFace(bitmap);
 								if (faceResult.result == 0) {
+									//先查询有没有
+									Subject ee= subjectBox.get(renShu.getId());
+									if (ee!=null){
+										//重复编辑会导致旷视底库图片增多，所以先删除旷视的
+										if (ee.getTeZhengMa()!=null)
+										Log.d("MyReceiver", "删除已有的员工底库"+facePassHandler.deleteFace(ee.getTeZhengMa()));
+									}
 									facePassHandler.bindGroup(group_name, faceResult.faceToken);
-									renShu.setTeZhengMa(faceResult.faceToken);
-									renShu.setDaka(0);
-									subjectBox.put(renShu);
+									Subject subject = new Subject();
+									subject.setTeZhengMa(faceResult.faceToken);
+									subject.setId(renShu.getId());
+									subject.setPeopleType(renShu.getPeopleType());
+									subject.setDaka(0);
+									subject.setBirthday(renShu.getBirthday());
+									subject.setName(renShu.getName());
+									subject.setEntryTime(renShu.getEntryTime());
+									subject.setPhone(renShu.getPhone());
+									subject.setEmail(renShu.getEmail());
+									subject.setRemark(renShu.getRemark());
+									subject.setPosition(renShu.getPosition());
+									subject.setWorkNumber(renShu.getWorkNumber());
+									subject.setStoreId(renShu.getStoreId());
+									subject.setStoreName(renShu.getStoreName());
+									subject.setCompanyId(renShu.getCompanyId());
+									subjectBox.put(subject);
+									Log.d("MyReceiver", "单个员工入库成功");
 								}else {
-									showNotifictionIcon(context,0,"入库失败","图片不符合入库要求");
+									showNotifictionIcon(0,"入库失败","图片不符合入库要求 "+renShu.getName());
 								}
 
 							} catch(FacePassException e){
 								e.printStackTrace();
 							}
 						}else {
-							showNotifictionIcon(context,0,"入库失败","下载图片失败");
+							showNotifictionIcon(0,"入库失败","下载图片失败 "+renShu.getName());
 						}
 
 					}else {
 						//删除
 						facePassHandler.deleteFace(subjectBox.get(Long.valueOf(id)).getTeZhengMa());
 						subjectBox.remove(Long.valueOf(id));
+						Log.d("MyReceiver", "单个员工删除成功");
 					}
 
 				}catch (Exception e){
-					showNotifictionIcon(context, 0,"入库出错","出现异常"+e.getMessage());
+					Log.d("MyReceiver", "dddd");
+					showNotifictionIcon( 0,"入库出错","出现异常"+e.getMessage());
 				}
 
 			}

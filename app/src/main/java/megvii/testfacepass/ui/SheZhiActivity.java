@@ -376,7 +376,7 @@ public class SheZhiActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);//解除订阅
-        startActivity(new Intent(SheZhiActivity.this, MianBanJiActivity.class));
+        startActivity(new Intent(SheZhiActivity.this, MainActivity2.class));
     }
 
 //    //绑定
