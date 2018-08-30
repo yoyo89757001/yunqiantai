@@ -330,6 +330,7 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
     private static final String authIP = "https://api-cn.faceplusplus.com";
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
