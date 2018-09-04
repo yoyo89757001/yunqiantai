@@ -12,6 +12,7 @@ import android.view.WindowManager;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.tencent.bugly.Bugly;
 import com.yatoooon.screenadaptation.ScreenAdapterTools;
 
 
@@ -50,6 +51,8 @@ public class MyApplication extends Application implements Application.ActivityLi
         super.onCreate();
         myApplication = this;
         mBoxStore = MyObjectBox.builder().androidContext(this).build();
+
+        Bugly.init(getApplicationContext(), "acd60de457", false);
 
         //适配
         ScreenAdapterTools.init(this);

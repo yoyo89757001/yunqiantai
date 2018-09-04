@@ -56,10 +56,9 @@ import megvii.testfacepass.dialogall.ToastUtils;
 import megvii.testfacepass.utils.FacePassUtil;
 import megvii.testfacepass.utils.FileUtil;
 import megvii.testfacepass.utils.SettingVar;
-import okhttp3.OkHttpClient;
 
 
-public class SheZhiActivity extends Activity {
+public class SheZhiActivity2 extends Activity {
     @BindView(R.id.rl3)
     RelativeLayout rl3;
     @BindView(R.id.rl1)
@@ -76,10 +75,6 @@ public class SheZhiActivity extends Activity {
     Switch switchs;
     @BindView(R.id.rl5)
     RelativeLayout rl5;
-    @BindView(R.id.rl8)
-    RelativeLayout rl8;
-    @BindView(R.id.chengshi)
-    TextView chengshi;
     @BindView(R.id.rl9)
     RelativeLayout rl9;
 
@@ -100,7 +95,7 @@ public class SheZhiActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_she_zhi);
+        setContentView(R.layout.activity_she_zhi2);
         ButterKnife.bind(this);
         //ScreenAdapterTools.getInstance().reset(this);//如果希望android7.0分屏也适配的话,加上这句
         //在setContentView();后面加上适配语句
@@ -122,14 +117,8 @@ public class SheZhiActivity extends Activity {
             baoCunBean.setTianQi(false);
 
             baoCunBeanDao.put(baoCunBean);
-        } else {
-            if (baoCunBean.getDangqianChengShi2() == null) {
-                chengshi.setText("");
-            } else {
-                chengshi.setText(baoCunBean.getDangqianChengShi2());
-            }
-
         }
+
 
         EventBus.getDefault().register(this);//订阅
         switchs.setChecked(true);
@@ -139,13 +128,13 @@ public class SheZhiActivity extends Activity {
                 if (isChecked) {
                     baoCunBean.setHuoTi(true);
                     baoCunBeanDao.put(baoCunBean);
-                    Toast tastyToast = TastyToast.makeText(SheZhiActivity.this, "活体验证已开启", TastyToast.LENGTH_LONG, TastyToast.INFO);
+                    Toast tastyToast = TastyToast.makeText(SheZhiActivity2.this, "活体验证已开启", TastyToast.LENGTH_LONG, TastyToast.INFO);
                     tastyToast.setGravity(Gravity.CENTER, 0, 0);
                     tastyToast.show();
                 } else {
                     baoCunBean.setHuoTi(false);
                     baoCunBeanDao.put(baoCunBean);
-                    Toast tastyToast = TastyToast.makeText(SheZhiActivity.this, "活体验证已关闭", TastyToast.LENGTH_LONG, TastyToast.INFO);
+                    Toast tastyToast = TastyToast.makeText(SheZhiActivity2.this, "活体验证已关闭", TastyToast.LENGTH_LONG, TastyToast.INFO);
                     tastyToast.setGravity(Gravity.CENTER, 0, 0);
                     tastyToast.show();
                 }
@@ -165,15 +154,15 @@ public class SheZhiActivity extends Activity {
         }
 
         FacePassUtil util=new FacePassUtil();
-        util.init(SheZhiActivity.this, getApplicationContext(), cameraRotation, baoCunBean);
+        util.init(SheZhiActivity2.this, getApplicationContext(), cameraRotation, baoCunBean);
     }
 
 
-    @OnClick({R.id.rl1, R.id.rl2, R.id.rl3, R.id.rl4, R.id.rl5, R.id.rl6, R.id.rl7, R.id.rl8, R.id.rl9})
+    @OnClick({R.id.rl1, R.id.rl2, R.id.rl3, R.id.rl4, R.id.rl5, R.id.rl6, R.id.rl7, R.id.rl9})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.rl1:
-                final XiuGaiDiZhiDialog diZhiDialog = new XiuGaiDiZhiDialog(SheZhiActivity.this);
+                final XiuGaiDiZhiDialog diZhiDialog = new XiuGaiDiZhiDialog(SheZhiActivity2.this);
                 diZhiDialog.setCanceledOnTouchOutside(false);
                 diZhiDialog.setContents(baoCunBean.getHoutaiDiZhi(), null);
                 diZhiDialog.setOnQueRenListener(new View.OnClickListener() {
@@ -194,7 +183,7 @@ public class SheZhiActivity extends Activity {
 
                 break;
             case R.id.rl2:
-                final BangDingDialog bangDingDialog = new BangDingDialog(SheZhiActivity.this);
+                final BangDingDialog bangDingDialog = new BangDingDialog(SheZhiActivity2.this);
                 bangDingDialog.setCanceledOnTouchOutside(false);
                 bangDingDialog.setOnQueRenListener(new View.OnClickListener() {
                     @Override
@@ -214,12 +203,12 @@ public class SheZhiActivity extends Activity {
                 bangDingDialog.show();
                 break;
             case R.id.rl3:
-                YuYingDialog yuYingDialog = new YuYingDialog(SheZhiActivity.this);
+                YuYingDialog yuYingDialog = new YuYingDialog(SheZhiActivity2.this);
                 yuYingDialog.show();
                 break;
             case R.id.rl4:
                 //识别阀值
-                final XiuGaiSBFZDialog sbfzDialog = new XiuGaiSBFZDialog(SheZhiActivity.this);
+                final XiuGaiSBFZDialog sbfzDialog = new XiuGaiSBFZDialog(SheZhiActivity2.this);
                 sbfzDialog.setContents(baoCunBean.getShibieFaZhi() + "", baoCunBean.getShibieFaceSize() + "");
                 sbfzDialog.setOnQueRenListener(new View.OnClickListener() {
                     @Override
@@ -243,7 +232,7 @@ public class SheZhiActivity extends Activity {
                 sbfzDialog.show();
                 break;
             case R.id.rl5:
-                final XiuGaiHuoTiFZDialog huoTiFZDialog = new XiuGaiHuoTiFZDialog(SheZhiActivity.this);
+                final XiuGaiHuoTiFZDialog huoTiFZDialog = new XiuGaiHuoTiFZDialog(SheZhiActivity2.this);
                 huoTiFZDialog.setContents(baoCunBean.getHuoTiFZ() + "", null);
                 huoTiFZDialog.setOnQueRenListener(new View.OnClickListener() {
                     @Override
@@ -268,11 +257,11 @@ public class SheZhiActivity extends Activity {
                 break;
             case R.id.rl6:
 
-                startActivity(new Intent(SheZhiActivity.this, SettingActivity.class));
+                startActivity(new Intent(SheZhiActivity2.this, SettingActivity.class));
 
                 break;
             case R.id.rl7:
-                final XiuGaiRuKuFZDialog dialog = new XiuGaiRuKuFZDialog(SheZhiActivity.this);
+                final XiuGaiRuKuFZDialog dialog = new XiuGaiRuKuFZDialog(SheZhiActivity2.this);
                 dialog.setContents(baoCunBean.getRuKuFaceSize() + "", baoCunBean.getRuKuMoHuDu() + "");
                 dialog.setOnQueRenListener(new View.OnClickListener() {
                     @Override
@@ -295,72 +284,23 @@ public class SheZhiActivity extends Activity {
                 });
                 dialog.show();
                 break;
-            case R.id.rl8:
-                //选择城市
-                if (options1Items.size() > 0 && options2Items.size() > 0 && options3Items.size() > 0) {
-                    showPickerView();
-                } else {
-                    Toast tastyToast = TastyToast.makeText(SheZhiActivity.this, "城市数据准备中...请稍后", TastyToast.LENGTH_LONG, TastyToast.INFO);
-                    tastyToast.setGravity(Gravity.CENTER, 0, 0);
-                    tastyToast.show();
-                }
-                break;
+//            case R.id.rl8:
+//                //选择城市
+//                if (options1Items.size() > 0 && options2Items.size() > 0 && options3Items.size() > 0) {
+//                    showPickerView();
+//                } else {
+//                    Toast tastyToast = TastyToast.makeText(SheZhiActivity2.this, "城市数据准备中...请稍后", TastyToast.LENGTH_LONG, TastyToast.INFO);
+//                    tastyToast.setGravity(Gravity.CENTER, 0, 0);
+//                    tastyToast.show();
+//                }
+//                break;
 
             case R.id.rl9:
 
-                startActivity(new Intent(SheZhiActivity.this, YuLanActivity.class));
+                startActivity(new Intent(SheZhiActivity2.this, YuLanActivity.class));
 
                 break;
 
-//            case R.id.r20:
-//                if (usbPath!=null){
-//
-//                    ToastUtils.getInstances().showDialog("获取图片","获取图片",0);
-//                    new Thread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            List<String> strings=new ArrayList<>();
-//                            FileUtil.getAllFiles(usbPath+ File.separator+"入库照片2",strings);
-//                            FacePassHandler facePassHandler=MyApplication.myApplication.getFacePassHandler();
-//                            Log.d("SheZhiActivity", "facePassHandler:" + facePassHandler);
-//                            int size=strings.size();
-//                            for (int i=0;i<size;i++){
-//
-//                                try {
-//                                    String sp=strings.get(i);
-//                                    Log.d("SheZhiActivity", sp);
-//                                    Log.d("SheZhiActivity", "BitmapFactory.decodeFile(sp):" + BitmapFactory.decodeFile(sp));
-//                                    FacePassAddFaceResult result= facePassHandler.addFace(BitmapFactory.decodeFile(sp));
-//                                    if (result.result==0){
-//                                        facePassHandler.bindGroup(group_name,result.faceToken);
-//                                        Subject subject=new Subject();
-//                                        int oo=sp.length();
-//                                        subject.setName(sp.substring(oo-6,oo-1));
-//                                        subject.setTeZhengMa(result.faceToken);
-//                                        subject.setId(System.currentTimeMillis());
-//                                        subjectBox.put(subject);
-//
-//                                    }else {
-//                                        shibai++;
-//                                    }
-//
-//                                    ToastUtils.getInstances().showDialog("入库中","失败了:"+shibai,(i/size)*100);
-//                                } catch (FacePassException e) {
-//                                    e.printStackTrace();
-//                                }
-//
-//                            }
-//
-//
-//                        }
-//
-//                    }).start();
-//
-//
-//
-//                }
-//
-//                break;
 
         }
     }
@@ -375,7 +315,7 @@ public class SheZhiActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);//解除订阅
-        startActivity(new Intent(SheZhiActivity.this, MainActivity.class));
+        startActivity(new Intent(SheZhiActivity2.this, MainActivity2.class));
     }
 
 //    //绑定
@@ -454,7 +394,7 @@ public class SheZhiActivity extends Activity {
 
     @Subscribe(threadMode = ThreadMode.MAIN) //在ui线程执行
     public void onDataSynEvent(String event) {
-        Toast tastyToast = TastyToast.makeText(SheZhiActivity.this, event, TastyToast.LENGTH_LONG, TastyToast.INFO);
+        Toast tastyToast = TastyToast.makeText(SheZhiActivity2.this, event, TastyToast.LENGTH_LONG, TastyToast.INFO);
         tastyToast.setGravity(Gravity.CENTER, 0, 0);
         tastyToast.show();
     }
@@ -532,58 +472,6 @@ public class SheZhiActivity extends Activity {
     }
 
 
-    private void showPickerView() {// 弹出选择器
-
-        OptionsPickerView pvOptions = new OptionsPickerBuilder(this, new OnOptionsSelectListener() {
-            @Override
-            public void onOptionsSelect(int options1, int options2, int options3, View v) {
-                //返回的分别是三个级别的选中位置
-                final String tx = options1Items.get(options1).getPickerViewText() +
-                        options2Items.get(options1).get(options2) +
-                        options3Items.get(options1).get(options2).get(options3);
-                chengshi.setText(tx);
-                baoCunBean.setDangqianChengShi2(tx);
-                baoCunBeanDao.put(baoCunBean);
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        String bidui = tx;
-                        List<ChengShiIDBean> shiIDBeanList = chengShiIDBeanBox.getAll();
-                        int size = shiIDBeanList.size();
-                        for (int i = 0; i < size; i++) {
-                            ChengShiIDBean bean = shiIDBeanList.get(i);
-                            if (bidui.contains(bean.getProvince()) && bidui.contains(bean.getCity()) && bidui.contains(bean.getDistrict())) {
-                                baoCunBean.setDangqianChengShi(bean.getId());
-                                baoCunBeanDao.put(baoCunBean);
-                                Log.d("SheZhiActivity", "找到了城市id");
-                                break;
-                            }
-
-                        }
-                        if (baoCunBean.getDangqianChengShi() == null) {
-                            baoCunBean.setDangqianChengShi("1");
-                            baoCunBeanDao.put(baoCunBean);
-                        }
-
-
-                    }
-                }).start();
-
-                //  Toast.makeText(SheZhiActivity.this, options3Items.get(options1).get(options2).get(options3), Toast.LENGTH_SHORT).show();
-            }
-        })
-
-                .setTitleText("城市选择")
-                .setDividerColor(Color.BLACK)
-                .setTextColorCenter(Color.BLACK) //设置选中项文字颜色
-                .setContentTextSize(30)
-                .build();
-
-        /*pvOptions.setPicker(options1Items);//一级选择器
-        pvOptions.setPicker(options1Items, options2Items);//二级选择器*/
-        pvOptions.setPicker(options1Items, options2Items, options3Items);//三级选择器
-        pvOptions.show();
-    }
 
 
 

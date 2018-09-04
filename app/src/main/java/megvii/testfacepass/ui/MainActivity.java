@@ -875,76 +875,76 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                         // showFacePassFace(detectionResult.faceList);
                     }
 
-                    if (SDK_MODE == FacePassSDKMode.MODE_ONLINE) {
-                        /*抓拍版模式*/
-//                        if (detectionResult != null && detectionResult.message.length != 0) {
-//                            /* 构建http请求 */
-//                            FacePassRequest request = new FacePassRequest(recognize_url, detectionResult, new Response.Listener<String>() {
-//                                @Override
-//                                public void onResponse(String response) {
-//                                    Log.d(DEBUG_TAG, String.format("%s", response));
-//                                    try {
-//                                        JSONObject jsresponse = new JSONObject(response);
-//                                        int code = jsresponse.getInt("code");
-//                                        if (code != 0) {
-//                                            Log.e(DEBUG_TAG, String.format("error code: %d", code));
-//                                            return;
-//                                        }
-//                                        /* 将服务器返回的结果交回SDK进行处理来获得识别结果 */
-//                                        FacePassRecognitionResult[] result = null;
-//                                        try {
-//                                            Log.i("lengthlength", "length is " + jsresponse.getString("data").getBytes().length);
-//                                            result = mFacePassHandler.decodeResponse(jsresponse.getString("data").getBytes());
-//                                        } catch (FacePassException e) {
-//                                            e.printStackTrace();
-//                                            return;
-//                                        }
-//                                        if (result == null || result.length == 0) {
-//                                            return;
-//                                        }
-//
-//                                        for (FacePassRecognitionResult res : result) {
-//                                            String faceToken = new String(res.faceToken);
-//                                            if (FacePassRecognitionResultType.RECOG_OK == res.facePassRecognitionResultType) {
-//                                                getFaceImageByFaceToken(res.trackId, faceToken);
-//                                            }
-//                                            showRecognizeResult(res.trackId, res.detail.searchScore, res.detail.livenessScore, FacePassRecognitionResultType.RECOG_OK == res.facePassRecognitionResultType);
-//                                        }
-//                                    } catch (JSONException e) {
-//                                        e.printStackTrace();
-//                                    }
-//                                }
-//                            }, new Response.ErrorListener() {
-//                                @Override
-//                                public void onErrorResponse(VolleyError errors) {
-//                                    final VolleyError error = errors;
-//                                    runOnUiThread(new Runnable() {
-//                                        @Override
-//                                        public void run() {
-//                                            Log.e(DEBUG_TAG, "volley error response");
-//                                            if (error.networkResponse != null) {
-//                                                faceEndTextView.append(String.format("network error %d", error.networkResponse.statusCode));
-//                                            } else {
-//                                                String errorMessage = error.getClass().getSimpleName();
-//                                                faceEndTextView.append("network error" + errorMessage);
-//                                            }
-//                                            faceEndTextView.append("\n");
-//                                        }
-//                                    });
-//                                }
-//                            });
-//                            request.setRetryPolicy(new DefaultRetryPolicy(10000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-//                            Log.d(DEBUG_TAG, "request add");
-//                            request.setTag("upload_detect_result_tag");
-//                            requestQueue.add(request);
-//                        }
-                    } else {
+//                    if (SDK_MODE == FacePassSDKMode.MODE_ONLINE) {
+//                        /*抓拍版模式*/
+////                        if (detectionResult != null && detectionResult.message.length != 0) {
+////                            /* 构建http请求 */
+////                            FacePassRequest request = new FacePassRequest(recognize_url, detectionResult, new Response.Listener<String>() {
+////                                @Override
+////                                public void onResponse(String response) {
+////                                    Log.d(DEBUG_TAG, String.format("%s", response));
+////                                    try {
+////                                        JSONObject jsresponse = new JSONObject(response);
+////                                        int code = jsresponse.getInt("code");
+////                                        if (code != 0) {
+////                                            Log.e(DEBUG_TAG, String.format("error code: %d", code));
+////                                            return;
+////                                        }
+////                                        /* 将服务器返回的结果交回SDK进行处理来获得识别结果 */
+////                                        FacePassRecognitionResult[] result = null;
+////                                        try {
+////                                            Log.i("lengthlength", "length is " + jsresponse.getString("data").getBytes().length);
+////                                            result = mFacePassHandler.decodeResponse(jsresponse.getString("data").getBytes());
+////                                        } catch (FacePassException e) {
+////                                            e.printStackTrace();
+////                                            return;
+////                                        }
+////                                        if (result == null || result.length == 0) {
+////                                            return;
+////                                        }
+////
+////                                        for (FacePassRecognitionResult res : result) {
+////                                            String faceToken = new String(res.faceToken);
+////                                            if (FacePassRecognitionResultType.RECOG_OK == res.facePassRecognitionResultType) {
+////                                                getFaceImageByFaceToken(res.trackId, faceToken);
+////                                            }
+////                                            showRecognizeResult(res.trackId, res.detail.searchScore, res.detail.livenessScore, FacePassRecognitionResultType.RECOG_OK == res.facePassRecognitionResultType);
+////                                        }
+////                                    } catch (JSONException e) {
+////                                        e.printStackTrace();
+////                                    }
+////                                }
+////                            }, new Response.ErrorListener() {
+////                                @Override
+////                                public void onErrorResponse(VolleyError errors) {
+////                                    final VolleyError error = errors;
+////                                    runOnUiThread(new Runnable() {
+////                                        @Override
+////                                        public void run() {
+////                                            Log.e(DEBUG_TAG, "volley error response");
+////                                            if (error.networkResponse != null) {
+////                                                faceEndTextView.append(String.format("network error %d", error.networkResponse.statusCode));
+////                                            } else {
+////                                                String errorMessage = error.getClass().getSimpleName();
+////                                                faceEndTextView.append("network error" + errorMessage);
+////                                            }
+////                                            faceEndTextView.append("\n");
+////                                        }
+////                                    });
+////                                }
+////                            });
+////                            request.setRetryPolicy(new DefaultRetryPolicy(10000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+////                            Log.d(DEBUG_TAG, "request add");
+////                            request.setTag("upload_detect_result_tag");
+////                            requestQueue.add(request);
+////                        }
+//                    } else {
                         /*离线模式，将识别到人脸的，message不为空的result添加到处理队列中*/
                         if (detectionResult != null && detectionResult.message.length != 0) {
                             mDetectResultQueue.offer(detectionResult.message);
-                            Log.d(DEBUG_TAG, "1 mDetectResultQueue.size = " + mDetectResultQueue.size());
+                           // Log.d(DEBUG_TAG, "1 mDetectResultQueue.size = " + mDetectResultQueue.size());
                         }
-                    }
+                 //   }
 
                 } catch (InterruptedException | FacePassException e) {
                     e.printStackTrace();

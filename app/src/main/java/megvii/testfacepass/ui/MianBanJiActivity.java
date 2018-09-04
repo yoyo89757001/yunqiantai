@@ -77,6 +77,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Timer;
@@ -104,6 +105,7 @@ import megvii.testfacepass.MyApplication;
 import megvii.testfacepass.R;
 
 import megvii.testfacepass.beans.BaoCunBean;
+import megvii.testfacepass.beans.BenDiJiLuBean;
 import megvii.testfacepass.beans.Subject;
 import megvii.testfacepass.beans.Subject_;
 import megvii.testfacepass.beans.TodayBean;
@@ -175,6 +177,7 @@ public class MianBanJiActivity extends Activity implements CameraManager.CameraL
 //    SlowScrollView scrollView;
 // private MarqueeView marqueeView;
 
+    private Box<BenDiJiLuBean> benDiJiLuBeanBox = null;
     private  ConcurrentHashMap map =new ConcurrentHashMap();
     private Box<Subject> subjectBox = null;
     protected Handler mainHandler;
@@ -212,10 +215,7 @@ public class MianBanJiActivity extends Activity implements CameraManager.CameraL
 
     }
 
-    private enum FacePassSDKMode {
-        MODE_ONLINE,
-        MODE_OFFLINE
-    }
+
 
     private final Timer timer = new Timer();
     private TimerTask task;
@@ -230,10 +230,6 @@ public class MianBanJiActivity extends Activity implements CameraManager.CameraL
     //  private static final String serverIP_online = "10.199.1.14";
     //  private static String serverIP;
     //  private static final String authIP = "https://api-cn.faceplusplus.com";
-    //  private static final String apiKey = "4gctI8NUJ2DbHDB5tkpYiidf2yEpVUIp";
-    //  private static final String apiSecret = "7GpRwThibD29ld-UVoyue6aGkPhS7Py-";
-    //  private static final String apiKey = "CKbSYQqAuc5AzCMoOK-kbo9KaabtEciQ";
-    //  private static final String apiSecret = "HeZgW5ILE83nKkqF-QO5IqEEmeRxPgeI";
     //  private static String recognize_url;
     private MianBanJiView mianBanJiView;
   //  private LinkedBlockingQueue<Subject> linkedBlockingQueue;
@@ -319,8 +315,10 @@ public class MianBanJiActivity extends Activity implements CameraManager.CameraL
    // private DiBuAdapter diBuAdapter = null;
    // private GridLayoutManager gridLayoutManager = new GridLayoutManager(MianBanJiActivity.this, 2, LinearLayoutManager.HORIZONTAL, false);
     private static final String authIP = "https://api-cn.faceplusplus.com";
-    private static final String apiKey = "CKbSYQqAuc5AzCMoOK-kbo9KaabtEciQ";
-    private static final String apiSecret = "HeZgW5ILE83nKkqF-QO5IqEEmeRxPgeI";
+    private static final String apiKey = "VIA9tPfCsx0_UXpf1oGmh6_dMqHvbmm9";
+    private static final String apiSecret = "SYqy-J0lvdNpBpTfXz8ZOtsaXGsyHEQf";
+    private static boolean isSC=true;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -328,7 +326,8 @@ public class MianBanJiActivity extends Activity implements CameraManager.CameraL
         // mImageCache = new FaceImageCache();
         mToastBlockQueue = new LinkedBlockingQueue<>();
         mDetectResultQueue = new ArrayBlockingQueue<byte[]>(5);
-        mFeedFrameQueue = new ArrayBlockingQueue<FacePassImage>(10);
+        mFeedFrameQueue = new ArrayBlockingQueue<FacePassImage>(1);
+        benDiJiLuBeanBox = MyApplication.myApplication.getBoxStore().boxFor(BenDiJiLuBean.class);
        // todayBeanBox = MyApplication.myApplication.getBoxStore().boxFor(TodayBean.class);
        // todayBean = todayBeanBox.get(123456L);
         // initAndroidHandler();
@@ -1144,6 +1143,7 @@ public class MianBanJiActivity extends Activity implements CameraManager.CameraL
             }
         });
 
+        isSC=true;
     }
 
 
@@ -2851,6 +2851,27 @@ public class MianBanJiActivity extends Activity implements CameraManager.CameraL
                 case Intent.ACTION_TIME_TICK:
                     mianBanJiView.setTime(DateUtils.time(System.currentTimeMillis()+""));
 
+                    String xiaoshiss=DateUtils.timeMinute(System.currentTimeMillis() + "");
+                    if (xiaoshiss.split(":")[0].equals("06") && xiaoshiss.split(":")[1].equals("30")){
+                        Log.d("TimeChangeReceiver", "同步");
+                        final List<BenDiJiLuBean> benDiJiLuBeans=benDiJiLuBeanBox.getAll();
+                        final int size=benDiJiLuBeans.size();
+
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                for (int i=0;i<size;i++){
+                                    while (isSC){
+                                        isSC=false;
+                                        link_shangchuanjilu2(benDiJiLuBeans.get(i));
+                                    }
+
+                                }
+
+                            }
+                        }).start();
+
+                    }
                   //  AssetManager mgr = getAssets();
                     //Univers LT 57 Condensed
                  //   Typeface tf = Typeface.createFromAsset(mgr, "fonts/Univers LT 57 Condensed.ttf");
@@ -3023,7 +3044,7 @@ public class MianBanJiActivity extends Activity implements CameraManager.CameraL
 
 
     //上传识别记录
-    private void link_shangchuanjilu(Subject subject) {
+    private void link_shangchuanjilu(final Subject subject) {
         final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .writeTimeout(100000, TimeUnit.MILLISECONDS)
@@ -3062,7 +3083,17 @@ public class MianBanJiActivity extends Activity implements CameraManager.CameraL
             @Override
             public void onFailure(Call call, IOException e) {
                 Log.d("AllConnects", "请求失败" + e.getMessage());
+                BenDiJiLuBean bean=new BenDiJiLuBean();
+                bean.setSubjectId(subject.getId());
+                bean.setDiscernPlace(FileUtil.getSerialNumber(MianBanJiActivity.this) == null ? FileUtil.getIMSI() : FileUtil.getSerialNumber(MianBanJiActivity.this));
+                bean.setSubjectType(subject.getPeopleType());
+                bean.setIdentificationTime(DateUtils.time(System.currentTimeMillis() + ""));
+                benDiJiLuBeanBox.put(bean);
 
+                List<BenDiJiLuBean> bb=  benDiJiLuBeanBox.getAll();
+                for (int i=0;i<bb.size();i++){
+                    Log.d("MainActivity2", bb.toString());
+                }
             }
 
             @Override
@@ -3076,11 +3107,81 @@ public class MianBanJiActivity extends Activity implements CameraManager.CameraL
 
 
                 } catch (Exception e) {
+                    BenDiJiLuBean bean=new BenDiJiLuBean();
+                    bean.setSubjectId(subject.getId());
+                    bean.setDiscernPlace(FileUtil.getSerialNumber(MianBanJiActivity.this) == null ? FileUtil.getIMSI() : FileUtil.getSerialNumber(MianBanJiActivity.this));
+                    bean.setSubjectType(subject.getPeopleType());
+                    bean.setIdentificationTime(DateUtils.time(System.currentTimeMillis() + ""));
+                    benDiJiLuBeanBox.put(bean);
+
                     Log.d("WebsocketPushMsg", e.getMessage() + "gggg");
                 }
             }
         });
     }
 
+    //上传识别记录2
+    private void link_shangchuanjilu2(final BenDiJiLuBean subject) {
+        final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .writeTimeout(100000, TimeUnit.MILLISECONDS)
+                .connectTimeout(100000, TimeUnit.MILLISECONDS)
+                .readTimeout(100000, TimeUnit.MILLISECONDS)
+//				    .cookieJar(new CookiesManager())
+                .retryOnConnectionFailure(true)
+                .build();
+        RequestBody body = null;
 
+        body = new FormBody.Builder()
+                //.add("name", subject.getName()) //
+                //.add("companyId", subject.getCompanyId()+"") //公司di
+                //.add("companyName",subject.getCompanyName()+"") //公司名称
+                //.add("storeId", subject.getStoreId()+"") //门店id
+                //.add("storeName", subject.getStoreName()+"") //门店名称
+                .add("subjectId", subject.getSubjectId() + "") //员工ID
+                .add("subjectType", subject.getSubjectType()+"") //人员类型
+                // .add("department", subject.getPosition()+"") //部门
+                .add("discernPlace",subject.getDiscernPlace()+"")//识别地点
+                // .add("discernAvatar",  "") //头像
+                .add("identificationTime",subject.getIdentificationTime()+"")//时间
+                .build();
+
+
+        okhttp3.Request.Builder requestBuilder = new okhttp3.Request.Builder()
+                .header("Content-Type", "application/json")
+                .post(body)
+                .url(baoCunBean.getHoutaiDiZhi() + "/app/historySave");
+
+        // step 3：创建 Call 对象
+        Call call = okHttpClient.newCall(requestBuilder.build());
+
+        //step 4: 开始异步请求
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("AllConnects", "请求失败" + e.getMessage());
+                isSC=true;
+            }
+
+            @Override
+            public void onResponse(Call call, okhttp3.Response response) throws IOException {
+                Log.d("AllConnects", "请求成功" + call.request().toString());
+                //获得返回体
+                try {
+                    ResponseBody body = response.body();
+                    String ss = body.string().trim();
+                    Log.d("AllConnects", "上传识别记录" + ss);
+                    //成功的话 删掉本地保存的记录
+                    benDiJiLuBeanBox.remove(subject.getId());
+
+                } catch (Exception e) {
+
+                    Log.d("WebsocketPushMsg", e.getMessage() + "gggg");
+
+                }finally {
+                    isSC=true;
+                }
+            }
+        });
+    }
 }
