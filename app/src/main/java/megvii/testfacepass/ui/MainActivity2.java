@@ -116,7 +116,6 @@ import butterknife.ButterKnife;
 import io.objectbox.Box;
 import megvii.facepass.FacePassException;
 import megvii.facepass.FacePassHandler;
-import megvii.facepass.ruitong.FaceInit;
 import megvii.facepass.types.FacePassDetectionResult;
 import megvii.facepass.types.FacePassImage;
 import megvii.facepass.types.FacePassImageRotation;
@@ -128,7 +127,7 @@ import megvii.testfacepass.R;
 import megvii.testfacepass.adapter.DiBuAdapter;
 import megvii.testfacepass.beans.BaoCunBean;
 import megvii.testfacepass.beans.BenDiJiLuBean;
-import megvii.testfacepass.beans.BenDiMBbean;
+
 import megvii.testfacepass.beans.Subject;
 import megvii.testfacepass.beans.Subject_;
 import megvii.testfacepass.beans.TianQiBean;
@@ -225,7 +224,6 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
             .error(R.drawable.erroy_bg)
             //   .transform(new GlideCircleTransform(MyApplication.myApplication, 2, Color.parseColor("#ffffffff")));
             .transform(new GlideRoundTransform(MainActivity2.this, 20));
-
 
 
     private final Timer timer = new Timer();
@@ -383,8 +381,6 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
             FacePassHandler.getAuth(authIP, apiKey, apiSecret);
             FacePassHandler.initSDK(getApplicationContext());
             Log.d("MainActivity2", FacePassHandler.getVersion());
-           // FaceInit init = new FaceInit(getApplicationContext());
-           //  init.initFacePass();
         }
 
         if (baoCunBean != null)
@@ -1593,8 +1589,7 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
                     }
             } else {
 
-                FaceInit init = new FaceInit(getApplicationContext());
-                init.initFacePass();
+                FacePassHandler.initSDK(getApplicationContext());
 
             }
         }
@@ -2794,16 +2789,14 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
             if (keyCode == KeyEvent.KEYCODE_MENU) {
-                startActivity(new Intent(MainActivity2.this, SheZhiActivity2.class));
+                startActivity(new Intent(MainActivity2.this, SheZhiActivity.class));
                 finish();
             }
-
         }
         Log.d("MainActivity", "keyCode:" + keyCode);
         Log.d("MainActivity", "event:" + event);
 
         return super.onKeyDown(keyCode, event);
-
     }
 
     @Override
@@ -2811,17 +2804,17 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
 
         Log.d("MainActivity", "ev.getPointerCount()1:" + ev.getPointerCount());
         Log.d("MainActivity", "ev.getAction()1:" + ev.getAction());
+
         if (ev.getAction() == MotionEvent.ACTION_DOWN) {
             isAnXia = true;
         }
         if (isAnXia) {
             if (ev.getPointerCount() == 4) {
                 isAnXia = false;
-                startActivity(new Intent(MainActivity2.this, SheZhiActivity2.class));
+                startActivity(new Intent(MainActivity2.this, SheZhiActivity.class));
                 finish();
             }
         }
-
         return super.dispatchTouchEvent(ev);
     }
 

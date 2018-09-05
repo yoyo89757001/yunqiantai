@@ -36,13 +36,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-
-
-
 import android.widget.ImageView;
-
 import android.widget.Toast;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
@@ -55,12 +50,9 @@ import com.baidu.tts.client.SpeechSynthesizer;
 import com.baidu.tts.client.SpeechSynthesizerListener;
 import com.baidu.tts.client.TtsMode;
 import com.bumptech.glide.request.RequestOptions;
-
 import com.jude.rollviewpager.adapter.StaticPagerAdapter;
 import com.sdsmdg.tastytoast.TastyToast;
-
 import com.yatoooon.screenadaptation.ScreenAdapterTools;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
@@ -70,19 +62,15 @@ import org.apache.http.util.CharsetUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
 import java.io.ByteArrayOutputStream;
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
-
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -93,7 +81,7 @@ import butterknife.ButterKnife;
 import io.objectbox.Box;
 import megvii.facepass.FacePassException;
 import megvii.facepass.FacePassHandler;
-import megvii.facepass.ruitong.FaceInit;
+
 import megvii.facepass.types.FacePassDetectionResult;
 import megvii.facepass.types.FacePassFace;
 import megvii.facepass.types.FacePassImage;
@@ -372,8 +360,7 @@ public class MianBanJiActivity extends Activity implements CameraManager.CameraL
             //初始化
             FacePassHandler.getAuth(authIP, apiKey, apiSecret);
             FacePassHandler.initSDK(getApplicationContext());
-           // FaceInit init = new FaceInit(getApplicationContext());
-           // init.initFacePass();
+
         }
 
         if (baoCunBean != null)
@@ -1527,8 +1514,7 @@ public class MianBanJiActivity extends Activity implements CameraManager.CameraL
                     }
             } else {
 
-                FaceInit init = new FaceInit(getApplicationContext());
-                init.initFacePass();
+         FacePassHandler.initSDK(getApplicationContext());
 
             }
         }
@@ -2739,7 +2725,7 @@ public class MianBanJiActivity extends Activity implements CameraManager.CameraL
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
             if (keyCode == KeyEvent.KEYCODE_MENU) {
-                startActivity(new Intent(MianBanJiActivity.this, SheZhiActivity.class));
+                startActivity(new Intent(MianBanJiActivity.this, SheZhiActivity2.class));
                 finish();
             }
 
@@ -2762,7 +2748,7 @@ public class MianBanJiActivity extends Activity implements CameraManager.CameraL
         if (isAnXia) {
             if (ev.getPointerCount() == 4) {
                 isAnXia = false;
-                startActivity(new Intent(MianBanJiActivity.this, SheZhiActivity.class));
+                startActivity(new Intent(MianBanJiActivity.this, SheZhiActivity2.class));
                 finish();
             }
         }

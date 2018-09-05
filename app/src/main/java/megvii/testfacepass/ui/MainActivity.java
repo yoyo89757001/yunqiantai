@@ -108,7 +108,7 @@ import butterknife.ButterKnife;
 import io.objectbox.Box;
 import megvii.facepass.FacePassException;
 import megvii.facepass.FacePassHandler;
-import megvii.facepass.ruitong.FaceInit;
+
 import megvii.facepass.types.FacePassDetectionResult;
 import megvii.facepass.types.FacePassImage;
 import megvii.facepass.types.FacePassImageRotation;
@@ -741,8 +741,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
             requestPermission();
         } else {
             //初始化
-            FaceInit init = new FaceInit(getApplicationContext());
-            init.initFacePass();
+            FacePassHandler.initSDK(getApplicationContext());
         }
 
         if (baoCunBean != null)
@@ -1081,8 +1080,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                     }
             } else {
 
-                FaceInit init = new FaceInit(getApplicationContext());
-                init.initFacePass();
+              FacePassHandler.initSDK(getApplicationContext());
 
             }
         }

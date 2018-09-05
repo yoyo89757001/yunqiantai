@@ -36,10 +36,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.objectbox.Box;
-import megvii.facepass.FacePassException;
-import megvii.facepass.FacePassHandler;
-import megvii.facepass.ruitong.FaceInit;
-import megvii.facepass.types.FacePassAddFaceResult;
 import megvii.testfacepass.MyApplication;
 import megvii.testfacepass.R;
 import megvii.testfacepass.beans.BaoCunBean;
@@ -52,7 +48,8 @@ import megvii.testfacepass.dialog.XiuGaiHuoTiFZDialog;
 import megvii.testfacepass.dialog.XiuGaiRuKuFZDialog;
 import megvii.testfacepass.dialog.XiuGaiSBFZDialog;
 import megvii.testfacepass.dialog.YuYingDialog;
-import megvii.testfacepass.dialogall.ToastUtils;
+
+import megvii.testfacepass.utils.FaceInit;
 import megvii.testfacepass.utils.FacePassUtil;
 import megvii.testfacepass.utils.FileUtil;
 import megvii.testfacepass.utils.SettingVar;
@@ -78,7 +75,7 @@ public class SheZhiActivity2 extends Activity {
     @BindView(R.id.rl9)
     RelativeLayout rl9;
 
-
+    private BangDingDialog bangDingDialog=null;
     private int cameraRotation;
     private static final String group_name = "face-pass-test-x";
     private Box<BaoCunBean> baoCunBeanDao = null;
@@ -153,8 +150,6 @@ public class SheZhiActivity2 extends Activity {
             cameraRotation = SettingVar.faceRotation;
         }
 
-        FacePassUtil util=new FacePassUtil();
-        util.init(SheZhiActivity2.this, getApplicationContext(), cameraRotation, baoCunBean);
     }
 
 
@@ -183,17 +178,17 @@ public class SheZhiActivity2 extends Activity {
 
                 break;
             case R.id.rl2:
-                final BangDingDialog bangDingDialog = new BangDingDialog(SheZhiActivity2.this);
+                 bangDingDialog = new BangDingDialog(SheZhiActivity2.this);
                 bangDingDialog.setCanceledOnTouchOutside(false);
                 bangDingDialog.setOnQueRenListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-//                        link_uplodexiazai(bangDingDialog.getZhuCeMa());
-                        FaceInit init = new FaceInit(getApplicationContext());
-                        init.init(bangDingDialog.getZhuCeMa(), baoCunBean.getHoutaiDiZhi());
-                        bangDingDialog.dismiss();
+                        FaceInit init=new FaceInit(SheZhiActivity2.this);
+                        init.init(bangDingDialog.getZhuCeMa(),baoCunBean.getHoutaiDiZhi());
+                        bangDingDialog.jiazai();
                     }
                 });
+                bangDingDialog.setCanceledOnTouchOutside(false);
                 bangDingDialog.setQuXiaoListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -394,9 +389,13 @@ public class SheZhiActivity2 extends Activity {
 
     @Subscribe(threadMode = ThreadMode.MAIN) //在ui线程执行
     public void onDataSynEvent(String event) {
-        Toast tastyToast = TastyToast.makeText(SheZhiActivity2.this, event, TastyToast.LENGTH_LONG, TastyToast.INFO);
-        tastyToast.setGravity(Gravity.CENTER, 0, 0);
-        tastyToast.show();
+        if (bangDingDialog!=null && bangDingDialog.isShowing()){
+            bangDingDialog.setContents(event);
+        }else {
+            Toast tastyToast = TastyToast.makeText(SheZhiActivity2.this, event, TastyToast.LENGTH_LONG, TastyToast.INFO);
+            tastyToast.setGravity(Gravity.CENTER, 0, 0);
+            tastyToast.show();
+        }
     }
 
     private void initJsonData() {//解析数据

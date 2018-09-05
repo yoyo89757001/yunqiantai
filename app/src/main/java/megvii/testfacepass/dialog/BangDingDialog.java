@@ -10,6 +10,10 @@ import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import megvii.testfacepass.R;
 
@@ -23,6 +27,10 @@ import megvii.testfacepass.R;
 public class BangDingDialog extends Dialog {
    // private TextView title2;
     private Button l1,l2;
+    private LinearLayout linearLayout;
+    private ProgressBar progressBar;
+    private TextView textView;
+    private RelativeLayout relativeLayout;
     private EditText jiudianname,idid;
     public BangDingDialog(Context context) {
         super(context, R.style.dialog_style2);
@@ -31,7 +39,10 @@ public class BangDingDialog extends Dialog {
 
     private void setCustomDialog() {
         View mView = LayoutInflater.from(getContext()).inflate(R.layout.xiugaidialog_bangding, null);
-
+        textView= mView.findViewById(R.id.testt);
+        progressBar= mView.findViewById(R.id.preeeee);
+        relativeLayout=mView.findViewById(R.id.jiazai_ll);
+        linearLayout=mView.findViewById(R.id.llllll);
         jiudianname= (EditText) mView.findViewById(R.id.xiangce);
         idid= (EditText)mView.findViewById(R.id.idid);
         idid.addTextChangedListener(new TextWatcher() {
@@ -82,6 +93,25 @@ public class BangDingDialog extends Dialog {
 
         super.setContentView(mView);
     }
+
+
+
+    public void jiazai(){
+        linearLayout.setVisibility(View.GONE);
+        relativeLayout.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
+        textView.setVisibility(View.GONE);
+    }
+
+    public void setContents(String ss){
+        if (ss!=null){
+            progressBar.setVisibility(View.GONE);
+            textView.setVisibility(View.VISIBLE);
+            textView.setText(ss);
+        }
+
+    }
+
 
     public void setContents(String ss, String s3){
        if (ss!=null)

@@ -29,8 +29,9 @@
 <LinearLayout
     android:orientation="horizontal"
     android:gravity="center"
+    android:id="@+id/llllll"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="60dp">
     <TextView
         android:text="注册码:"
         android:textColor="@color/blake"
@@ -50,38 +51,34 @@
         android:id="@+id/idid"
         android:layout_width="match_parent"
         android:layout_height="60dp" />
+
+
 </LinearLayout>
 
-        <View
-            android:background="@color/colorBar_bg"
-            android:layout_width="match_parent"
-            android:visibility="gone"
-            android:layout_height="1dp"/>
-        <LinearLayout
+        <RelativeLayout
             android:orientation="horizontal"
             android:gravity="center"
+            android:id="@+id/jiazai_ll"
             android:visibility="gone"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="60dp">
+            <ProgressBar
+                android:id="@+id/preeeee"
+                android:layout_centerInParent="true"
+                android:layout_width="60dp"
+                style="@style/Widget.AppCompat.ProgressBar"
+                android:layout_height="60dp" />
+
             <TextView
-                android:text="酒店名称:"
-                android:layout_marginLeft="16dp"
-                android:textColor="@color/blake"
-                android:textSize="14sp"
+                android:id="@+id/testt"
+                android:textColor="#3722dc"
+                android:textSize="18sp"
+                android:layout_centerInParent="true"
+                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
+        </RelativeLayout>
 
-            <EditText
-                android:textColor="@color/textcolor"
-                android:textSize="14sp"
-                android:text="南北纵横酒店"
-                android:paddingLeft="16dp"
-                android:background="@null"
-                android:gravity="center_vertical"
-                android:id="@+id/xiangce"
-                android:layout_width="match_parent"
-                android:layout_height="50dp" />
-        </LinearLayout>
         <View
             android:background="@color/colorBar_bg"
             android:layout_width="match_parent"
@@ -113,7 +110,7 @@
                 android:layout_weight="1"
                 android:textSize="16sp"
                 android:id="@+id/quxiao"
-                android:text="取消"
+                android:text="关闭"
                 android:textColor="@color/colorBar_bg"
                 android:layout_height="50dp" />
 

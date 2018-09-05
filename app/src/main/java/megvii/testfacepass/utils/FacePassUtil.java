@@ -56,7 +56,7 @@ private     FacePassModel livenessModel;
                             float livenessThreshold = baoCunBean.getHuoTiFZ();
                             boolean livenessEnabled = baoCunBean.isHuoTi();
                             int faceMinThreshold =baoCunBean.getShibieFaceSize();
-                            FacePassPose poseThreshold = new FacePassPose(30f, 30f, 30f);
+                            FacePassPose poseThreshold = new FacePassPose(22f, 22f, 22f);
                             float blurThreshold = 0.3f;
                             float lowBrightnessThreshold = 70f;
                             float highBrightnessThreshold = 210f;
