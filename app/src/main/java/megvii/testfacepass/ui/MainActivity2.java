@@ -18,10 +18,7 @@ import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.ImageFormat;
-import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.graphics.YuvImage;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -33,14 +30,12 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.LruCache;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -56,14 +51,6 @@ import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.android.volley.AuthFailureError;
-import com.android.volley.NetworkResponse;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyLog;
-import com.android.volley.toolbox.HttpHeaderParser;
-import com.android.volley.toolbox.ImageLoader;
 import com.badoo.mobile.util.WeakHandler;
 import com.baidu.tts.client.SpeechSynthesizer;
 import com.baidu.tts.client.SpeechSynthesizerListener;
@@ -82,20 +69,14 @@ import com.sdsmdg.tastytoast.TastyToast;
 import com.sunfusheng.marqueeview.MarqueeView;
 import com.yatoooon.screenadaptation.ScreenAdapterTools;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.ByteArrayBody;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.util.CharsetUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.ByteArrayOutputStream;
+
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -209,7 +190,7 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
     private String offlineVoice = OfflineResource.VOICE_FEMALE;
     // 主控制类，所有合成控制方法从这个类开始
     private MySyntherizer synthesizer;
-    private static boolean isOne = true;
+   // private static boolean isOne = true;
     private static Vector<Subject> vipList = new Vector<>();//vip的弹窗
     private static Vector<Subject> dibuList = new Vector<>();//下面的弹窗
     private static Vector<Long> quchongList = new Vector<>();//下面的弹窗
@@ -339,7 +320,7 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
         todayBean = todayBeanBox.get(123456L);
         benDiJiLuBeanBox = MyApplication.myApplication.getBoxStore().boxFor(BenDiJiLuBean.class);
         // initAndroidHandler();
-        isOne = true;
+      //  isOne = true;
         baoCunBeanDao = MyApplication.myApplication.getBoxStore().boxFor(BaoCunBean.class);
         mainHandler = new Handler() {
             @Override
@@ -973,26 +954,10 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
                                         }
                                     }
                                     //消失
-                                    new Thread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            SystemClock.sleep(9000);
-                                            if (shuLiebiao.getChildCount() > 0) {
+                                    Message message= Message.obtain();
+                                    message.what=999;
+                                    mHandler.sendMessageDelayed(message,9000);
 
-                                                runOnUiThread(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        shuLiebiao.removeViewAt(0);
-                                                        quchongList.remove(0);
-                                                        if (shuLiebiao.getChildCount() == 0) {
-                                                            toumingbeijing.setVisibility(View.GONE);
-                                                        }
-                                                    }
-                                                });
-
-                                            }
-                                        }
-                                    }).start();
 
                                 }
                             }
@@ -1168,24 +1133,12 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
                                         //adapter.notifyDataSetChanged();
                                         gridLayoutManager.scrollToPosition(0);
                                     }
-                                    new Thread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            SystemClock.sleep(9000);
-                                            if (shuLiebiao.getChildCount() > 0) {
-                                                runOnUiThread(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        shuLiebiao.removeViewAt(0);
-                                                        if (shuLiebiao.getChildCount() == 0) {
-                                                            toumingbeijing.setVisibility(View.GONE);
-                                                        }
-                                                    }
-                                                });
 
-                                            }
-                                        }
-                                    }).start();
+                                    //消失
+                                    Message message= Message.obtain();
+                                    message.what=999;
+                                    mHandler.sendMessageDelayed(message,9000);
+
 
                                 }
                             }
@@ -1195,6 +1148,22 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
 
                         break;
                     }
+                    case 999:{
+
+                        if (shuLiebiao.getChildCount() > 0) {
+                            shuLiebiao.removeViewAt(0);
+                            if (quchongList.size()>0)
+                                quchongList.remove(0);
+                            if (shuLiebiao.getChildCount() == 0) {
+                                toumingbeijing.setVisibility(View.GONE);
+                            }
+
+                        }
+
+                        break;
+                    }
+
+
 
                 }
                 return false;
@@ -1248,7 +1217,6 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
                     /* 将每一帧FacePassImage 送入SDK算法， 并得到返回结果 */
                     FacePassDetectionResult detectionResult = null;
                     detectionResult = mFacePassHandler.feedFrame(image);
-
 
 //                    if (detectionResult == null || detectionResult.faceList.length == 0) {
 ////                        faceView.clear();
@@ -1340,6 +1308,12 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
                 }
             }
         }
+
+        @Override
+        public void interrupt() {
+            isIterrupt = true;
+            super.interrupt();
+        }
     }
 
     private class RecognizeThread extends Thread {
@@ -1416,6 +1390,11 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
             }
         }
 
+        @Override
+        public void interrupt() {
+            isInterrupt = true;
+            super.interrupt();
+        }
 
     }
 
@@ -1523,7 +1502,6 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
         @Override
         public void interrupt() {
             isRing = true;
-           // Log.d("RecognizeThread", "中断了弹窗线程");
             super.interrupt();
         }
     }
@@ -1639,6 +1617,7 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
             screenState = 0;
         }
         setContentView(R.layout.activity_main2);
+
         ScreenAdapterTools.getInstance().loadView(getWindow().getDecorView());
         ButterKnife.bind(this);
         AssetManager mgr = getAssets();
@@ -1716,13 +1695,13 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
         });
 
 
-        shipingView.setOnErrorListener(new IMediaPlayer.OnErrorListener() {
-            @Override
-            public boolean onError(IMediaPlayer iMediaPlayer, int i, int i1) {
-                TastyToast.makeText(MainActivity2.this, "播放视频失败", TastyToast.LENGTH_SHORT, TastyToast.INFO).show();
-                return false;
-            }
-        });
+//        shipingView.setOnErrorListener(new IMediaPlayer.OnErrorListener() {
+//            @Override
+//            public boolean onError(IMediaPlayer iMediaPlayer, int i, int i1) {
+//                TastyToast.makeText(MainActivity2.this, "播放视频失败", TastyToast.LENGTH_SHORT, TastyToast.INFO).show();
+//                return false;
+//            }
+//        });
 
         //  shipingView.start();
 
@@ -1866,7 +1845,6 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
             case 4:
 
                 break;
-
         }
 
     }
@@ -1875,13 +1853,20 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
     @Override
     protected void onStop() {
         SettingVar.isButtonInvisible = false;
+        shuLiebiao.removeAllViews();
+        rootLayout.removeAllViews();
         mToastBlockQueue.clear();
         mDetectResultQueue.clear();
         mFeedFrameQueue.clear();
+        linkedBlockingQueue.clear();
         if (manager != null) {
             manager.release();
         }
         marqueeView.stopFlipping();
+        dibuList.clear();
+        vipList.clear();
+        quchongList.clear();
+
         super.onStop();
     }
 
@@ -1900,50 +1885,45 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
         marqueeView.startFlipping();
     }
 
-
     @Override
     protected void onDestroy() {
-        if (mRecognizeThread != null) {
-            mRecognizeThread.isInterrupt = true;
-            mRecognizeThread.interrupt();
-        }
-        if (tanChuangThread != null) {
-            tanChuangThread.isRing = true;
-            tanChuangThread.interrupt();
-        }
-        //时钟
-        clockView.crean();
-
-        unregisterReceiver(timeChangeReceiver);
-
-//        if (requestQueue != null) {
-//            requestQueue.cancelAll("upload_detect_result_tag");
-//            requestQueue.cancelAll("handle_sync_request_tag");
-//            requestQueue.cancelAll("load_image_request_tag");
-//            requestQueue.stop();
-//        }
-
-        EventBus.getDefault().unregister(this);//解除订阅
-
-        if (manager != null) {
-            manager.release();
-        }
+        lunboview.removeAllViews();
         if (mToastBlockQueue != null) {
-            mToastBlockQueue.clear();
-        }
-//        if (mAndroidHandler != null) {
-//            mAndroidHandler.removeCallbacksAndMessages(null);
-//        }
-
-        if (mFacePassHandler != null) {
-            mFacePassHandler.release();
+        mToastBlockQueue.clear();
+    }
+        if (linkedBlockingQueue!=null){
+            linkedBlockingQueue.clear();
         }
         if (mFeedFrameQueue != null) {
             mFeedFrameQueue.clear();
         }
+        if (mFeedFrameThread != null) {
+            mFeedFrameThread.isIterrupt = true;
+            mFeedFrameThread.interrupt();
+        }
+
+        if (tanChuangThread != null) {
+            tanChuangThread.isRing = true;
+            tanChuangThread.interrupt();
+        }
+
+        if (mRecognizeThread != null) {
+            mRecognizeThread.isInterrupt = true;
+            mRecognizeThread.interrupt();
+        }
+        //时钟
+        clockView.crean();
+        shipingView.release(true);
+        unregisterReceiver(timeChangeReceiver);
+        EventBus.getDefault().unregister(this);//解除订阅
+        if (manager != null) {
+            manager.release();
+        }
+        if (mFacePassHandler != null) {
+            mFacePassHandler.release();
+        }
         if (synthesizer != null)
             synthesizer.release();
-
 
         timer.cancel();
         if (task != null)
@@ -2671,119 +2651,119 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
         Toast.makeText(MainActivity2.this, msg, Toast.LENGTH_SHORT).show();
     }
 
+//
+//    /**
+//     * 根据facetoken下载图片缓存
+//     */
+//    private static class FaceImageCache implements ImageLoader.ImageCache {
+//
+//        private static final int CACHE_SIZE = 6 * 1024 * 1024;
+//
+//        LruCache<String, Bitmap> mCache;
+//
+//        public FaceImageCache() {
+//            mCache = new LruCache<String, Bitmap>(CACHE_SIZE) {
+//
+//                @Override
+//                protected int sizeOf(String key, Bitmap value) {
+//                    return value.getRowBytes() * value.getHeight();
+//                }
+//            };
+//        }
+//
+//        @Override
+//        public Bitmap getBitmap(String url) {
+//            return mCache.get(url);
+//        }
+//
+//        @Override
+//        public void putBitmap(String url, Bitmap bitmap) {
+//            mCache.put(url, bitmap);
+//        }
+//    }
 
-    /**
-     * 根据facetoken下载图片缓存
-     */
-    private static class FaceImageCache implements ImageLoader.ImageCache {
-
-        private static final int CACHE_SIZE = 6 * 1024 * 1024;
-
-        LruCache<String, Bitmap> mCache;
-
-        public FaceImageCache() {
-            mCache = new LruCache<String, Bitmap>(CACHE_SIZE) {
-
-                @Override
-                protected int sizeOf(String key, Bitmap value) {
-                    return value.getRowBytes() * value.getHeight();
-                }
-            };
-        }
-
-        @Override
-        public Bitmap getBitmap(String url) {
-            return mCache.get(url);
-        }
-
-        @Override
-        public void putBitmap(String url, Bitmap bitmap) {
-            mCache.put(url, bitmap);
-        }
-    }
-
-    private class FacePassRequest extends Request<String> {
-
-        HttpEntity entity;
-
-        FacePassDetectionResult mFacePassDetectionResult;
-        private Response.Listener<String> mListener;
-
-        public FacePassRequest(String url, FacePassDetectionResult detectionResult, Response.Listener<String> listener, Response.ErrorListener errorListener) {
-            super(Method.POST, url, errorListener);
-            mFacePassDetectionResult = detectionResult;
-            mListener = listener;
-        }
-
-        @Override
-        protected Response<String> parseNetworkResponse(NetworkResponse response) {
-            String parsed;
-            try {
-                parsed = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
-            } catch (UnsupportedEncodingException e) {
-                parsed = new String(response.data);
-            }
-            return Response.success(parsed, HttpHeaderParser.parseCacheHeaders(response));
-        }
-
-        @Override
-        protected void deliverResponse(String response) {
-            mListener.onResponse(response);
-        }
-
-        @Override
-        public String getBodyContentType() {
-            return entity.getContentType().getValue();
-        }
-
-        @Override
-        public byte[] getBody() throws AuthFailureError {
-            MultipartEntityBuilder entityBuilder = MultipartEntityBuilder.create();
-//        beginRecogIdArrayList.clear();
-
-            for (FacePassImage passImage : mFacePassDetectionResult.images) {
-                /* 将人脸图转成jpg格式图片用来上传 */
-                YuvImage img = new YuvImage(passImage.image, ImageFormat.NV21, passImage.width, passImage.height, null);
-                Rect rect = new Rect(0, 0, passImage.width, passImage.height);
-                ByteArrayOutputStream os = new ByteArrayOutputStream();
-                img.compressToJpeg(rect, 95, os);
-                byte[] tmp = os.toByteArray();
-                ByteArrayBody bab = new ByteArrayBody(tmp, String.valueOf(passImage.trackId) + ".jpg");
-//            beginRecogIdArrayList.add(passImage.trackId);
-                entityBuilder.addPart("image_" + String.valueOf(passImage.trackId), bab);
-            }
-            StringBody sbody = null;
-            try {
-                sbody = new StringBody(MainActivity2.group_name, ContentType.TEXT_PLAIN.withCharset(CharsetUtils.get("UTF-8")));
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-            entityBuilder.addPart("group_name", sbody);
-            StringBody data = null;
-            try {
-                data = new StringBody(new String(mFacePassDetectionResult.message), ContentType.TEXT_PLAIN.withCharset(CharsetUtils.get("UTF-8")));
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-            entityBuilder.addPart("face_data", data);
-            entity = entityBuilder.build();
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            try {
-                entity.writeTo(bos);
-            } catch (IOException e) {
-                VolleyLog.e("IOException writing to ByteArrayOutputStream");
-            }
-            byte[] result = bos.toByteArray();
-            if (bos != null) {
-                try {
-                    bos.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            return result;
-        }
-    }
+//    private class FacePassRequest extends Request<String> {
+//
+//        HttpEntity entity;
+//
+//        FacePassDetectionResult mFacePassDetectionResult;
+//        private Response.Listener<String> mListener;
+//
+//        public FacePassRequest(String url, FacePassDetectionResult detectionResult, Response.Listener<String> listener, Response.ErrorListener errorListener) {
+//            super(Method.POST, url, errorListener);
+//            mFacePassDetectionResult = detectionResult;
+//            mListener = listener;
+//        }
+//
+//        @Override
+//        protected Response<String> parseNetworkResponse(NetworkResponse response) {
+//            String parsed;
+//            try {
+//                parsed = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+//            } catch (UnsupportedEncodingException e) {
+//                parsed = new String(response.data);
+//            }
+//            return Response.success(parsed, HttpHeaderParser.parseCacheHeaders(response));
+//        }
+//
+//        @Override
+//        protected void deliverResponse(String response) {
+//            mListener.onResponse(response);
+//        }
+//
+//        @Override
+//        public String getBodyContentType() {
+//            return entity.getContentType().getValue();
+//        }
+//
+//        @Override
+//        public byte[] getBody() throws AuthFailureError {
+//            MultipartEntityBuilder entityBuilder = MultipartEntityBuilder.create();
+////        beginRecogIdArrayList.clear();
+//
+//            for (FacePassImage passImage : mFacePassDetectionResult.images) {
+//                /* 将人脸图转成jpg格式图片用来上传 */
+//                YuvImage img = new YuvImage(passImage.image, ImageFormat.NV21, passImage.width, passImage.height, null);
+//                Rect rect = new Rect(0, 0, passImage.width, passImage.height);
+//                ByteArrayOutputStream os = new ByteArrayOutputStream();
+//                img.compressToJpeg(rect, 95, os);
+//                byte[] tmp = os.toByteArray();
+//                ByteArrayBody bab = new ByteArrayBody(tmp, String.valueOf(passImage.trackId) + ".jpg");
+////            beginRecogIdArrayList.add(passImage.trackId);
+//                entityBuilder.addPart("image_" + String.valueOf(passImage.trackId), bab);
+//            }
+//            StringBody sbody = null;
+//            try {
+//                sbody = new StringBody(MainActivity2.group_name, ContentType.TEXT_PLAIN.withCharset(CharsetUtils.get("UTF-8")));
+//            } catch (UnsupportedEncodingException e) {
+//                e.printStackTrace();
+//            }
+//            entityBuilder.addPart("group_name", sbody);
+//            StringBody data = null;
+//            try {
+//                data = new StringBody(new String(mFacePassDetectionResult.message), ContentType.TEXT_PLAIN.withCharset(CharsetUtils.get("UTF-8")));
+//            } catch (UnsupportedEncodingException e) {
+//                e.printStackTrace();
+//            }
+//            entityBuilder.addPart("face_data", data);
+//            entity = entityBuilder.build();
+//            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+//            try {
+//                entity.writeTo(bos);
+//            } catch (IOException e) {
+//                VolleyLog.e("IOException writing to ByteArrayOutputStream");
+//            }
+//            byte[] result = bos.toByteArray();
+//            if (bos != null) {
+//                try {
+//                    bos.close();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//            return result;
+//        }
+//    }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -2793,9 +2773,6 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
                 finish();
             }
         }
-        Log.d("MainActivity", "keyCode:" + keyCode);
-        Log.d("MainActivity", "event:" + event);
-
         return super.onKeyDown(keyCode, event);
     }
 
@@ -2909,10 +2886,10 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
                     xiaoshi.setTypeface(tf);
                     String xiaoshiss=DateUtils.timeMinute(System.currentTimeMillis() + "");
                     if (xiaoshiss.split(":")[0].equals("06") && xiaoshiss.split(":")[1].equals("30")){
-                        Log.d("TimeChangeReceiver", "同步");
+                        clockView.crean();
+
                       final List<BenDiJiLuBean> benDiJiLuBeans=benDiJiLuBeanBox.getAll();
                       final int size=benDiJiLuBeans.size();
-
                       new Thread(new Runnable() {
                           @Override
                           public void run() {
@@ -2926,6 +2903,9 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
 
                           }
                       }).start();
+
+                        clockView.setTimeMills(System.currentTimeMillis());
+                        clockView.start();
 
                     }
                     xiaoshi.setText(xiaoshiss);
@@ -3137,10 +3117,7 @@ public class MainActivity2 extends Activity implements CameraManager.CameraListe
                 bean.setIdentificationTime(DateUtils.time(System.currentTimeMillis() + ""));
                 benDiJiLuBeanBox.put(bean);
 
-              List<BenDiJiLuBean> bb=  benDiJiLuBeanBox.getAll();
-              for (int i=0;i<bb.size();i++){
-                  Log.d("MainActivity2", bb.toString());
-              }
+
             }
 
             @Override

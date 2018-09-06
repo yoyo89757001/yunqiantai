@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,7 +28,6 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONArray;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,12 +47,10 @@ import megvii.testfacepass.dialog.XiuGaiHuoTiFZDialog;
 import megvii.testfacepass.dialog.XiuGaiRuKuFZDialog;
 import megvii.testfacepass.dialog.XiuGaiSBFZDialog;
 import megvii.testfacepass.dialog.YuYingDialog;
-import megvii.testfacepass.dialogall.ToastUtils;
 import megvii.testfacepass.utils.FaceInit;
-import megvii.testfacepass.utils.FacePassUtil;
 import megvii.testfacepass.utils.FileUtil;
+import megvii.testfacepass.utils.RestartAPPTool;
 import megvii.testfacepass.utils.SettingVar;
-import okhttp3.OkHttpClient;
 
 
 public class SheZhiActivity extends Activity {
@@ -79,20 +76,22 @@ public class SheZhiActivity extends Activity {
     TextView chengshi;
     @BindView(R.id.rl9)
     RelativeLayout rl9;
+    @BindView(R.id.r21)
+    RelativeLayout r21;
 
-    private BangDingDialog bangDingDialog=null;
+    private BangDingDialog bangDingDialog = null;
     private int cameraRotation;
     private static final String group_name = "face-pass-test-x";
     private Box<BaoCunBean> baoCunBeanDao = null;
     private BaoCunBean baoCunBean = null;
-   // public OkHttpClient okHttpClient = null;
+    // public OkHttpClient okHttpClient = null;
     private ArrayList<JsonBean> options1Items = new ArrayList<>();//省
     private ArrayList<ArrayList<String>> options2Items = new ArrayList<>();//市
     private ArrayList<ArrayList<ArrayList<String>>> options3Items = new ArrayList<>();//区
     private Box<ChengShiIDBean> chengShiIDBeanBox;
     private static String usbPath = null;
     private int shibai;
-    private Box<Subject> subjectBox=MyApplication.myApplication.getBoxStore().boxFor(Subject.class);
+    private Box<Subject> subjectBox = MyApplication.myApplication.getBoxStore().boxFor(Subject.class);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,30 +101,15 @@ public class SheZhiActivity extends Activity {
         //ScreenAdapterTools.getInstance().reset(this);//如果希望android7.0分屏也适配的话,加上这句
         //在setContentView();后面加上适配语句
         ScreenAdapterTools.getInstance().loadView(getWindow().getDecorView());
+
         baoCunBeanDao = MyApplication.myApplication.getBoxStore().boxFor(BaoCunBean.class);
         chengShiIDBeanBox = MyApplication.myApplication.getBoxStore().boxFor(ChengShiIDBean.class);
         baoCunBean = baoCunBeanDao.get(123456L);
-        if (baoCunBean == null) {
-            baoCunBean = new BaoCunBean();
-            baoCunBean.setId(123456L);
-            baoCunBean.setHoutaiDiZhi("http://192.168.2.187:8980/js/f");
-            baoCunBean.setShibieFaceSize(100);
-            baoCunBean.setShibieFaZhi(70);
-            baoCunBean.setRuKuFaceSize(80);
-            baoCunBean.setRuKuMoHuDu(0.4f);
-            baoCunBean.setHuoTiFZ(70);
-            baoCunBean.setHuoTi(true);
-            baoCunBean.setDangqianShiJian("d");
-            baoCunBean.setTianQi(false);
 
-            baoCunBeanDao.put(baoCunBean);
+        if (baoCunBean.getDangqianChengShi2() == null) {
+            chengshi.setText("");
         } else {
-            if (baoCunBean.getDangqianChengShi2() == null) {
-                chengshi.setText("");
-            } else {
-                chengshi.setText(baoCunBean.getDangqianChengShi2());
-            }
-
+            chengshi.setText(baoCunBean.getDangqianChengShi2());
         }
 
         EventBus.getDefault().register(this);//订阅
@@ -164,7 +148,7 @@ public class SheZhiActivity extends Activity {
     }
 
 
-    @OnClick({R.id.rl1, R.id.rl2, R.id.rl3, R.id.rl4, R.id.rl5, R.id.rl6, R.id.rl7, R.id.rl8, R.id.rl9})
+    @OnClick({R.id.rl1, R.id.rl2, R.id.rl3, R.id.rl4, R.id.rl5, R.id.rl6, R.id.rl7, R.id.rl8, R.id.rl9,R.id.r21})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.rl1:
@@ -189,13 +173,13 @@ public class SheZhiActivity extends Activity {
 
                 break;
             case R.id.rl2:
-                 bangDingDialog= new BangDingDialog(SheZhiActivity.this);
+                bangDingDialog = new BangDingDialog(SheZhiActivity.this);
                 bangDingDialog.setCanceledOnTouchOutside(false);
                 bangDingDialog.setOnQueRenListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        FaceInit init=new FaceInit(SheZhiActivity.this);
-                        init.init(bangDingDialog.getZhuCeMa(),baoCunBean.getHoutaiDiZhi());
+                        FaceInit init = new FaceInit(SheZhiActivity.this);
+                        init.init(bangDingDialog.getZhuCeMa(), baoCunBean.getHoutaiDiZhi());
                         bangDingDialog.jiazai();
                     }
                 });
@@ -306,6 +290,12 @@ public class SheZhiActivity extends Activity {
 
                 break;
 
+            case R.id.r21:
+                //模版
+                startActivity(new Intent(SheZhiActivity.this, MoBanActivity.class));
+
+                break;
+
 //            case R.id.r20:
 //                if (usbPath!=null){
 //
@@ -369,7 +359,8 @@ public class SheZhiActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);//解除订阅
-        startActivity(new Intent(SheZhiActivity.this, MainActivity.class));
+        RestartAPPTool.restartAPP(SheZhiActivity.this);
+        //  startActivity(new Intent(SheZhiActivity.this, MainActivity2.class));
     }
 
 //    //绑定
@@ -448,9 +439,9 @@ public class SheZhiActivity extends Activity {
 
     @Subscribe(threadMode = ThreadMode.MAIN) //在ui线程执行
     public void onDataSynEvent(String event) {
-        if (bangDingDialog!=null && bangDingDialog.isShowing()){
+        if (bangDingDialog != null && bangDingDialog.isShowing()) {
             bangDingDialog.setContents(event);
-        }else {
+        } else {
             Toast tastyToast = TastyToast.makeText(SheZhiActivity.this, event, TastyToast.LENGTH_LONG, TastyToast.INFO);
             tastyToast.setGravity(Gravity.CENTER, 0, 0);
             tastyToast.show();

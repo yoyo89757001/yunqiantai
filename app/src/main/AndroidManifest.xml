@@ -34,16 +34,16 @@
     <uses-permission android:name="android.permission.GET_TASKS" />
 
     <application
-        android:largeHeap="true"
         android:name=".MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".ui.MainActivity2"
+            android:name=".ui.BaseActivity"
             android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -51,15 +51,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".ui.MainActivity2" />
         <activity android:name=".ui.SettingActivity" />
+        <activity android:name=".ui.YuLanActivity" />
 
-        <activity android:name=".ui.YuLanActivity"/>
-
+        <service
+            android:name=".utils.killSelfService"
+            android:process=":restart" />
 
         <activity
             android:name="com.tencent.bugly.beta.ui.BetaActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
             android:theme="@android:style/Theme.Translucent" />
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="${applicationId}.fileProvider"
@@ -67,14 +71,14 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"/>
+                android:resource="@xml/provider_paths" />
         </provider>
 
         <!-- Rich push 核心功能 since 2.0.6 -->
         <activity
             android:name="cn.jpush.android.ui.PopWinActivity"
             android:exported="false"
-            android:theme="@style/MyDialogStyle"/>
+            android:theme="@style/MyDialogStyle" />
 
         <!-- Required SDK核心功能 -->
         <activity
@@ -184,44 +188,46 @@
             android:name="JPUSH_APPKEY"
             android:value="e96a0aef1820de90142a3e23" /> <!-- </>值来自开发者平台取得的AppKey -->
 
-        <activity android:name=".ui.SheZhiActivity"/>
-        <activity android:name=".ui.SheZhiActivity2"/>
+        <activity android:name=".ui.SheZhiActivity" />
+
         <meta-data
             android:name="designwidth"
             android:value="1080" />
-        <!--//设计图的宽,单位是像素,推荐用markman测量,量出来如果是750px那么请尽量去找ui设计师要一份android的设计图.-->
+        <!-- //设计图的宽,单位是像素,推荐用markman测量,量出来如果是750px那么请尽量去找ui设计师要一份android的设计图. -->
         <meta-data
             android:name="designdpi"
             android:value="480" />
-        <!--//设计图对应的标准dpi,根据下面的那张图找到对应的dpi,比如1080就对应480dpi,如果拿到的是其他宽度的设计图,那么选择一个相近的dpi就好了-->
+        <!-- //设计图对应的标准dpi,根据下面的那张图找到对应的dpi,比如1080就对应480dpi,如果拿到的是其他宽度的设计图,那么选择一个相近的dpi就好了 -->
         <meta-data
             android:name="fontsize"
             android:value="1.0" />
-        <!--//全局字体的大小倍数,有时候老板会觉得你的所有的字小了或者大了,你总不能一个一个去改吧-->
+        <!-- //全局字体的大小倍数,有时候老板会觉得你的所有的字小了或者大了,你总不能一个一个去改吧 -->
         <meta-data
             android:name="unit"
             android:value="px" />
-        <!--//你的布局里面用的是px这就写px,你的布局里面用的是dp这就写dp,要统一,不要一会儿px一会儿dp,字体也用px或者dp,不要用sp,微信qq用的肯定不是sp.-->
-        <!--宽         	240 	320 	480 	720     1080 	1440-->
-        <!--DPI等级	        LDPI	MDPI	HDPI	XHDPI	XXHDPI	XXXHDPI-->
-        <!--DPI数值	        120	160	240	320	480	640-->
+        <!-- //你的布局里面用的是px这就写px,你的布局里面用的是dp这就写dp,要统一,不要一会儿px一会儿dp,字体也用px或者dp,不要用sp,微信qq用的肯定不是sp. -->
+        <!-- 宽         	240 	320 	480 	720     1080 	1440 -->
+        <!-- DPI等级	        LDPI	MDPI	HDPI	XHDPI	XXHDPI	XXXHDPI -->
+        <!-- DPI数值	        120	160	240	320	480	640 -->
 
         <service
             android:name=".ljkplay.services.MediaPlayerService"
             android:enabled="false"
             android:exported="false"
             android:icon="@drawable/rtlogo"
-            android:label="@string/app_name" >
-        </service>
-        <service android:name=".dialogall.CommonDialogService"/>
-        <receiver android:name=".ui.SheZhiActivity$UsbBroadCastReceiver">
-            <intent-filter android:priority="1000" >
-                <action android:name="android.intent.action.MEDIA_MOUNTED"/>
-                <action android:name="android.intent.action.MEDIA_EJECT" />
-                <data android:scheme="file"/>
-            </intent-filter>
+            android:label="@string/app_name" />
+        <service android:name=".dialogall.CommonDialogService" />
 
+        <receiver android:name=".ui.SheZhiActivity$UsbBroadCastReceiver">
+            <intent-filter android:priority="1000">
+                <action android:name="android.intent.action.MEDIA_MOUNTED" />
+                <action android:name="android.intent.action.MEDIA_EJECT" />
+
+                <data android:scheme="file" />
+            </intent-filter>
         </receiver>
+
+        <activity android:name=".ui.MoBanActivity"/>
     </application>
 
 </manifest>

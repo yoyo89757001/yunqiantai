@@ -412,8 +412,6 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                         yuangongList.add(bean);
                         lingdaoList.add(0, bean);
 
-
-
                         //入场动画(从右往左)
                         ValueAnimator anim = ValueAnimator.ofInt(dw, 30);
                         anim.setDuration(1100);
