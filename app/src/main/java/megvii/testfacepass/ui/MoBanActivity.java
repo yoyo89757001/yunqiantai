@@ -63,7 +63,7 @@ public class MoBanActivity extends AppCompatActivity implements MoBanAdapter.OnR
             //竖
             recycerview.setLayoutManager(gridLayoutManager2);
             integerList.add(R.drawable.moban201);
-           // integerList.add(R.drawable.moban201);
+            integerList.add(R.drawable.mb202);
            // integerList.add(R.drawable.moban201);
         }
 

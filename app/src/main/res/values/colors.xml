@@ -15,7 +15,7 @@
     <color name="tabtextcolo">#b7868686</color>
     <color name="write">#ffffffff</color>
     <color name="blake">#ff111111</color>
-    <color name="textcolor">#8c050505</color>
+    <color name="textcolor">#9a050505</color>
     <!-- 半透明 -->
     <color name="ijk_color_blue_main">@color/ijk_color_blue_500</color>
     <color name="ijk_color_blue_50">#E3F2FD</color>
@@ -42,4 +42,6 @@
     <color name="dark_grey">#e2e1e1</color><!-- 深灰 -->
     <color name="huangse">#eeff00</color><!-- 深灰 -->
     <color name="touming22">#59000000</color>
+    <color name="dabg">#f7f7f7</color>
+
 </resources>

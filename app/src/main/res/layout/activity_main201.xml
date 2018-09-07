@@ -14,12 +14,7 @@
         android:background="@color/ijk_transparent_dark"
         android:padding="8dp" />
 
-        <megvii.testfacepass.camera.CameraPreview
-            android:id="@+id/preview"
-            android:layout_width="1dp"
-            android:layout_height="1dp"
-            android:visibility="visible"
-            android:layout_gravity="center_vertical" />
+
 
 
 
@@ -302,8 +297,16 @@
         android:layout_width="match_parent"
         android:layout_height="0dp">
 
+        <megvii.testfacepass.camera.CameraPreview
+            android:id="@+id/preview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:layout_gravity="center_vertical" />
+
         <megvii.testfacepass.ljkplay.widget.media.IjkVideoView
             android:id="@+id/ijkplayview"
+            android:visibility="gone"
             android:layout_centerVertical="true"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
