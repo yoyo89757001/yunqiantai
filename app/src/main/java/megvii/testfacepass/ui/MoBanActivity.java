@@ -51,7 +51,6 @@ public class MoBanActivity extends AppCompatActivity implements MoBanAdapter.OnR
         baoCunBean = baoCunBeanDao.get(123456L);
 
 
-
         if (baoCunBean.isHengOrShu()){
             //横
             recycerview.setLayoutManager(gridLayoutManager);
