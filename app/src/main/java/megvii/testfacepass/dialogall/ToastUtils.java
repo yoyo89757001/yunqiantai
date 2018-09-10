@@ -36,6 +36,10 @@ public class ToastUtils {
         return instances;
     }
 
+    public void setDate(String a,float p, String t){
+        mListener.setDate(a, (int) p,t);
+    }
+
 
     public void showDialog(String a, String t, int p){
        // Log.d("CommonDialogService", "ddddddddddddd");

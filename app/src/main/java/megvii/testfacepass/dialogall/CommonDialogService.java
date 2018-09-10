@@ -69,17 +69,18 @@ public class CommonDialogService extends Service implements CommonDialogListener
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         if(dialog!=null&&dialog.isShowing()){
             dialog.cancel();
             dialog=null;
         }
+        super.onDestroy();
+
     }
 
     private void showDialog(String a, String t, int p){
       //  Log.d("CommonDialogService", "显示弹窗");
 
-        if(dialog==null&&CommonData.mNowContext!=null){
+        if(dialog==null && CommonData.mNowContext!=null){
           //  Log.d("CommonDialogService", "显示2");
             handler.post(new Runnable() {
                 @Override
@@ -92,6 +93,7 @@ public class CommonDialogService extends Service implements CommonDialogListener
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            if (dialog!=null)
                             dialog.dismiss();
                             dialog=null;
                         }
@@ -100,7 +102,6 @@ public class CommonDialogService extends Service implements CommonDialogListener
                     progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
                     dialog.setContentView(view);
                     dialog.setCanceledOnTouchOutside(false);
-                    dialog.show();
 
                     Window window= dialog.getWindow();
                     if ( window != null) {
@@ -112,6 +113,12 @@ public class CommonDialogService extends Service implements CommonDialogListener
                             dialog.getWindow().setAttributes(attr);
                         }
                     }
+
+                    if (!dialog.isShowing()){
+                        Log.d("CommonDialogService", "xianshi");
+                        dialog.show();
+                    }
+
 
                 }
             });
@@ -154,6 +161,7 @@ public class CommonDialogService extends Service implements CommonDialogListener
        showDialog(a,t,p);
     }
 
+
     @Override
     public void cancel() {
          if(dialog!=null){
@@ -161,5 +169,18 @@ public class CommonDialogService extends Service implements CommonDialogListener
                 dialog=null;
 
          }
+    }
+
+    @Override
+    public void setDate(String a, int p, String t) {
+        Tishi tishi=new Tishi();
+        tishi.setA(a);
+        tishi.setP(p);
+        tishi.setTishi(t);
+
+        Message message= Message.obtain();
+        message.what=111;
+        message.obj=tishi;
+        handler.sendMessage(message);
     }
 }

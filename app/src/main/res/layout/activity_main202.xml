@@ -53,6 +53,7 @@
 
             <RelativeLayout
                 android:layout_centerHorizontal="true"
+                android:layout_marginBottom="10px"
                 android:layout_alignParentBottom="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
@@ -169,7 +170,7 @@
                     android:layout_below="@+id/ttzz"
                     app:mvDirection="bottom_to_top"
                     app:mvInterval="3000"
-                    app:mvTextColor="@color/white"
+                    app:mvTextColor="@color/textcolor"
                     app:mvTextSize="26px"
                     app:mvSingleLine="false"
                     android:id="@+id/marqueeView"
@@ -219,10 +220,11 @@
                 android:id="@+id/preview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:visibility="gone"/>
+                android:visibility="visible"/>
 
             <megvii.testfacepass.ljkplay.widget.media.IjkVideoView
                 android:id="@+id/ijkplayview"
+                android:visibility="gone"
                 android:layout_centerVertical="true"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
@@ -292,7 +294,7 @@
         android:id="@+id/scrollview"
         android:elevation="6dp"
         android:layout_below="@+id/rl1"
-        android:layout_width="140px"
+        android:layout_width="150px"
         android:layout_height="match_parent">
         <LinearLayout
             android:id="@+id/shu_liebiao"
@@ -300,7 +302,6 @@
             android:background="#EFF0F2"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
 
 
         </LinearLayout>

@@ -181,7 +181,7 @@ public class MyReceiver extends BroadcastReceiver {
 				if (jsonObject.get("title").getAsString().equals("人员入库") || jsonObject.get("title").getAsString().equals("访客入库")){
 					FileDownloader.setup(context);
 					isDW=true;
-					Thread.sleep(1200);
+					Thread.sleep(2200);
 					//baoCunBean.setZhanhuiId(jsonObject.get("content").getAsJsonObject().get("id").getAsInt()+"");
 					//baoCunBean.setGonggao(jsonObject.get("content").getAsJsonObject().get("screenId").getAsInt()+"");
 					//baoCunBeanDao.put(baoCunBean);
@@ -211,8 +211,9 @@ public class MyReceiver extends BroadcastReceiver {
 									protected void connected(BaseDownloadTask task, String etag, boolean isContinue, int soFarBytes, int totalBytes) {
 										//已经连接上
 										Log.d(TAG, "isContinue:" + isContinue);
+										showNotifictionIcon(((float)soFarBytes/(float) totalBytes)*100,"下载中","下载人脸库中"+((float)soFarBytes/(float) totalBytes)*100+"%");
 
-										}
+									}
 
 									@Override
 									protected void progress(BaseDownloadTask task, int soFarBytes, int totalBytes) {
@@ -220,8 +221,10 @@ public class MyReceiver extends BroadcastReceiver {
 										//进度
 										isDW=false;
 										if (task.getUrl().equals(path2)){
-										//	Log.d(TAG, totalBytes+"KB");
-											showNotifictionIcon(((float)soFarBytes/(float) totalBytes)*100,"下载中","下载人脸库中"+((float)soFarBytes/(float) totalBytes)*100+"%");
+
+											ToastUtils.getInstances().setDate("下载中",((float)soFarBytes/(float) totalBytes)*100,"下载人脸库中"+((float)soFarBytes/(float) totalBytes)*100+"%");
+										//	showNotifictionIcon(,,);
+
 										}
 									}
 

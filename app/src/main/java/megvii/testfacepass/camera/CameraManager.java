@@ -9,6 +9,8 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.WindowManager;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -142,6 +144,7 @@ public class CameraManager implements CameraPreview.CameraPreviewListener {
                                 camera = Camera.open(cameraId);
                             }catch (Exception ee){
                                 ee.printStackTrace();
+                                EventBus.getDefault().post("摄像头开启失败");
                             }
 
                         } else {

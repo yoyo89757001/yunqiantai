@@ -126,7 +126,6 @@ import megvii.testfacepass.utils.FacePassUtil;
 import megvii.testfacepass.utils.FileUtil;
 import megvii.testfacepass.utils.GsonUtil;
 import megvii.testfacepass.utils.SettingVar;
-import megvii.testfacepass.view.ClockView;
 import megvii.testfacepass.view.GlideCircleTransform;
 import megvii.testfacepass.view.GlideRoundTransform;
 import megvii.testfacepass.view.SlowScrollView;
@@ -1313,6 +1312,8 @@ public class MainActivity202 extends Activity implements CameraManager.CameraLis
                 try {
 
                     FacePassDetectionResult detectionResult = mDetectResultQueue.take();
+                    Log.d("RecognizeThread", "ddddddddddddrrrrrrrewew");
+
                     FacePassRecognitionResult[] recognizeResult = mFacePassHandler.recognize(group_name, detectionResult.message);
                     Log.d("RecognizeThread", "识别线程");
                     if (recognizeResult != null && recognizeResult.length > 0) {
@@ -1631,9 +1632,11 @@ public class MainActivity202 extends Activity implements CameraManager.CameraLis
         scrollView.setSmoothScrollingEnabled(true);
         marqueeView = (MarqueeView) findViewById(R.id.marqueeView);
         List<String> info = new ArrayList<>();
-        info.add("大家好我是孙福生哦哦大家好我是孙福生哦哦大家好我是孙福生哦哦大家好我是孙福生哦哦大家好我是孙福生哦哦大家好我是孙福生哦哦大家好我是孙福生哦哦");
+        info.add("大家好我是孙福生哦哦大家好我是孙福生哦哦大家好我是孙福生哦哦大家好我是孙福生哦哦大家好我是孙福生哦哦大家好我是孙福生哦哦大家好我是孙福生哦哦" +
+                "大家好我是孙福生哦哦大家好我是孙福生哦哦大家好我是孙福生哦哦大家好我是孙福生哦哦大家好我是孙福生哦哦大家好我是孙福生哦哦大家好我是孙福生哦哦");
         //70个字
-        info.add("明天上午12点开会明天上午12点开会明天上午12点开会明天上午12点开会明天上午12点开会明天上午12点开会明天上午12点开会明天上午12点开会明天上午12点开会");
+        info.add("明天上午12点开会明天上午12点开会明天上午12点开会明天上午12点开会明天上午12点开会明天上午12点开会明天上午12点开会明天上午12点开会明天上午12点开会" +
+                "明天上午12点开会明天上午12点开会明天上午12点开会明天上午12点开会明天上午12点开会明天上午12点开会明天上午12点开会明天上午12点开会明天上午12点开会");
         marqueeView.startWithList(info);
 
         // 在代码里设置自己的动画
