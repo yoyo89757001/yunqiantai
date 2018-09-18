@@ -713,6 +713,7 @@ public class MainActivity202 extends Activity implements CameraManager.CameraLis
                                     }
                                 }
                             });
+
                             alphaAnim2.addListener(new Animator.AnimatorListener() {
                                 @Override
                                 public void onAnimationStart(Animator animation) {
@@ -2855,6 +2856,7 @@ public class MainActivity202 extends Activity implements CameraManager.CameraLis
                     //  riqi.setTypeface(tf);
                     //  riqi.setText(riqi2);
                     xiaoshi.setTypeface(tf);
+
                     String xiaoshiss=DateUtils.timeMinute(System.currentTimeMillis() + "");
                     if (xiaoshiss.split(":")[0].equals("06") && xiaoshiss.split(":")[1].equals("30")){
 
@@ -2873,8 +2875,6 @@ public class MainActivity202 extends Activity implements CameraManager.CameraLis
 
                           }
                       }).start();
-
-
 
                     }
                     xiaoshi.setText(xiaoshiss);

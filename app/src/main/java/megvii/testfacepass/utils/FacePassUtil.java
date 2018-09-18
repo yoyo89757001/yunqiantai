@@ -84,9 +84,9 @@ private     FacePassModel livenessModel;
                                     e.printStackTrace();
                                 }
 
-                                float searchThreshold2 = 75f;
-                                float livenessThreshold2 = 48f;
-                                boolean livenessEnabled2 = true;
+                              //  float searchThreshold2 = 75f;
+                              //  float livenessThreshold2 = 48f;
+                             //   boolean livenessEnabled2 = true;
                                 int faceMinThreshold2 = baoCunBean.getRuKuFaceSize();
                                 float blurThreshold2 = baoCunBean.getRuKuMoHuDu();
                                 float lowBrightnessThreshold2 = 70f;
@@ -94,8 +94,9 @@ private     FacePassModel livenessModel;
                                 float brightnessSTDThreshold2 = 60f;
                                 FacePassConfig config1=new FacePassConfig(faceMinThreshold2,30f,30f,30f,blurThreshold2,
                                         lowBrightnessThreshold2,highBrightnessThreshold2,brightnessSTDThreshold2);
+                                boolean is=   mFacePassHandler.setAddFaceConfig(config1);
 
-                                Log.d("YanShiActivity", "设置入库质量配置" + mFacePassHandler.setAddFaceConfig(config1));
+                                Log.d("YanShiActivity", "设置入库质量配置"+is );
 
                                 activity.runOnUiThread(new Runnable() {
                                     @Override

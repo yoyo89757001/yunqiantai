@@ -372,7 +372,7 @@ public class MainActivity201 extends Activity implements CameraManager.CameraLis
             requestPermission();
         } else {
             //初始化
-            FacePassHandler.getAuth(authIP, apiKey, apiSecret);
+         //   FacePassHandler.getAuth(authIP, apiKey, apiSecret);
             FacePassHandler.initSDK(getApplicationContext());
             Log.d("MainActivity201", FacePassHandler.getVersion());
         }
@@ -1393,7 +1393,6 @@ public class MainActivity201 extends Activity implements CameraManager.CameraLis
                                     if (result.trackId == detectionResult.images[i].trackId) {
                                         //从一帧中所有人里面寻找trackId一样的陌生人，然后取出图片
                                         try {
-
                                             YuvImage img = new YuvImage(detectionResult.images[i].image, ImageFormat.NV21, detectionResult.images[i].width, detectionResult.images[i].height, null);
                                             Rect rect = new Rect(0, 0, detectionResult.images[i].width, detectionResult.images[i].height);
                                             ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -1401,7 +1400,6 @@ public class MainActivity201 extends Activity implements CameraManager.CameraLis
                                             //这个bitmap是单个人脸的图片
                                             final Bitmap bmp = BitmapFactory.decodeByteArray( os.toByteArray(), 0, os.size());
                                             os.close();
-
                                             runOnUiThread(new Runnable() {
                                                 @Override
                                                 public void run() {

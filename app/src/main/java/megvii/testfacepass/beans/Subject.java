@@ -16,7 +16,7 @@ public class Subject implements Comparator<Subject> {
     public Subject() {
     }
 
-    public Subject(long id, String sid, String name, String companyId, String companyName, String workNumber, String sex, String phone, String peopleType, String email, String position, int employeeStatus, int quitType, String remark, String photo, String storeId, String storeName, String entryTime, String birthday, byte[] teZhengMa, String departmentName, int daka, String shijian, View view) {
+    public Subject(long id, String sid, String name, String companyId, String companyName, String workNumber, String sex, String phone, String peopleType, String email, String position, int employeeStatus, int quitType, String remark, String photo, String storeId, String storeName, String entryTime, String birthday, byte[] teZhengMa, String departmentName, int daka, String shijian, String displayPhoto, View view) {
         this.id = id;
         this.sid = sid;
         this.name = name;
@@ -40,8 +40,10 @@ public class Subject implements Comparator<Subject> {
         this.departmentName = departmentName;
         this.daka = daka;
         this.shijian = shijian;
+        this.displayPhoto = displayPhoto;
         this.view = view;
     }
+
 
     @Id(assignable = true)
     private long id;
@@ -67,6 +69,17 @@ public class Subject implements Comparator<Subject> {
     private String departmentName;
     private int daka;
     private String shijian;
+    private String displayPhoto;
+
+
+
+    public String getDisplayPhoto() {
+        return displayPhoto;
+    }
+
+    public void setDisplayPhoto(String displayPhoto) {
+        this.displayPhoto = displayPhoto;
+    }
 
     public String getShijian() {
         return shijian;

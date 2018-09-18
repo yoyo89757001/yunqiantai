@@ -36,6 +36,16 @@ public class FangKeBean {
     private String id;
     private String position;
     private String email;
+    private String displayPhoto;
+
+
+    public String getDisplayPhoto() {
+        return displayPhoto;
+    }
+
+    public void setDisplayPhoto(String displayPhoto) {
+        this.displayPhoto = displayPhoto;
+    }
 
     public String getBirthday() {
         return birthday;

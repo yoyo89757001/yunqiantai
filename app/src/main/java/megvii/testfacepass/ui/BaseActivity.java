@@ -28,6 +28,9 @@ public class BaseActivity extends AppCompatActivity {
             baoCunBean.setHoutaiDiZhi("http://192.168.2.187:8980/js/f");
             baoCunBean.setShibieFaceSize(60);
             baoCunBean.setShibieFaZhi(70);
+            baoCunBean.setYudiao(5);
+            baoCunBean.setYusu(5);
+            baoCunBean.setBoyingren(4);
             baoCunBean.setRuKuFaceSize(60);
             baoCunBean.setRuKuMoHuDu(0.4f);
             baoCunBean.setHuoTiFZ(70);
