@@ -1695,6 +1695,9 @@ public class MainActivity201 extends Activity implements CameraManager.CameraLis
 
         // 在代码里设置自己的动画
         marqueeView.startWithList(info, R.anim.anim_bottom_in, R.anim.anim_top_out);
+      // String ss= "http://192.168.2.202:8080/f/app/employeesPush";
+
+      //  Log.d("MainActivity201", "ss.index" + ss.split("/")[0]);
 
 //        shipingView.setOnClickListener(new View.OnClickListener() {
 //            @Override

@@ -326,7 +326,7 @@ public class FileUtil {
         return "com.google.android.apps.photos.content".equals(uri.getAuthority());
     }
 
-    public static final String PATH = "ruitongPD";
+    public static final String PATH = "ruitongPhoto";
 
     /**
      * 是否支持SDCard

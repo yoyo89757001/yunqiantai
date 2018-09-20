@@ -32,6 +32,7 @@ import net.lingala.zip4j.model.FileHeader;
 import org.xmlpull.v1.XmlPullParser;
 
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -1117,20 +1118,37 @@ public class MyReceiver extends BroadcastReceiver {
 					ResponseBody body = response.body();
 					final String ss=body.string().trim();
 					Log.d("AllConnects", "单个访客"+ss);
-
 					JsonObject jsonObject= GsonUtil.parse(ss).getAsJsonObject();
 					Gson gson=new Gson();
 					final FangKeBean renShu=gson.fromJson(jsonObject,FangKeBean.class);
 					if (status!=3){
-						Bitmap bitmap=null;
+						Bitmap bitmap=null,bitmapTX=null;
 						try {
 							bitmap = Glide.with(context).asBitmap()
-									.load(baoCunBean.getHoutaiDiZhi().replace("/js/f","")+renShu.getPhoto())
+									.load(baoCunBean.getHoutaiDiZhi().replace("/f","")+renShu.getPhoto())
 									// .sizeMultiplier(0.5f)
 									.submit(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
 									.get();
 						} catch (InterruptedException | ExecutionException e) {
 							e.printStackTrace();
+						}
+						if (renShu.getDisplayPhoto()!=null && !renShu.getDisplayPhoto().equals("")){
+							try {
+								bitmapTX = Glide.with(context).asBitmap()
+										.load(baoCunBean.getHoutaiDiZhi().replace("/f","")+renShu.getDisplayPhoto())
+										// .sizeMultiplier(0.5f)
+										.submit(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+										.get();
+							} catch (InterruptedException | ExecutionException e) {
+								e.printStackTrace();
+							}
+						}
+						//保存头像
+						String path=null;
+						if (bitmapTX!=null){
+							String fn = renShu.getId()+".jpg";
+							FileUtil.isExists(FileUtil.PATH, fn);
+							path=saveBitmap2File2(bitmapTX, FileUtil.SDPATH + File.separator + FileUtil.PATH + File.separator + fn, 100);
 						}
 						if (bitmap!=null) {
 							FacePassAddFaceResult faceResult = null;
@@ -1144,7 +1162,6 @@ public class MyReceiver extends BroadcastReceiver {
 										if (ee.getTeZhengMa()!=null)
 										Log.d("MyReceiver", "删除已有的访客底库"+facePassHandler.deleteFace(ee.getTeZhengMa()));
 									}
-
 									facePassHandler.bindGroup(group_name, faceResult.faceToken);
 									Subject subject = new Subject();
 									subject.setTeZhengMa(faceResult.faceToken);
@@ -1162,7 +1179,7 @@ public class MyReceiver extends BroadcastReceiver {
 									subject.setStoreId(renShu.getStoreId());
 									subject.setStoreName(renShu.getStoreName());
 									subject.setCompanyId(renShu.getCompanyId());
-									subject.setDisplayPhoto(renShu.getDisplayPhoto());
+									subject.setDisplayPhoto(path);
 									subjectBox.put(subject);
 									Log.d("MyReceiver", "单个访客入库成功");
 								}else {
@@ -1233,15 +1250,33 @@ public class MyReceiver extends BroadcastReceiver {
 					Gson gson=new Gson();
 					final LingShiSubject renShu=gson.fromJson(jsonObject,LingShiSubject.class);
 					if (status!=3){
-						Bitmap bitmap=null;
+						Bitmap bitmap=null,bitmapTX=null;
 						try {
 							bitmap = Glide.with(context).asBitmap()
-									.load(baoCunBean.getHoutaiDiZhi().replace("/js/f","")+renShu.getPhoto())
+									.load(baoCunBean.getHoutaiDiZhi().replace("/f","")+renShu.getPhoto())
 									// .sizeMultiplier(0.5f)
 									.submit(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
 									.get();
 						} catch (InterruptedException | ExecutionException e) {
 							e.printStackTrace();
+						}
+						if (renShu.getDisplayPhoto()!=null && !renShu.getDisplayPhoto().equals("")){
+							try {
+								bitmapTX = Glide.with(context).asBitmap()
+										.load(baoCunBean.getHoutaiDiZhi().replace("/f","")+renShu.getDisplayPhoto())
+										// .sizeMultiplier(0.5f)
+										.submit(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+										.get();
+							} catch (InterruptedException | ExecutionException e) {
+								e.printStackTrace();
+							}
+						}
+						//保存头像
+						String path=null;
+						if (bitmapTX!=null){
+							String fn = renShu.getId()+".jpg";
+							FileUtil.isExists(FileUtil.PATH, fn);
+							path=saveBitmap2File2(bitmapTX, FileUtil.SDPATH + File.separator + FileUtil.PATH + File.separator + fn, 100);
 						}
 						if (bitmap!=null) {
 							FacePassAddFaceResult faceResult = null;
@@ -1272,7 +1307,7 @@ public class MyReceiver extends BroadcastReceiver {
 									subject.setStoreId(renShu.getStoreId());
 									subject.setStoreName(renShu.getStoreName());
 									subject.setCompanyId(renShu.getCompanyId());
-									subject.setDisplayPhoto(renShu.getDisplayPhoto());
+									subject.setDisplayPhoto(path);
 									subjectBox.put(subject);
 									Log.d("MyReceiver", "单个员工入库成功");
 								}else {
@@ -1496,6 +1531,41 @@ public class MyReceiver extends BroadcastReceiver {
 	}
 
 
+	/***
+	 *保存bitmap对象到文件中
+	 * @param bm
+	 * @param path
+	 * @param quality
+	 * @return
+	 */
+	public String saveBitmap2File2(Bitmap bm, final String path, int quality) {
+		if (null == bm || bm.isRecycled()) {
+			Log.d("InFoActivity", "回收|空");
+			return null;
+		}
+		try {
+			File file = new File(path);
+			if (file.exists()) {
+				file.delete();
+			}
+			BufferedOutputStream bos = new BufferedOutputStream(
+					new FileOutputStream(file));
+			bm.compress(Bitmap.CompressFormat.JPEG, quality, bos);
+			bos.flush();
+			bos.close();
 
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+
+			if (!bm.isRecycled()) {
+				bm.recycle();
+			}
+			bm = null;
+		}
+		return path;
+	}
 
 }
