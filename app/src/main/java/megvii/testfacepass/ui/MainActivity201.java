@@ -435,12 +435,19 @@ public class MainActivity201 extends Activity implements CameraManager.CameraLis
 
                         // Log.d(TAG, "SSSSSSSSSSSSS");
                         try {
-                            Bitmap bitmap = mFacePassHandler.getFaceImage(bean.getTeZhengMa());
-                            Drawable drawable = new BitmapDrawable(getResources(), bitmap);
-                            Glide.with(MainActivity201.this)
-                                    .load(drawable)
-                                    .apply(myOptions2)
-                                    .into(touxiang1);
+                            if (bean.getDisplayPhoto()!=null){
+                                Glide.with(MainActivity201.this)
+                                        .load(new File(bean.getDisplayPhoto()))
+                                        .apply(myOptions2)
+                                        .into(touxiang1);
+                            }else {
+                                Bitmap bitmap = mFacePassHandler.getFaceImage(bean.getTeZhengMa());
+                                Drawable drawable = new BitmapDrawable(getResources(), bitmap);
+                                Glide.with(MainActivity201.this)
+                                        .load(drawable)
+                                        .apply(myOptions2)
+                                        .into(touxiang1);
+                            }
 
                         } catch (FacePassException e) {
                             e.printStackTrace();
@@ -898,16 +905,24 @@ public class MainActivity201 extends Activity implements CameraManager.CameraLis
                             TextView daka = (TextView) view_dk.findViewById(R.id.daka);
                             ImageView touxiang2 = (ImageView) view_dk.findViewById(R.id.touxiang);
                             RelativeLayout root_rl2 = (RelativeLayout) view_dk.findViewById(R.id.root_rl);
+                            root_rl2.setBackgroundResource(R.drawable.putongyuangong_bg);
                             name2.setText(bean2.getName() + "");
                             daka.setText(bean2.getDepartmentName() + "");
 
                             try {
-                                Bitmap bitmap = mFacePassHandler.getFaceImage(bean2.getTeZhengMa());
-                                Drawable drawable = new BitmapDrawable(getResources(), bitmap);
-                                Glide.with(MainActivity201.this)
-                                        .load(drawable)
-                                        .apply(myOptions)
-                                        .into(touxiang2);
+                                if (bean2.getDisplayPhoto()!=null){
+                                    Glide.with(MainActivity201.this)
+                                            .load(new File(bean2.getDisplayPhoto()))
+                                            .apply(myOptions)
+                                            .into(touxiang2);
+                                }else {
+                                    Bitmap bitmap = mFacePassHandler.getFaceImage(bean2.getTeZhengMa());
+                                    Drawable drawable = new BitmapDrawable(getResources(), bitmap);
+                                    Glide.with(MainActivity201.this)
+                                            .load(drawable)
+                                            .apply(myOptions)
+                                            .into(touxiang2);
+                                }
 
                             } catch (FacePassException e) {
                                 e.printStackTrace();
@@ -1092,12 +1107,19 @@ public class MainActivity201 extends Activity implements CameraManager.CameraLis
                         daka.setText("欢迎你的来访");
 
                         try {
-                            Bitmap bitmap = mFacePassHandler.getFaceImage(bean2.getTeZhengMa());
-                            Drawable drawable = new BitmapDrawable(getResources(), bitmap);
-                            Glide.with(MainActivity201.this)
-                                    .load(drawable)
-                                    .apply(myOptions)
-                                    .into(touxiang2);
+                            if (bean2.getDisplayPhoto()!=null){
+                                Glide.with(MainActivity201.this)
+                                        .load(new File(bean2.getDisplayPhoto()))
+                                        .apply(myOptions)
+                                        .into(touxiang2);
+                            }else {
+                                Bitmap bitmap = mFacePassHandler.getFaceImage(bean2.getTeZhengMa());
+                                Drawable drawable = new BitmapDrawable(getResources(), bitmap);
+                                Glide.with(MainActivity201.this)
+                                        .load(drawable)
+                                        .apply(myOptions)
+                                        .into(touxiang2);
+                            }
 
                         } catch (FacePassException e) {
                             e.printStackTrace();
@@ -1183,6 +1205,13 @@ public class MainActivity201 extends Activity implements CameraManager.CameraLis
         });
 
         isSC = true;
+
+
+      List<Subject> subjectList=  subjectBox.getAll();
+
+        for (Subject subject:subjectList){
+            Log.d("MainActivity201", subject.toString());
+        }
     }
 
 

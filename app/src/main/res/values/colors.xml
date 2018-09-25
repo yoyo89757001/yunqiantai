@@ -34,14 +34,13 @@
     <!-- 用于页面背景 -->
     <!-- 用于页面背景 -->
     <!-- actionbar背景 ,即是所有标题栏背景 主题色 -->
-
-
     <!-- 红色 -->
     <!-- 辅助文字-->
     <!-- 橙色 -->
     <color name="dark_grey">#e2e1e1</color><!-- 深灰 -->
-    <color name="huangse">#eeff00</color><!-- 深灰 -->
+    <color name="huangse">#e9eeff00</color><!-- 深灰 -->
     <color name="touming22">#59000000</color>
     <color name="dabg">#f7f7f7</color>
+
 
 </resources>

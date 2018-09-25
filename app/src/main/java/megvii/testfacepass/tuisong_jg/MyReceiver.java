@@ -1179,6 +1179,7 @@ public class MyReceiver extends BroadcastReceiver {
 									subject.setStoreId(renShu.getStoreId());
 									subject.setStoreName(renShu.getStoreName());
 									subject.setCompanyId(renShu.getCompanyId());
+                                   // subject.setDepartmentName(renShu.getDepartmentName());
 									subject.setDisplayPhoto(path);
 									subjectBox.put(subject);
 									Log.d("MyReceiver", "单个访客入库成功");
@@ -1307,6 +1308,7 @@ public class MyReceiver extends BroadcastReceiver {
 									subject.setStoreId(renShu.getStoreId());
 									subject.setStoreName(renShu.getStoreName());
 									subject.setCompanyId(renShu.getCompanyId());
+                                    subject.setDepartmentName(renShu.getDepartmentName());
 									subject.setDisplayPhoto(path);
 									subjectBox.put(subject);
 									Log.d("MyReceiver", "单个员工入库成功");

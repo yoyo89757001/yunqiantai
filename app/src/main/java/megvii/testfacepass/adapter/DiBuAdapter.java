@@ -24,6 +24,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.yatoooon.screenadaptation.ScreenAdapterTools;
 
+import java.io.File;
 import java.util.List;
 
 import megvii.facepass.FacePassException;
@@ -31,6 +32,7 @@ import megvii.facepass.FacePassHandler;
 import megvii.testfacepass.MyApplication;
 import megvii.testfacepass.R;
 import megvii.testfacepass.beans.Subject;
+import megvii.testfacepass.ui.MainActivity201;
 import megvii.testfacepass.utils.DateUtils;
 import megvii.testfacepass.view.GlideCircleTransform;
 
@@ -89,20 +91,24 @@ public class DiBuAdapter extends RecyclerView.Adapter<DiBuAdapter.ViewHolder>{
 
 
         try {
-            Bitmap bitmap = facePassHandler.getFaceImage(list.get(position).getTeZhengMa());
-            Drawable drawable = new BitmapDrawable(context.getResources(), bitmap);
-            Glide.with(context)
-                    .load(drawable)
-                    .apply(myOptions)
-                    .into(holder.touxiang);
+
+            if (list.get(position).getDisplayPhoto()!=null){
+                Glide.with(context)
+                        .load(new File(list.get(position).getDisplayPhoto()))
+                        .apply(myOptions)
+                        .into(holder.touxiang);
+            }else {
+                Bitmap bitmap = facePassHandler.getFaceImage(list.get(position).getTeZhengMa());
+                Drawable drawable = new BitmapDrawable(context.getResources(), bitmap);
+                Glide.with(context)
+                        .load(drawable)
+                        .apply(myOptions)
+                        .into(holder.touxiang);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
-
-
 
 //        RelativeLayout.LayoutParams params1 = (RelativeLayout.LayoutParams)holder.touxiang.getLayoutParams();
 //        params1.height=dh/13;

@@ -61,7 +61,7 @@ private     FacePassModel livenessModel;
                             float lowBrightnessThreshold = 70f;
                             float highBrightnessThreshold = 210f;
                             float brightnessSTDThreshold = 60f;
-                            int retryCount = 2;
+                            int retryCount = 3;
                             int rotation = cameraRotation;
                             String fileRootPath = Environment.getExternalStorageDirectory().getAbsolutePath();
                             FacePassConfig config;

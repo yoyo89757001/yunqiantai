@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
     <TableLayout
         android:id="@+id/hud_view"
         android:visibility="gone"
@@ -13,8 +14,6 @@
         android:layout_height="wrap_content"
         android:background="@color/ijk_transparent_dark"
         android:padding="8dp" />
-
-
 
 
     <ImageView
@@ -146,12 +145,31 @@
                 android:layout_marginTop="20px"
                 android:layout_marginLeft="20px"
                 android:layout_marginBottom="20px"
-                app:cardBackgroundColor="@color/white"
                 android:layout_marginRight="40px"
                 android:layout_toLeftOf="@+id/ttzz22"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
                 <!--公告-->
+
+                <com.sunfusheng.marqueeview.MarqueeView
+                    android:textColor="@color/tabtextcolo"
+                    android:text="明天12点开会"
+                    app:mvAnimDuration="1000"
+                    android:layout_below="@+id/ttzz"
+                    app:mvDirection="bottom_to_top"
+                    app:mvInterval="3000"
+                    android:background="@drawable/jj_gg_bg"
+                    app:mvTextColor="@color/textcolor"
+                    app:mvTextSize="26px"
+                    app:mvSingleLine="false"
+                    android:id="@+id/marqueeView"
+                    android:paddingTop="60px"
+                    android:paddingLeft="26px"
+                    android:paddingRight="20px"
+                    android:paddingBottom="20px"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
                 <TextView
                     android:textColor="@color/white"
                     android:text="NOTICE"
@@ -162,24 +180,6 @@
                     android:background="#D7D7D9"
                     android:layout_width="match_parent"
                     android:layout_height="50px" />
-
-                <com.sunfusheng.marqueeview.MarqueeView
-                    android:textColor="@color/tabtextcolo"
-                    android:text="明天12点开会"
-                    app:mvAnimDuration="1000"
-                    android:layout_below="@+id/ttzz"
-                    app:mvDirection="bottom_to_top"
-                    app:mvInterval="3000"
-                    app:mvTextColor="@color/textcolor"
-                    app:mvTextSize="26px"
-                    app:mvSingleLine="false"
-                    android:id="@+id/marqueeView"
-                    android:layout_marginTop="60px"
-                    android:layout_marginLeft="26px"
-                    android:layout_marginRight="26px"
-                    android:layout_marginBottom="10px"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
 
             </android.support.v7.widget.CardView>
 
@@ -272,22 +272,9 @@
 
             </android.support.v7.widget.CardView>
 
-
         </RelativeLayout>
-
-
     </LinearLayout>
 
-
-
-    <!--阴影-->
-    <ImageView
-        android:background="#94000000"
-        android:elevation="7dp"
-        android:visibility="gone"
-        android:id="@+id/toumingbeijing"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
 
     <!--//竖向列表-->
     <megvii.testfacepass.view.SlowScrollView
@@ -316,18 +303,26 @@
         android:layout_height="match_parent"/>
 
 
+    <ImageView
+        android:background="#867b7a7a"
+        android:id="@+id/yinying"
+        android:visibility="gone"
+        android:elevation="9dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
     <!--一个列表-->
     <RelativeLayout
-        android:orientation="horizontal"
         android:id="@+id/root_layout"
-        android:elevation="8dp"
-        android:background="@color/transparent"
+        android:elevation="10dp"
+        android:layout_marginLeft="20px"
+        android:layout_marginRight="20px"
+        android:layout_toRightOf="@+id/scrollview"
         android:layout_centerVertical="true"
-        android:layout_marginTop="30px"
         android:gravity="center"
+        android:clipChildren="false"
         android:layout_width="match_parent"
-        android:layout_height="650px">
-
+        android:layout_height="wrap_content">
     </RelativeLayout>
 
 

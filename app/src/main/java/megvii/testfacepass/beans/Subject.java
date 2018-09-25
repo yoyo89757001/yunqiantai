@@ -2,6 +2,7 @@ package megvii.testfacepass.beans;
 
 import android.view.View;
 
+import java.util.Arrays;
 import java.util.Comparator;
 
 import io.objectbox.annotation.Entity;
@@ -14,6 +15,10 @@ import io.objectbox.annotation.Transient;
 @Entity
 public class Subject implements Comparator<Subject> {
     public Subject() {
+    }
+
+    public Subject(long id) {
+        this.id = id;
     }
 
     public Subject(long id, String sid, String name, String companyId, String companyName, String workNumber, String sex, String phone, String peopleType, String email, String position, int employeeStatus, int quitType, String remark, String photo, String storeId, String storeName, String entryTime, String birthday, byte[] teZhengMa, String departmentName, int daka, String shijian, String displayPhoto, View view) {
@@ -43,6 +48,7 @@ public class Subject implements Comparator<Subject> {
         this.displayPhoto = displayPhoto;
         this.view = view;
     }
+
 
 
     @Id(assignable = true)
@@ -279,5 +285,36 @@ public class Subject implements Comparator<Subject> {
     @Override
     public int compare(Subject o1, Subject o2) {
         return o1.getSid().compareTo(o2.getSid());
+    }
+
+    @Override
+    public String toString() {
+        return "Subject{" +
+                "id=" + id +
+                ", sid='" + sid + '\'' +
+                ", name='" + name + '\'' +
+                ", companyId='" + companyId + '\'' +
+                ", companyName='" + companyName + '\'' +
+                ", workNumber='" + workNumber + '\'' +
+                ", sex='" + sex + '\'' +
+                ", phone='" + phone + '\'' +
+                ", peopleType='" + peopleType + '\'' +
+                ", email='" + email + '\'' +
+                ", position='" + position + '\'' +
+                ", employeeStatus=" + employeeStatus +
+                ", quitType=" + quitType +
+                ", remark='" + remark + '\'' +
+                ", photo='" + photo + '\'' +
+                ", storeId='" + storeId + '\'' +
+                ", storeName='" + storeName + '\'' +
+                ", entryTime='" + entryTime + '\'' +
+                ", birthday='" + birthday + '\'' +
+                ", teZhengMa=" + Arrays.toString(teZhengMa) +
+                ", departmentName='" + departmentName + '\'' +
+                ", daka=" + daka +
+                ", shijian='" + shijian + '\'' +
+                ", displayPhoto='" + displayPhoto + '\'' +
+                ", view=" + view +
+                '}';
     }
 }
