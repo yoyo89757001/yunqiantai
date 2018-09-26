@@ -53,6 +53,7 @@
         </activity>
         <activity android:name=".ui.MainActivity201" />
         <activity android:name=".ui.MainActivity202" />
+        <activity android:name=".ui.MainActivity203" />
         <activity android:name=".ui.SettingActivity" />
         <activity android:name=".ui.YuLanActivity" />
 
