@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:id="@+id/root_rl"
+    android:clipChildren="false"
+    android:background="#db454444"
+    android:layout_height="match_parent">
+
+    <megvii.testfacepass.view.YGTopView
+        android:id="@+id/ygtopview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+
+    <View
+        android:layout_below="@+id/ygtopview"
+        android:id="@+id/frrr"
+        android:background="#919191"
+        android:layout_marginTop="10px"
+        android:layout_marginLeft="40px"
+        android:layout_marginRight="40px"
+        android:layout_width="match_parent"
+        android:layout_height="2px"/>
+
+    <ScrollView
+        android:layout_below="@+id/frrr"
+        android:layout_marginTop="16px"
+        android:clipChildren="false"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:orientation="vertical"
+            android:id="@+id/xiaoxi_ll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

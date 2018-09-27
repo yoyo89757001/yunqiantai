@@ -25,10 +25,14 @@ public class DBG_View extends ImageView{
     public boolean isDrag() {
         return isDrag;
     }
+
+
     public DBG_View(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context=context;
     }
+
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
