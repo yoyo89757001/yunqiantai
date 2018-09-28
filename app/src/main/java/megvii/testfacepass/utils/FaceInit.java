@@ -40,9 +40,9 @@ import sun.misc.BASE64Decoder;
 public class FaceInit {
     private Context context;
 
-    static {
-        System.loadLibrary("ruitongnative");
-    }
+//    static {
+//        System.loadLibrary("ruitongnative");
+//    }
 
     public FaceInit(Context context) {
         this.context =context;

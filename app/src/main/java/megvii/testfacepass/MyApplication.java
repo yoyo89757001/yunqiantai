@@ -46,6 +46,7 @@ public class MyApplication extends Application implements Application.ActivityLi
     private Box<ChengShiIDBean> chengShiIDBeanBox;
 
 
+
     @Override
     public void onCreate() {
         super.onCreate();

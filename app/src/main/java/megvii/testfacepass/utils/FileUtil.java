@@ -6,6 +6,8 @@ import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
@@ -794,4 +796,129 @@ public class FileUtil {
 
         return output;
     }
+
+    /**
+     * 转换图片成圆形
+     *
+     * @param bitmap
+     *            传入Bitmap对象
+     * @return
+     */
+    public static Bitmap toRoundBitmap2(Bitmap bitmap,Bitmap bitmap2,int newWidth, int newHeight) {
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        float roundPx;
+        float left, top, right, bottom, dst_left, dst_top, dst_right, dst_bottom;
+        if (width <= height) {
+            roundPx = width / 2;
+            left = 0;
+            top = 0;
+            right = width;
+            bottom = width;
+            height = width;
+            dst_left = 0;
+            dst_top = 0;
+            dst_right = width;
+            dst_bottom = width;
+        } else {
+            roundPx = height / 2;
+            float clip = (width - height) / 2;
+            left = clip;
+            right = width - clip;
+            top = 0;
+            bottom = height;
+            width = height;
+            dst_left = 0;
+            dst_top = 0;
+            dst_right = height;
+            dst_bottom = height;
+        }
+
+        Bitmap output = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+
+        final int color = 0xff424242;
+        final Paint paint = new Paint();
+        final Rect src = new Rect((int) left, (int) top, (int) right,
+                (int) bottom);
+        final Rect dst = new Rect((int) dst_left, (int) dst_top,
+                (int) dst_right, (int) dst_bottom);
+        new RectF(dst);
+
+        paint.setAntiAlias(true);// 设置画笔无锯齿
+
+        canvas.drawARGB(0, 0, 0, 0); // 填充整个Canvas
+        paint.setColor(color);
+
+        canvas.drawCircle(roundPx, roundPx, roundPx, paint);
+
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));// 设置两张图片相交时的模式,参考http://trylovecatch.iteye.com/blog/1189452
+        canvas.drawBitmap(bitmap, src, dst, paint); // 以Mode.SRC_IN模式合并bitmap和已经draw了的Circle
+
+        Paint pp=new Paint();
+        pp.setAntiAlias(true);
+        pp.setStyle(Paint.Style.STROKE);
+        pp.setStrokeWidth(10);
+        pp.setColor(Color.WHITE);
+        canvas.drawCircle(roundPx, roundPx, roundPx-4, pp);
+        canvas.drawBitmap(bitmap2,null,new RectF(roundPx*2-300,dst_top,roundPx*2,dst_top+300),pp);
+
+
+        int height2 = output.getHeight();
+        int width2 = output.getWidth();
+        float scaleWidth = ((float) newWidth) / width2;
+        float scaleHeight = ((float) newHeight) / height2;
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaleWidth, scaleHeight);// 使用后乘
+        Bitmap newBM = Bitmap.createBitmap(output, 0, 0, width2, height2, matrix, false);
+        if (!output.isRecycled()) {
+            output.recycle();
+        }
+
+        return newBM;
+    }
+
+    public static Bitmap toConformBitmap(Bitmap background, Bitmap foreground) {
+        if( background == null ) {
+        return null;
+        }
+         int bgWidth = background.getWidth();
+        int bgHeight = background.getHeight();
+        //int fgWidth = foreground.getWidth();   
+        //int fgHeight = foreground.getHeight();   
+        //create the new blank bitmap 创建一个新的和SRC长度宽度一样的位图   
+        Bitmap newbmp = Bitmap.createBitmap(bgWidth, bgHeight, Bitmap.Config.ARGB_8888);
+        Canvas cv = new Canvas(newbmp);
+        //draw bg into   
+        cv.drawBitmap(background, 0, 0, null);//在 0，0坐标开始画入bg   
+        //draw fg into   
+        cv.drawBitmap(foreground, 0, 0, null);//在 0，0坐标开始画入fg ，可以从任意位置画入
+        //save all clip   
+        cv.save(Canvas.ALL_SAVE_FLAG);//保存   
+        //store   
+        cv.restore();//存储   
+        return newbmp;
+ }
+    public static Bitmap toConformBitmap2(Bitmap background) {
+        if( background == null ) {
+            return null;
+        }
+        int bgWidth = background.getWidth()+100;
+        int bgHeight = background.getHeight()+200;
+        //int fgWidth = foreground.getWidth();   
+        //int fgHeight = foreground.getHeight();   
+        //create the new blank bitmap 创建一个新的和SRC长度宽度一样的位图   
+
+        Bitmap newbmp = Bitmap.createBitmap(bgWidth, bgHeight, Bitmap.Config.ARGB_8888);
+        Canvas cv = new Canvas(newbmp);
+        Paint p=new Paint();
+        p.setColor(Color.BLACK);
+        p.setStyle(Paint.Style.FILL);
+        p.setTextSize(40);
+        cv.drawText("fffff",20,20,p);
+        cv.drawBitmap(background, 100, 200, null);//在 0，0坐标开始画入fg ，可以从任意位置画入
+
+        return newbmp;
+    }
+
 }

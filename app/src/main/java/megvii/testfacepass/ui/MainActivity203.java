@@ -49,6 +49,7 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -65,6 +66,7 @@ import com.facebook.rebound.SpringConfig;
 import com.facebook.rebound.SpringSystem;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.plattysoft.leonids.ParticleSystem;
 import com.sdsmdg.tastytoast.TastyToast;
 import com.yatoooon.screenadaptation.ScreenAdapterTools;
 
@@ -75,7 +77,9 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -130,6 +134,7 @@ import megvii.testfacepass.utils.ValueAnimatorIntface;
 import megvii.testfacepass.utils.ValueAnimatorUtils;
 import megvii.testfacepass.view.GlideCircleTransform;
 import megvii.testfacepass.view.GlideRoundTransform;
+import megvii.testfacepass.view.MianBanJiView;
 import megvii.testfacepass.view.YGTopView;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -144,6 +149,11 @@ import tv.danmaku.ijk.media.player.IMediaPlayer;
 
 
 public class MainActivity203 extends Activity implements CameraManager.CameraListener, XiuGaiListener {
+
+    static {
+        System.loadLibrary("ruitongnative");
+    }
+
     protected Handler mainHandler;
     @BindView(R.id.xiaoshi)
     TextView xiaoshi;
@@ -192,7 +202,7 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
             .error(R.drawable.erroy_bg)
             .transform(new GlideCircleTransform(MyApplication.myApplication, 2, Color.parseColor("#ffffffff")));
     // .transform(new GlideRoundTransform(MainActivity.this,10));
-
+    private ImageView ceshi;
     private RequestOptions myOptions2 = new RequestOptions()
             .fitCenter()
             .error(R.drawable.erroy_bg)
@@ -254,9 +264,8 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
     private static final String authIP = "https://api-cn.faceplusplus.com";
     private static final String apiKey = "zIvtfbe_qPHpLZzmRAE-zVg7-EaVhKX2";
     private static final String apiSecret = "-H4Ik0iZ_5YTyw5NPT8LfnJREz_NCbo7";
-
-
-
+    private List<Integer> topAminaem=new ArrayList<>();
+    private int []topIm=new int[]{R.drawable.sp1,R.drawable.sp2,R.drawable.sp3,R.drawable.sp4,R.drawable.sp5,R.drawable.sp6,R.drawable.sp7,R.drawable.sp8,R.drawable.sp9,};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -295,6 +304,17 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
         getWindowManager().getDefaultDisplay().getMetrics(dm);
         dw = dm.widthPixels;
         dh = dm.heightPixels;
+        Log.d("MainActivity203", "dw:" + dw);
+        int temp=dw/9;
+        for (int i=1;i<10;i++){
+            if (i==9){
+                topAminaem.add(temp*9-80);
+            }else {
+                topAminaem.add(temp*i);
+            }
+        }
+
+
 
         /* 初始化界面 */
         initView();
@@ -351,40 +371,52 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
                         //vip
                         final Subject bean2 = (Subject) msg.obj;
 
-                        final View view_dk = View.inflate(MainActivity203.this, R.layout.vipfangke_item_jj, null);
+                        final View view_dk = View.inflate(MainActivity203.this, R.layout.vipfangke_item_203, null);
                         ScreenAdapterTools.getInstance().loadView(view_dk);
-                        TextView name2 = (TextView) view_dk.findViewById(R.id.name);
-                        TextView bumen = (TextView) view_dk.findViewById(R.id.bumen);
-                        ImageView touxiang2 = (ImageView) view_dk.findViewById(R.id.touxiang);
-                        LinearLayout xiaoxi_ll = (LinearLayout) view_dk.findViewById(R.id.xiaoxi_ll);
-                        name2.setText(bean2.getName() + "");
-                        bumen.setText("欢迎贵宾VIP来访");
+                        MianBanJiView mianBanJiView =  view_dk.findViewById(R.id.mianbanjiview);
+
+
                         synthesizer.speak("欢迎贵宾VIP来访");
+
                         try {
                             if (bean2.getDisplayPhoto() != null) {
-                                Glide.with(MainActivity203.this)
-                                        .load(new File(bean2.getDisplayPhoto()))
-                                        .apply(myOptions2)
-                                        .into(touxiang2);
+                                mianBanJiView.setBitmap(FileUtil.toRoundBitmap(BitmapFactory.decodeFile(bean2.getDisplayPhoto())));
                             } else {
                                 Bitmap bitmap = mFacePassHandler.getFaceImage(bean2.getTeZhengMa());
-                                Drawable drawable = new BitmapDrawable(getResources(), bitmap);
-                                Glide.with(MainActivity203.this)
-                                        .load(drawable)
-                                        .apply(myOptions2)
-                                        .into(touxiang2);
+                                mianBanJiView.setBitmap(FileUtil.toRoundBitmap(bitmap));
                             }
 
                         } catch (FacePassException e) {
                             e.printStackTrace();
                         }
+
                         rootLayout.addView(view_dk);
 
-                        RelativeLayout.LayoutParams layoutParams2 = (RelativeLayout.LayoutParams) touxiang2.getLayoutParams();
-                        layoutParams2.width = dw / 5;
-                        layoutParams2.height = dw / 4;
-                        touxiang2.setLayoutParams(layoutParams2);
-                        touxiang2.invalidate();
+
+                        RelativeLayout.LayoutParams layoutParams2 = (RelativeLayout.LayoutParams) mianBanJiView.getLayoutParams();
+                        layoutParams2.height = (int)((float)dh * 0.4f);
+                        mianBanJiView.setLayoutParams(layoutParams2);
+                        mianBanJiView.invalidate();
+
+                        allList.add(view_dk);
+                        //大于1个就
+                        if (allList.size()>1){
+                            final View view=allList.get(0);
+                            ValueAnimatorUtils utils=new ValueAnimatorUtils();
+                            utils.setIntface(new ValueAnimatorIntface() {
+                                @Override
+                                public void end() {
+                                    rootLayout.removeView(view);
+                                    allList.remove(0);
+                                }
+                                @Override
+                                public void update(float value) {
+                                    view.setX(value);
+                                }
+                            });
+                            utils.animator(0,-dw,1000,0,0);
+                        }
+
 
                         //动画
                         SpringSystem springSystem3 = SpringSystem.create();
@@ -414,7 +446,6 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
                                         }
                                     }
                                     if (cv) {
-
                                         final View view_dk = View.inflate(MainActivity203.this, R.layout.shulianbiao_jj, null);
                                         ScreenAdapterTools.getInstance().loadView(view_dk);
                                         TextView name = view_dk.findViewById(R.id.name);
@@ -451,9 +482,30 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
                                         dibuList.add(0, bean2);
                                     }
                                     //消失
-                                    Message message = Message.obtain();
-                                    message.what = 999;
-                                    mHandler.sendMessageDelayed(message, 9000);
+                                    //启动定时器或重置定时器
+                                    if (task != null) {
+                                        task.cancel();
+                                        //timer.cancel();
+                                        task = new TimerTask() {
+                                            @Override
+                                            public void run() {
+                                                Message message = new Message();
+                                                message.what = 999;
+                                                mHandler.sendMessage(message);
+                                            }
+                                        };
+                                        timer.schedule(task, 9000);
+                                    } else {
+                                        task = new TimerTask() {
+                                            @Override
+                                            public void run() {
+                                                Message message = new Message();
+                                                message.what = 999;
+                                                mHandler.sendMessage(message);
+                                            }
+                                        };
+                                        timer.schedule(task, 9000);
+                                    }
                                 }
                             }
                         });
@@ -466,10 +518,11 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
                     case 444: {
                         //普通打卡
                         final Subject bean2 = (Subject) msg.obj;
-
+                            startTopAnim();
                             final View view_dk = View.inflate(MainActivity203.this, R.layout.yuangong_item_03, null);
                             ScreenAdapterTools.getInstance().loadView(view_dk);
                             YGTopView ygTopView = view_dk.findViewById(R.id.ygtopview);
+                            final ScrollView scrollView_03=view_dk.findViewById(R.id.scrollview_03);
                             ygTopView.setHight(dh, dw);
                             ygTopView.setBitmapHG();
                             ygTopView.setName(bean2.getName(), bean2.getDepartmentName());
@@ -577,8 +630,8 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
                                                             animator.start();
                                                         }
                                                     });
-
-                                                    SystemClock.sleep(1100);
+                                                    scrollView_03.fullScroll(ScrollView.FOCUS_DOWN);
+                                                    SystemClock.sleep(1000);
 
                                                 }
                                             }
@@ -593,7 +646,7 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
                                             }
                                         }
                                         if (cv) {
-                                            final View view_dk = View.inflate(MainActivity203.this, R.layout.shulianbiao_jj, null);
+                                            final View view_dk = View.inflate(MainActivity203.this, R.layout.shulianbiao_203, null);
                                             ScreenAdapterTools.getInstance().loadView(view_dk);
                                             TextView name = view_dk.findViewById(R.id.name);
                                             ImageView touxiang = view_dk.findViewById(R.id.touxiang);
@@ -893,6 +946,20 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
                         spring3.setEndValue(1f);
                         break;
                     }
+                    case 123:{
+                        //粒子动画
+                        Collections.shuffle(topAminaem);
+                        for(int i=0;i<9;i++){
+                            new ParticleSystem(MainActivity203.this, 100, topIm[i], 3000)
+                                    .setSpeedModuleAndAngleRange(0.05f, 0.2f, 45, 125)
+                                    .setRotationSpeed(30)
+                                    .setFadeOut(1000,new LinearInterpolator())
+                                    .setAcceleration(0.0001f, 90)
+                                    .emit(topAminaem.get(i),0, 1,100);
+                        }
+
+                        break;
+                    }
                 }
                 return false;
             }
@@ -992,7 +1059,7 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
                                 Log.d("RecognizeThread", "识别了");
                                 Subject subject = subjectBox.query().equal(Subject_.teZhengMa, result.faceToken).build().findUnique();
                                 if (subject != null) {
-                                    subject.setPeopleType("员工");
+                                    subject.setPeopleType("白名单");
                                     linkedBlockingQueue.offer(subject);
                                     link_shangchuanjilu(subject);
 
@@ -1280,6 +1347,8 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
         //背景
         daBg.setBackgroundResource(R.color.dabg);
         scrollView.setSmoothScrollingEnabled(true);
+        ceshi=findViewById(R.id.ceshi);
+        ceshi.setImageBitmap(FileUtil.toRoundBitmap2(BitmapFactory.decodeResource(getResources(),R.drawable.dbg_1),BitmapFactory.decodeResource(getResources(),R.drawable.xinxinxin),100,100));
 
         // marqueeView = (MarqueeView) findViewById(R.id.marqueeView);
         //   List<String> info = new ArrayList<>();
@@ -1410,6 +1479,11 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
         ppp.height = (int) ((float) dw * 0.4f);
         contentRl.setLayoutParams(ppp);
         contentRl.invalidate();
+
+        RelativeLayout.LayoutParams ppp2 = (RelativeLayout.LayoutParams) scrollView.getLayoutParams();
+        ppp2.width = (int) ((float) dw * 0.7f);
+        scrollView.setLayoutParams(ppp2);
+        scrollView.invalidate();
 
     }
 
@@ -2174,6 +2248,21 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
                 }
             }
         });
+    }
+
+    private void startTopAnim(){
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                        for (int i=0;i<9;i++){
+                            Message message=Message.obtain();
+                            message.what=123;
+                            mHandler.sendMessage(message);
+                            SystemClock.sleep(1000);
+                        }
+                }
+            }).start();
+
     }
 
 }
