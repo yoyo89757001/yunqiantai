@@ -2,21 +2,19 @@ package megvii.testfacepass.utils;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
-import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 
 public class ValueAnimatorUtils  {
-
+    private ValueAnimator valueAnimator=null;
     private  ValueAnimatorIntface valueAnimatorIntface;
     private Interpolator [] interpolators=new Interpolator[]{new AccelerateInterpolator(),new LinearInterpolator(),new DecelerateInterpolator()};
 
     public  void setIntface(ValueAnimatorIntface valueAnimatorIntface){
        this.valueAnimatorIntface=valueAnimatorIntface;
     }
-
 
     public  void animator(float a1, float a2,long duration,int repeatCount,int interpolator){
         ValueAnimator animator = ValueAnimator.ofFloat(a1, a2);
@@ -52,8 +50,10 @@ public class ValueAnimatorUtils  {
             }
         });
         animator.start();
-
-
+        valueAnimator=animator;
     }
 
+    public ValueAnimator getValueAnimator(){
+        return valueAnimator;
+    }
 }

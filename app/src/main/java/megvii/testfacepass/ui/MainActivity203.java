@@ -1,7 +1,6 @@
 package megvii.testfacepass.ui;
 
 import android.Manifest;
-import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -42,7 +41,6 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.HorizontalScrollView;
@@ -96,8 +94,11 @@ import java.util.concurrent.TimeUnit;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.objectbox.Box;
+import io.objectbox.query.LazyList;
+import io.objectbox.query.Query;
 import megvii.facepass.FacePassException;
 import megvii.facepass.FacePassHandler;
+import megvii.facepass.types.FacePassAddFaceResult;
 import megvii.facepass.types.FacePassDetectionResult;
 import megvii.facepass.types.FacePassFace;
 import megvii.facepass.types.FacePassImage;
@@ -118,6 +119,7 @@ import megvii.testfacepass.camera.CameraManager;
 import megvii.testfacepass.camera.CameraPreview;
 import megvii.testfacepass.camera.CameraPreviewData;
 import megvii.testfacepass.dialog.XiuGaiGaoKuanDialog;
+import megvii.testfacepass.dialogall.ToastUtils;
 import megvii.testfacepass.dialogall.XiuGaiListener;
 import megvii.testfacepass.ljkplay.widget.media.IjkVideoView;
 import megvii.testfacepass.tts.control.InitConfig;
@@ -129,6 +131,7 @@ import megvii.testfacepass.utils.DateUtils;
 import megvii.testfacepass.utils.FacePassUtil;
 import megvii.testfacepass.utils.FileUtil;
 import megvii.testfacepass.utils.GsonUtil;
+import megvii.testfacepass.utils.RandomDataUtil;
 import megvii.testfacepass.utils.SettingVar;
 import megvii.testfacepass.utils.ValueAnimatorIntface;
 import megvii.testfacepass.utils.ValueAnimatorUtils;
@@ -150,9 +153,6 @@ import tv.danmaku.ijk.media.player.IMediaPlayer;
 
 public class MainActivity203 extends Activity implements CameraManager.CameraListener, XiuGaiListener {
 
-    static {
-        System.loadLibrary("ruitongnative");
-    }
 
     protected Handler mainHandler;
     @BindView(R.id.xiaoshi)
@@ -196,7 +196,7 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
     // 主控制类，所有合成控制方法从这个类开始
     private MySyntherizer synthesizer;
     private static Vector<Subject> dibuList = new Vector<>();//下面的弹窗
-    private static Vector<View> allList = new Vector<>();//中间的弹窗
+  //  private static Vector<View> allList = new Vector<>();//中间的弹窗
     private RequestOptions myOptions = new RequestOptions()
             .fitCenter()
             .error(R.drawable.erroy_bg)
@@ -208,7 +208,7 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
             .error(R.drawable.erroy_bg)
             //   .transform(new GlideCircleTransform(MyApplication.myApplication, 2, Color.parseColor("#ffffffff")));
             .transform(new GlideRoundTransform(MainActivity203.this, 20));
-
+    private ValueAnimatorUtils utils=null;
 
     private LinkedBlockingQueue<Subject> linkedBlockingQueue;
     /* 人脸识别Group */
@@ -243,6 +243,7 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
     /* 网络请求队列*/
     /*Toast 队列*/
     LinkedBlockingQueue<Toast> mToastBlockQueue;
+    private static boolean isDH=false;
     private static boolean isLink = true;
     private long tID = -1;
     /*DetectResult queue*/
@@ -264,8 +265,16 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
     private static final String authIP = "https://api-cn.faceplusplus.com";
     private static final String apiKey = "zIvtfbe_qPHpLZzmRAE-zVg7-EaVhKX2";
     private static final String apiSecret = "-H4Ik0iZ_5YTyw5NPT8LfnJREz_NCbo7";
-    private List<Integer> topAminaem=new ArrayList<>();
-    private int []topIm=new int[]{R.drawable.sp1,R.drawable.sp2,R.drawable.sp3,R.drawable.sp4,R.drawable.sp5,R.drawable.sp6,R.drawable.sp7,R.drawable.sp8,R.drawable.sp9,};
+    private List<Integer> topZuoBiao=new ArrayList<>();
+    private List<Integer> bootomZuoBiao=new ArrayList<>();
+    private int []topIm=new int[]{R.drawable.sp1,R.drawable.sp2,R.drawable.sp3,R.drawable.sp4,R.drawable.sp5,
+            R.drawable.sp6,R.drawable.sp7,R.drawable.sp8,R.drawable.sp9,};
+    private int []putongIm=new int[]{R.drawable.sp1,R.drawable.sp2,R.drawable.sp3,R.drawable.sp4,R.drawable.
+            sp5,R.drawable.sp6};
+    private ShengRiThierd  shengRiThierd=null;
+    private VipThired vipThired=null;
+    private FangkeThired fangkeThired=null;
+    private Query<Subject> query = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -304,16 +313,31 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
         getWindowManager().getDefaultDisplay().getMetrics(dm);
         dw = dm.widthPixels;
         dh = dm.heightPixels;
-        Log.d("MainActivity203", "dw:" + dw);
-        int temp=dw/9;
-        for (int i=1;i<10;i++){
-            if (i==9){
-                topAminaem.add(temp*9-80);
-            }else {
-                topAminaem.add(temp*i);
-            }
-        }
 
+        //初始化动画坐标
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                int temp=dw/9;
+                for (int i=1;i<10;i++){
+                    if (i==9){
+                        topZuoBiao.add(temp*9-80);
+                    }else {
+                        topZuoBiao.add(temp*i);
+                    }
+                }
+
+                int temp2=dw/6;
+                for (int i=1;i<7;i++){
+                    if (i==6){
+                        bootomZuoBiao.add(temp2*6-200);
+                    }else {
+                        bootomZuoBiao.add(temp2*i);
+                    }
+                }
+
+            }
+        }).start();
 
 
         /* 初始化界面 */
@@ -327,7 +351,6 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
 //                    }
 //
 //                });
-
         /* 申请程序所需权限 */
         if (!hasPermission()) {
             requestPermission();
@@ -368,22 +391,28 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
             public boolean handleMessage(Message msg) {
                 switch (msg.what) {
                     case 111: {
+                       if (vipThired!=null ){
+                           vipThired.interrupt();
+                           vipThired=null;
+                       }
+                       vipThired=new VipThired();
+                       vipThired.start();
                         //vip
                         final Subject bean2 = (Subject) msg.obj;
 
                         final View view_dk = View.inflate(MainActivity203.this, R.layout.vipfangke_item_203, null);
                         ScreenAdapterTools.getInstance().loadView(view_dk);
                         MianBanJiView mianBanJiView =  view_dk.findViewById(R.id.mianbanjiview);
-
-
+                        TextView name=view_dk.findViewById(R.id.name);
+                        name.setText(bean2.getName());
                         synthesizer.speak("欢迎贵宾VIP来访");
 
                         try {
                             if (bean2.getDisplayPhoto() != null) {
-                                mianBanJiView.setBitmap(FileUtil.toRoundBitmap(BitmapFactory.decodeFile(bean2.getDisplayPhoto())));
+                                mianBanJiView.setBitmap(FileUtil.toRoundBitmap(BitmapFactory.decodeFile(bean2.getDisplayPhoto())),0);
                             } else {
                                 Bitmap bitmap = mFacePassHandler.getFaceImage(bean2.getTeZhengMa());
-                                mianBanJiView.setBitmap(FileUtil.toRoundBitmap(bitmap));
+                                mianBanJiView.setBitmap(FileUtil.toRoundBitmap(bitmap),0);
                             }
 
                         } catch (FacePassException e) {
@@ -392,31 +421,30 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
 
                         rootLayout.addView(view_dk);
 
-
                         RelativeLayout.LayoutParams layoutParams2 = (RelativeLayout.LayoutParams) mianBanJiView.getLayoutParams();
                         layoutParams2.height = (int)((float)dh * 0.4f);
                         mianBanJiView.setLayoutParams(layoutParams2);
                         mianBanJiView.invalidate();
-
-                        allList.add(view_dk);
                         //大于1个就
-                        if (allList.size()>1){
-                            final View view=allList.get(0);
-                            ValueAnimatorUtils utils=new ValueAnimatorUtils();
-                            utils.setIntface(new ValueAnimatorIntface() {
-                                @Override
-                                public void end() {
-                                    rootLayout.removeView(view);
-                                    allList.remove(0);
-                                }
-                                @Override
-                                public void update(float value) {
-                                    view.setX(value);
-                                }
-                            });
-                            utils.animator(0,-dw,1000,0,0);
+                        if (isDH){ //表示在执行动画
+                            isDH=false;
+                            utils.getValueAnimator().cancel();
                         }
+                            if (rootLayout.getChildCount() > 1) {
+                                ValueAnimatorUtils utils = new ValueAnimatorUtils();
+                                utils.setIntface(new ValueAnimatorIntface() {
+                                    @Override
+                                    public void end() {
+                                        rootLayout.removeViewAt(0);
+                                    }
 
+                                    @Override
+                                    public void update(float value) {
+                                        rootLayout.getChildAt(0).setX(value);
+                                    }
+                                });
+                                utils.animator(0, -dw, 1000, 0, 0);
+                            }
 
                         //动画
                         SpringSystem springSystem3 = SpringSystem.create();
@@ -437,7 +465,6 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
                                 view_dk.setScaleX(value);
                                 view_dk.setScaleY(value);
                                 if (value == 1) {
-
                                     boolean cv = true;
                                     for (int i = 0; i < dibuList.size(); i++) {
                                         if (dibuList.get(i).getId() == bean2.getId()) {
@@ -446,7 +473,7 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
                                         }
                                     }
                                     if (cv) {
-                                        final View view_dk = View.inflate(MainActivity203.this, R.layout.shulianbiao_jj, null);
+                                        final View view_dk = View.inflate(MainActivity203.this, R.layout.shulianbiao_203, null);
                                         ScreenAdapterTools.getInstance().loadView(view_dk);
                                         TextView name = view_dk.findViewById(R.id.name);
                                         ImageView touxiang = view_dk.findViewById(R.id.touxiang);
@@ -476,12 +503,13 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
                                         layoutParams2.width = dw / 9;
                                         layoutParams2.topMargin = 30;
                                         layoutParams2.height = dw / 9;
+                                        layoutParams2.leftMargin=10;
+                                        layoutParams2.rightMargin=10;
                                         touxiang.setLayoutParams(layoutParams2);
                                         touxiang.invalidate();
 
                                         dibuList.add(0, bean2);
                                     }
-                                    //消失
                                     //启动定时器或重置定时器
                                     if (task != null) {
                                         task.cancel();
@@ -494,7 +522,7 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
                                                 mHandler.sendMessage(message);
                                             }
                                         };
-                                        timer.schedule(task, 9000);
+                                        timer.schedule(task, 12000);
                                     } else {
                                         task = new TimerTask() {
                                             @Override
@@ -504,7 +532,7 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
                                                 mHandler.sendMessage(message);
                                             }
                                         };
-                                        timer.schedule(task, 9000);
+                                        timer.schedule(task, 12000);
                                     }
                                 }
                             }
@@ -518,7 +546,14 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
                     case 444: {
                         //普通打卡
                         final Subject bean2 = (Subject) msg.obj;
-                            startTopAnim();
+
+                            if (shengRiThierd!=null ){
+                                shengRiThierd.interrupt();
+                                shengRiThierd=null;
+                            }
+                            shengRiThierd=new ShengRiThierd();
+                            shengRiThierd.run();
+
                             final View view_dk = View.inflate(MainActivity203.this, R.layout.yuangong_item_03, null);
                             ScreenAdapterTools.getInstance().loadView(view_dk);
                             YGTopView ygTopView = view_dk.findViewById(R.id.ygtopview);
@@ -537,23 +572,24 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
                                 e.printStackTrace();
                             }
                             final LinearLayout xiaoxi_ll = view_dk.findViewById(R.id.xiaoxi_ll);
-
                             rootLayout.addView(view_dk);
-                            allList.add(view_dk);
 
+                        if (isDH){ //表示在执行动画
+                            isDH=false;
+                            utils.getValueAnimator().cancel();
+                        }
                         //大于1个就
-                        if (allList.size()>1){
-                            final View view=allList.get(0);
+                        if (rootLayout.getChildCount()>1){
+
                             ValueAnimatorUtils utils=new ValueAnimatorUtils();
                             utils.setIntface(new ValueAnimatorIntface() {
                                 @Override
                                 public void end() {
-                                    rootLayout.removeView(view);
-                                    allList.remove(0);
+                                    rootLayout.removeViewAt(0);
                                 }
                                 @Override
                                 public void update(float value) {
-                                    view.setX(value);
+                                    rootLayout.getChildAt(0).setX(value);
                                 }
                             });
                             utils.animator(0,-dw,1000,0,0);
@@ -675,6 +711,8 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
                                             layoutParams2.width = dw / 9;
                                             layoutParams2.topMargin = 30;
                                             layoutParams2.height = dw / 9;
+                                            layoutParams2.leftMargin=10;
+                                            layoutParams2.rightMargin=10;
                                             touxiang.setLayoutParams(layoutParams2);
                                             touxiang.invalidate();
                                             dibuList.add(0, bean2);
@@ -692,7 +730,7 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
                                                     mHandler.sendMessage(message);
                                                 }
                                             };
-                                            timer.schedule(task, 9000);
+                                            timer.schedule(task, 12000);
                                         } else {
                                             task = new TimerTask() {
                                                 @Override
@@ -702,9 +740,8 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
                                                     mHandler.sendMessage(message);
                                                 }
                                             };
-                                            timer.schedule(task, 9000);
+                                            timer.schedule(task, 12000);
                                         }
-
                                     }
                                 }
                             });
@@ -715,43 +752,60 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
                     }
 
                     case 666: {
-                        //访客
+                        //普通访客
+                        if (fangkeThired!=null ){
+                            fangkeThired.interrupt();
+                            fangkeThired=null;
+                        }
+                        fangkeThired=new FangkeThired();
+                        fangkeThired.start();
+                        //vip
                         final Subject bean2 = (Subject) msg.obj;
-
-                        final View view_dk = View.inflate(MainActivity203.this, R.layout.putongfangke_item_jj, null);
+                        final View view_dk = View.inflate(MainActivity203.this, R.layout.fangke_item_203, null);
                         ScreenAdapterTools.getInstance().loadView(view_dk);
-                        TextView name2 = (TextView) view_dk.findViewById(R.id.name);
-                        TextView daka = (TextView) view_dk.findViewById(R.id.bumen);
-                        ImageView touxiang2 = (ImageView) view_dk.findViewById(R.id.touxiang);
-                        LinearLayout xiaoxi_ll = (LinearLayout) view_dk.findViewById(R.id.xiaoxi_ll);
-                        name2.setText(bean2.getName() + "");
-                        daka.setText("欢迎你的来访");
+                        MianBanJiView mianBanJiView =  view_dk.findViewById(R.id.mianbanjiview);
+                        TextView name=view_dk.findViewById(R.id.name);
+                        name.setText(bean2.getName());
 
                         try {
                             if (bean2.getDisplayPhoto() != null) {
-                                Glide.with(MainActivity203.this)
-                                        .load(new File(bean2.getDisplayPhoto()))
-                                        // .apply(myOptions2)
-                                        .into(touxiang2);
+                                mianBanJiView.setBitmap(FileUtil.toRoundBitmap(BitmapFactory.decodeFile(bean2.getDisplayPhoto())),1);
                             } else {
                                 Bitmap bitmap = mFacePassHandler.getFaceImage(bean2.getTeZhengMa());
-                                Drawable drawable = new BitmapDrawable(getResources(), bitmap);
-                                Glide.with(MainActivity203.this)
-                                        .load(drawable)
-                                        // .apply(myOptions2)
-                                        .into(touxiang2);
+                                mianBanJiView.setBitmap(FileUtil.toRoundBitmap(bitmap),1);
                             }
+
                         } catch (FacePassException e) {
                             e.printStackTrace();
                         }
 
                         rootLayout.addView(view_dk);
 
-                        RelativeLayout.LayoutParams layoutParams2 = (RelativeLayout.LayoutParams) touxiang2.getLayoutParams();
-                        layoutParams2.width = dw / 5;
-                        layoutParams2.height = dw / 4;
-                        touxiang2.setLayoutParams(layoutParams2);
-                        touxiang2.invalidate();
+                        RelativeLayout.LayoutParams layoutParams2 = (RelativeLayout.LayoutParams) mianBanJiView.getLayoutParams();
+                        layoutParams2.height = (int)((float)dh * 0.4f);
+                        mianBanJiView.setLayoutParams(layoutParams2);
+                        mianBanJiView.invalidate();
+                        //大于1个就
+                        if (isDH){ //表示在执行动画
+                            isDH=false;
+                            utils.getValueAnimator().cancel();
+                        }
+                        if (rootLayout.getChildCount() > 1) {
+                            ValueAnimatorUtils utils = new ValueAnimatorUtils();
+                            utils.setIntface(new ValueAnimatorIntface() {
+                                @Override
+                                public void end() {
+                                    rootLayout.removeViewAt(0);
+                                }
+
+                                @Override
+                                public void update(float value) {
+                                    rootLayout.getChildAt(0).setX(value);
+                                }
+                            });
+                            utils.animator(0, -dw, 1000, 0, 0);
+                        }
+
                         //动画
                         SpringSystem springSystem3 = SpringSystem.create();
                         final Spring spring3 = springSystem3.createSpring();
@@ -779,11 +833,10 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
                                         }
                                     }
                                     if (cv) {
-                                        final View view_dk = View.inflate(MainActivity203.this, R.layout.shulianbiao_jj, null);
+                                        final View view_dk = View.inflate(MainActivity203.this, R.layout.shulianbiao_203, null);
                                         ScreenAdapterTools.getInstance().loadView(view_dk);
                                         TextView name = view_dk.findViewById(R.id.name);
                                         ImageView touxiang = view_dk.findViewById(R.id.touxiang);
-
                                         name.setText(bean2.getName());
                                         try {
                                             if (bean2.getDisplayPhoto() != null) {
@@ -810,17 +863,37 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
                                         layoutParams2.width = dw / 9;
                                         layoutParams2.topMargin = 30;
                                         layoutParams2.height = dw / 9;
+                                        layoutParams2.leftMargin=10;
+                                        layoutParams2.rightMargin=10;
                                         touxiang.setLayoutParams(layoutParams2);
                                         touxiang.invalidate();
 
                                         dibuList.add(0, bean2);
-
                                     }
-                                    //消失
-                                    Message message = Message.obtain();
-                                    message.what = 999;
-                                    mHandler.sendMessageDelayed(message, 9000);
-
+                                    //启动定时器或重置定时器
+                                    if (task != null) {
+                                        task.cancel();
+                                        //timer.cancel();
+                                        task = new TimerTask() {
+                                            @Override
+                                            public void run() {
+                                                Message message = new Message();
+                                                message.what = 999;
+                                                mHandler.sendMessage(message);
+                                            }
+                                        };
+                                        timer.schedule(task, 12000);
+                                    } else {
+                                        task = new TimerTask() {
+                                            @Override
+                                            public void run() {
+                                                Message message = new Message();
+                                                message.what = 999;
+                                                mHandler.sendMessage(message);
+                                            }
+                                        };
+                                        timer.schedule(task, 12000);
+                                    }
                                 }
                             }
                         });
@@ -830,32 +903,30 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
                         break;
                     }
                     case 999: {
-
-                        if (rootLayout.getChildCount() > 0) {
+                        if (rootLayout.getChildCount()==1) {
                             //大于1个就
-                            if (allList.size()>0){
-                                final View view2=allList.get(0);
-                                ValueAnimatorUtils utils=new ValueAnimatorUtils();
+                                utils=new ValueAnimatorUtils();
                                 utils.setIntface(new ValueAnimatorIntface() {
                                     @Override
                                     public void end() {
-                                        rootLayout.removeView(view2);
-                                        allList.remove(0);
+                                        rootLayout.removeViewAt(0);
+                                        isDH=false;
                                     }
+
                                     @Override
                                     public void update(float value) {
-                                        view2.setX(value);
+                                        rootLayout.getChildAt(0).setX(value);
                                     }
                                 });
                                 utils.animator(0,-dw,1000,0,0);
+                              isDH=true;
                             }
 
-                            if (dibuList.size() > 9) {
-                                dibuList.remove(9);
-                            }
-                            if (shuLiebiao.getChildCount() > 9) {
-                                shuLiebiao.removeViewAt(shuLiebiao.getChildCount() - 1);
-                            }
+                        if (dibuList.size() > 9) {
+                            dibuList.remove(9);
+                        }
+                        if (shuLiebiao.getChildCount() > 9) {
+                            shuLiebiao.removeViewAt(shuLiebiao.getChildCount() - 1);
                         }
 
                         break;
@@ -933,7 +1004,6 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
                                     layoutParams2.height = dw / 9;
                                     touxiang.setLayoutParams(layoutParams2);
                                     touxiang.invalidate();
-
                                     //消失
                                     Message message = Message.obtain();
                                     message.what = 999;
@@ -947,15 +1017,47 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
                         break;
                     }
                     case 123:{
-                        //粒子动画
-                        Collections.shuffle(topAminaem);
+                        //生日粒子动画
+                        Collections.shuffle(topZuoBiao);
                         for(int i=0;i<9;i++){
                             new ParticleSystem(MainActivity203.this, 100, topIm[i], 3000)
-                                    .setSpeedModuleAndAngleRange(0.05f, 0.2f, 45, 125)
+                                    .setSpeedModuleAndAngleRange(0.05f, 0.2f, 45, 135)
                                     .setRotationSpeed(30)
                                     .setFadeOut(1000,new LinearInterpolator())
                                     .setAcceleration(0.0001f, 90)
-                                    .emit(topAminaem.get(i),0, 1,100);
+                                    .emit(topZuoBiao.get(i),0, 1,100);
+                        }
+
+                        break;
+                    }
+                    case 122:{
+                        //vip粒子动画
+                        List<Bitmap> tempLists = ((List<Bitmap>) msg.obj);
+                        if (tempLists==null)
+                            break;
+
+                        int size=tempLists.size();
+
+                        for(int i=0;i<size;i++){
+                            new ParticleSystem(MainActivity203.this, 100, tempLists.get(i), 5000)
+                                    .setSpeedModuleAndAngleRange(0.02f, 0.1f, 260, 300)
+                                    .setRotationSpeed(0)
+                                    .setFadeOut(1000,new LinearInterpolator())
+                                    .setAcceleration(0.000004f, 270)
+                                    .emit(bootomZuoBiao.get(i),dh+50, 1,100);
+                        }
+
+                        break;
+                    }
+                    case 121:{
+                        //普通访客粒子动画
+                        for(int i=0;i<6;i++){
+                            new ParticleSystem(MainActivity203.this, 100, putongIm[i], 5000)
+                                    .setSpeedModuleAndAngleRange(0.02f, 0.1f, 260, 300)
+                                    .setRotationSpeed(0)
+                                    .setFadeOut(1000,new LinearInterpolator())
+                                    .setAcceleration(0.000004f, 270)
+                                    .emit(bootomZuoBiao.get(i),dh+50, 1,100);
                         }
 
                         break;
@@ -977,6 +1079,7 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
         if (hasPermission()) {
             manager.open(getWindowManager(), cameraFacingFront, cameraWidth, cameraHeight);
         }
+        query = subjectBox.query().equal(Subject_.peopleType, "员工").build();
         adaptFrameLayout();
         super.onResume();
     }
@@ -1058,18 +1161,19 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
                                 //  getFaceImageByFaceToken(result.trackId, faceToken);
                                 Log.d("RecognizeThread", "识别了");
                                 Subject subject = subjectBox.query().equal(Subject_.teZhengMa, result.faceToken).build().findUnique();
+
                                 if (subject != null) {
-                                    subject.setPeopleType("白名单");
+                                    subject.setPeopleType("普通访客");
                                     linkedBlockingQueue.offer(subject);
                                     link_shangchuanjilu(subject);
 
                                 } else {
                                     EventBus.getDefault().post("没有查询到人员信息");
                                     Subject subject1 = new Subject();
-                                    subject1.setId(12345);
+                                    subject1.setId(System.currentTimeMillis());
                                     subject1.setName("测试");
                                     subject1.setTeZhengMa(result.faceToken);
-                                    subject1.setPeopleType("白名单");
+                                    subject1.setPeopleType("员工");
                                     subjectBox.put(subject1);
                                 }
 
@@ -1293,6 +1397,8 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
         SettingVar.isButtonInvisible = false;
     }
 
+    private int shibai;
+
     private void initView() {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         int windowRotation = ((WindowManager) (getApplicationContext().getSystemService(Context.WINDOW_SERVICE))).getDefaultDisplay().getRotation() * 90;
@@ -1348,7 +1454,54 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
         daBg.setBackgroundResource(R.color.dabg);
         scrollView.setSmoothScrollingEnabled(true);
         ceshi=findViewById(R.id.ceshi);
-        ceshi.setImageBitmap(FileUtil.toRoundBitmap2(BitmapFactory.decodeResource(getResources(),R.drawable.dbg_1),BitmapFactory.decodeResource(getResources(),R.drawable.xinxinxin),100,100));
+        ceshi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (usbPath!=null){
+
+                    ToastUtils.getInstances().showDialog("获取图片","获取图片",0);
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            List<String> strings=new ArrayList<>();
+                            FileUtil.getAllFiles(usbPath+ File.separator+"入库照片2",strings);
+                            FacePassHandler facePassHandler=MyApplication.myApplication.getFacePassHandler();
+
+                            int size=strings.size();
+                            for (int i=0;i<size;i++){
+
+                                try {
+                                    String sp=strings.get(i);
+                                    Log.d("SheZhiActivity", sp);
+                                    Log.d("SheZhiActivity", "i" + i);
+                                    FacePassAddFaceResult result= facePassHandler.addFace(BitmapFactory.decodeFile(sp));
+                                    if (result.result==0){
+                                        facePassHandler.bindGroup(group_name,result.faceToken);
+                                        Subject subject=new Subject();
+                                        int oo=sp.length();
+                                        subject.setName(sp.substring(oo-6,oo-1));
+                                        subject.setTeZhengMa(result.faceToken);
+                                        subject.setPeopleType("员工");
+                                        subject.setId(System.currentTimeMillis());
+                                        subjectBox.put(subject);
+
+                                    }else {
+                                        shibai++;
+                                    }
+
+                                    ToastUtils.getInstances().showDialog("入库中","失败了:"+shibai,(i/size)*100);
+                                } catch (FacePassException e) {
+                                    e.printStackTrace();
+                                }
+
+                            }
+
+
+                        }
+
+                    }).start();
+            }}
+        });
 
         // marqueeView = (MarqueeView) findViewById(R.id.marqueeView);
         //   List<String> info = new ArrayList<>();
@@ -2250,19 +2403,129 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
         });
     }
 
-    private void startTopAnim(){
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                        for (int i=0;i<9;i++){
-                            Message message=Message.obtain();
-                            message.what=123;
-                            mHandler.sendMessage(message);
-                            SystemClock.sleep(1000);
-                        }
-                }
-            }).start();
 
+
+    private class ShengRiThierd extends Thread{
+        @Override
+        public void run() {
+            int i=0;
+            while (!this.isInterrupted()) {
+                Message message=Message.obtain();
+                message.what=123;
+                mHandler.sendMessage(message);
+                SystemClock.sleep(1000);
+                i++;
+                if (i>=9){
+                    break;
+                }
+            }
+
+        }
     }
+
+    private class FangkeThired extends Thread{
+        @Override
+        public void run() {
+            int i=0;
+            while (!this.isInterrupted()) {
+                Message message=Message.obtain();
+                message.what=121;
+                mHandler.sendMessage(message);
+                SystemClock.sleep(1000);
+                i++;
+                if (i>=5){
+                    break;
+                }
+            }
+        }
+    }
+
+    private class VipThired extends Thread{
+        @Override
+        public void run() {
+            LazyList<Subject> subjects = query.findLazy();
+            RandomDataUtil util=new RandomDataUtil();
+            List<Bitmap> bitmapListAmin=new ArrayList<>();
+
+            if (subjects.size()>30){
+                List<Subject> subjectList = util.generateRandomDataNoRepeat(subjects,30);
+                Log.d("VipThired", "subjectList.size():" + subjectList.size());
+                for (Subject subject:subjectList){
+                    try {
+                        Bitmap  bitmap= mFacePassHandler.getFaceImage(subject.getTeZhengMa());
+                        bitmapListAmin.add(FileUtil.toRoundBitmap2(bitmap,BitmapFactory.decodeResource(getResources(),R.drawable.xinxinxin),100,100));
+                    } catch (FacePassException e) {
+                        Log.d("VipThired", e.getMessage()+"获取vip动画bitmap异常");
+                    }
+                }
+            }else {
+                for (Subject subject:subjects){
+                    try {
+                        Bitmap  bitmap= mFacePassHandler.getFaceImage(subject.getTeZhengMa());
+                        bitmapListAmin.add(FileUtil.toRoundBitmap2(bitmap,BitmapFactory.decodeResource(getResources(),R.drawable.xinxinxin),100,100));
+                    } catch (FacePassException e) {
+                        Log.d("VipThired", e.getMessage()+"获取vip动画bitmap异常");
+                    }
+                }
+                //Collections.shuffle(bitmapListAmin);
+            }
+            Log.d("VipThired", "subjects.size():" + subjects.size());
+            int j=0;
+            while (!this.isInterrupted()) {
+                     //   Collections.shuffle(bitmapListAmin);
+                        List<Bitmap> tempLS=new ArrayList<>();
+                        int tem=j*6;
+                        int tesi=bitmapListAmin.size();
+                        for (int i=0;i<6;i++){
+                            if (tesi>tem+i){
+                                tempLS.add(bitmapListAmin.get(tem+i));
+                            }
+                        }
+                        Message message=Message.obtain();
+                        message.what=122;
+                        message.obj=tempLS;
+                        mHandler.sendMessage(message);
+                       SystemClock.sleep(1000);
+
+                    j++;
+                    if (j>=5){
+                        break;
+                    }
+
+                }
+
+
+        }
+    }
+
+
+    public static class UsbBroadCastReceiver extends BroadcastReceiver {
+
+        public UsbBroadCastReceiver() {
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            if (intent.getAction() != null && intent.getAction().equals("android.intent.action.MEDIA_MOUNTED")) {
+                usbPath = intent.getData().getPath();
+                List<String> sss = FileUtil.getMountPathList();
+                int size = sss.size();
+                for (int i = 0; i < size; i++) {
+
+                    if (sss.get(i).contains(usbPath)) {
+                        usbPath = sss.get(i);
+                    }
+
+                }
+
+                Log.d("UsbBroadCastReceiver", usbPath);
+            }
+
+
+        }
+    }
+    private static String usbPath = null;
+
 
 }

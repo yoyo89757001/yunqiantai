@@ -45,7 +45,9 @@ public class MyApplication extends Application implements Application.ActivityLi
     public static MyApplication myApplication;
     private Box<ChengShiIDBean> chengShiIDBeanBox;
 
-
+    static {
+        System.loadLibrary("ruitongnative");
+    }
 
     @Override
     public void onCreate() {

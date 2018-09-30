@@ -33,6 +33,7 @@ public class MianBanJiView extends View{
     private RectF rectF=new RectF();
     private RectF rectF2=new RectF();
     private Bitmap henfu= null;
+    private int type=0;
 
 
     private void initPaints() {
@@ -95,9 +96,9 @@ public class MianBanJiView extends View{
 
 
 
-    public void setBitmap(Bitmap bitmap){
+    public void setBitmap(Bitmap bitmap,int type){
         this.bitmap=bitmap;
-
+        this.type=type;
     }
 
 
@@ -130,7 +131,9 @@ public class MianBanJiView extends View{
         }
         //中间的圆
         canvas.drawBitmap(bitmap,null,rectF, centerPaint);
-        canvas.drawBitmap(henfu,null,rectF2, centerPaint);
+        if (type==0){
+            canvas.drawBitmap(henfu,null,rectF2, centerPaint);
+        }
         //TODO 可以在中间圆绘制文字或者图片
         //延迟更新，达到扩散视觉差效果
         postInvalidateDelayed(10);

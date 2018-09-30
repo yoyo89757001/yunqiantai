@@ -855,15 +855,6 @@ public class FileUtil {
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));// 设置两张图片相交时的模式,参考http://trylovecatch.iteye.com/blog/1189452
         canvas.drawBitmap(bitmap, src, dst, paint); // 以Mode.SRC_IN模式合并bitmap和已经draw了的Circle
 
-        Paint pp=new Paint();
-        pp.setAntiAlias(true);
-        pp.setStyle(Paint.Style.STROKE);
-        pp.setStrokeWidth(10);
-        pp.setColor(Color.WHITE);
-        canvas.drawCircle(roundPx, roundPx, roundPx-4, pp);
-        canvas.drawBitmap(bitmap2,null,new RectF(roundPx*2-300,dst_top,roundPx*2,dst_top+300),pp);
-
-
         int height2 = output.getHeight();
         int width2 = output.getWidth();
         float scaleWidth = ((float) newWidth) / width2;
@@ -871,11 +862,26 @@ public class FileUtil {
         Matrix matrix = new Matrix();
         matrix.postScale(scaleWidth, scaleHeight);// 使用后乘
         Bitmap newBM = Bitmap.createBitmap(output, 0, 0, width2, height2, matrix, false);
+
+        Bitmap output2 = Bitmap.createBitmap(newWidth+20, newHeight+20, Bitmap.Config.ARGB_8888);
+        Canvas canvas2 = new Canvas(output2);
+        canvas2.drawBitmap(newBM, 0, 20, null);//在 0，0坐标开始画入bg 
+        Paint pp=new Paint();
+        pp.setAntiAlias(true);
+        pp.setStyle(Paint.Style.STROKE);
+        pp.setStrokeWidth(2);
+        pp.setColor(Color.WHITE);
+        canvas2.drawCircle(newHeight/2, newHeight/2+20, newHeight/2-1, pp);
+        canvas2.drawBitmap(bitmap2,null,new RectF(newHeight+20-60,0,newHeight+20,top+60),pp);
+        canvas2.save(Canvas.ALL_SAVE_FLAG);//保存   
+        //store   
+        canvas2.restore();//存储   
+
         if (!output.isRecycled()) {
             output.recycle();
         }
 
-        return newBM;
+        return output2;
     }
 
     public static Bitmap toConformBitmap(Bitmap background, Bitmap foreground) {

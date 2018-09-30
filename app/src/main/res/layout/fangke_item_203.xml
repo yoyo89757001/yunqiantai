@@ -2,8 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:id="@+id/root_rl"
-    android:layout_margin="20px"
-    android:background="@drawable/jianbian_bg_vip"
+    android:background="@drawable/jianbian_bg_fangke"
     android:layout_height="match_parent">
 
     <ImageView
