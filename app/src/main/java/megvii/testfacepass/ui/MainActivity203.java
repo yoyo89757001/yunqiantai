@@ -24,6 +24,9 @@ import android.graphics.Typeface;
 import android.graphics.YuvImage;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -83,6 +86,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
@@ -127,6 +131,7 @@ import megvii.testfacepass.tts.control.MySyntherizer;
 import megvii.testfacepass.tts.control.NonBlockSyntherizer;
 import megvii.testfacepass.tts.listener.UiMessageListener;
 import megvii.testfacepass.tts.util.OfflineResource;
+import megvii.testfacepass.utils.CeShi;
 import megvii.testfacepass.utils.DateUtils;
 import megvii.testfacepass.utils.FacePassUtil;
 import megvii.testfacepass.utils.FileUtil;
@@ -180,7 +185,7 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
     @BindView(R.id.shidu)
     TextView shidu;
 
-
+    private String oneTzm="";
     private final Timer timer = new Timer();
     private TimerTask task;
     private Box<Subject> subjectBox = null;
@@ -200,7 +205,7 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
     private RequestOptions myOptions = new RequestOptions()
             .fitCenter()
             .error(R.drawable.erroy_bg)
-            .transform(new GlideCircleTransform(MyApplication.myApplication, 2, Color.parseColor("#ffffffff")));
+            .transform(new GlideCircleTransform(MainActivity203.this, 12, Color.parseColor("#ffffff")));
     // .transform(new GlideRoundTransform(MainActivity.this,10));
     private ImageView ceshi;
     private RequestOptions myOptions2 = new RequestOptions()
@@ -246,6 +251,7 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
     private static boolean isDH=false;
     private static boolean isLink = true;
     private long tID = -1;
+    private boolean isNet=false;
     /*DetectResult queue*/
     ArrayBlockingQueue<FacePassDetectionResult> mDetectResultQueue;
     ArrayBlockingQueue<FacePassImage> mFeedFrameQueue;
@@ -269,12 +275,17 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
     private List<Integer> bootomZuoBiao=new ArrayList<>();
     private int []topIm=new int[]{R.drawable.sp1,R.drawable.sp2,R.drawable.sp3,R.drawable.sp4,R.drawable.sp5,
             R.drawable.sp6,R.drawable.sp7,R.drawable.sp8,R.drawable.sp9,};
-    private int []putongIm=new int[]{R.drawable.sp1,R.drawable.sp2,R.drawable.sp3,R.drawable.sp4,R.drawable.
-            sp5,R.drawable.sp6};
+
+    private int []qqIm=new int[]{R.drawable.qq1,R.drawable.qq2,R.drawable.qq3,R.drawable.qq4,R.drawable.
+            qq5,R.drawable.qq6,R.drawable.qq7,R.drawable.qq8};
     private ShengRiThierd  shengRiThierd=null;
     private VipThired vipThired=null;
     private FangkeThired fangkeThired=null;
     private Query<Subject> query = null;
+    private NetWorkStateReceiver netWorkStateReceiver = null;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -298,6 +309,13 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
         };
         baoCunBean = baoCunBeanDao.get(123456L);
         subjectBox = MyApplication.myApplication.getBoxStore().boxFor(Subject.class);
+        //网络状态关闭
+        if (netWorkStateReceiver == null) {
+            netWorkStateReceiver = new NetWorkStateReceiver();
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+            registerReceiver(netWorkStateReceiver, filter);
+        }
 
         //每分钟的广播
         intentFilter = new IntentFilter();
@@ -336,8 +354,12 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
                     }
                 }
 
+                CeShi cc=new CeShi();
+                cc.statrt();
+
             }
         }).start();
+
 
 
         /* 初始化界面 */
@@ -356,7 +378,7 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
             requestPermission();
         } else {
             //初始化
-            //  FacePassHandler.getAuth(authIP, apiKey, apiSecret);
+            // FacePassHandler.getAuth(authIP, apiKey, apiSecret);
             FacePassHandler.initSDK(getApplicationContext());
             Log.d("MainActivity201", FacePassHandler.getVersion());
         }
@@ -500,11 +522,11 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
                                         shuLiebiao.addView(view_dk, 0);
 
                                         RelativeLayout.LayoutParams layoutParams2 = (RelativeLayout.LayoutParams) touxiang.getLayoutParams();
-                                        layoutParams2.width = dw / 9;
+                                        layoutParams2.width = dw / 10;
                                         layoutParams2.topMargin = 30;
-                                        layoutParams2.height = dw / 9;
-                                        layoutParams2.leftMargin=10;
-                                        layoutParams2.rightMargin=10;
+                                        layoutParams2.height = dw / 10;
+                                        layoutParams2.leftMargin=16;
+                                        layoutParams2.rightMargin=16;
                                         touxiang.setLayoutParams(layoutParams2);
                                         touxiang.invalidate();
 
@@ -546,13 +568,13 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
                     case 444: {
                         //普通打卡
                         final Subject bean2 = (Subject) msg.obj;
-
-                            if (shengRiThierd!=null ){
-                                shengRiThierd.interrupt();
-                                shengRiThierd=null;
-                            }
-                            shengRiThierd=new ShengRiThierd();
-                            shengRiThierd.run();
+                        //生日的时候开启
+//                            if (shengRiThierd!=null ){
+//                                shengRiThierd.interrupt();
+//                                shengRiThierd=null;
+//                            }
+                         //   shengRiThierd=new ShengRiThierd();
+                         //   shengRiThierd.start();
 
                             final View view_dk = View.inflate(MainActivity203.this, R.layout.yuangong_item_03, null);
                             ScreenAdapterTools.getInstance().loadView(view_dk);
@@ -560,7 +582,8 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
                             final ScrollView scrollView_03=view_dk.findViewById(R.id.scrollview_03);
                             ygTopView.setHight(dh, dw);
                             ygTopView.setBitmapHG();
-                            ygTopView.setName(bean2.getName(), bean2.getDepartmentName());
+                            ygTopView.setName(bean2.getName(), bean2.getDepartmentName(),false);
+
                             try {
                                 if (bean2.getDisplayPhoto() != null) {
                                     ygTopView.setBitmapTX(FileUtil.toRoundBitmap(BitmapFactory.decodeFile(bean2.getDisplayPhoto())));
@@ -573,7 +596,6 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
                             }
                             final LinearLayout xiaoxi_ll = view_dk.findViewById(R.id.xiaoxi_ll);
                             rootLayout.addView(view_dk);
-
                         if (isDH){ //表示在执行动画
                             isDH=false;
                             utils.getValueAnimator().cancel();
@@ -618,12 +640,14 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
                                     //float scale = 1f - (value * 0.5f);
                                     view_dk.setScaleX(value);
                                     view_dk.setScaleY(value);
-                                    if (value == 1) {
+                                    if (value == 1 && isNet) {
+
+
                                         new Thread(new Runnable() {
                                             @Override
                                             public void run() {
 
-                                                for (int i = 0; i < 10; i++) {
+                                                for (int i = 0; i < 0; i++) {
 
                                                     final int finalI = i;
                                                     runOnUiThread(new Runnable() {
@@ -636,43 +660,44 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
                                                             xiaoxi_im.setBackgroundResource(R.drawable.jieri_xx);
                                                             view_xiaoxi.setY(dh);
                                                             xiaoxi_ll.addView(view_xiaoxi);
+
                                                             RelativeLayout.LayoutParams layoutParams6 = (RelativeLayout.LayoutParams) rl_xiaoxi.getLayoutParams();
                                                             layoutParams6.topMargin = 40;
                                                             layoutParams6.bottomMargin = 20;
-                                                            layoutParams6.height = (int) ((float) dh * 0.11);
+                                                            layoutParams6.height = (int) ((float) dh * 0.13);
                                                             rl_xiaoxi.setLayoutParams(layoutParams6);
                                                             rl_xiaoxi.invalidate();
 
-                                                            float sfff = 60 + ((float) dh * 0.11f);
+                                                            float sfff = 60 + ((float) dh * 0.13f);
 
-                                                            ValueAnimator animator = ValueAnimator.ofFloat(dh, sfff * finalI);
-                                                            //动画时长，让进度条在CountDown时间内正好从0-360走完，
-                                                            animator.setDuration(1000);
-                                                            animator.setInterpolator(new DecelerateInterpolator());//匀速
-                                                            animator.setRepeatCount(0);//0表示不循环，-1表示无限循环
-                                                            animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                                                                @Override
-                                                                public void onAnimationUpdate(ValueAnimator animation) {
-                                                                    /**
-                                                                     * 这里我们已经知道ValueAnimator只是对值做动画运算，而不是针对控件的，因为我们设置的区间值为0-1.0f
-                                                                     * 所以animation.getAnimatedValue()得到的值也是在[0.0-1.0]区间，而我们在画进度条弧度时，设置的当前角度为360*currentAngle，
-                                                                     * 因此，当我们的区间值变为1.0的时候弧度刚好转了360度
-                                                                     */
-                                                                    float jiaodu = (float) animation.getAnimatedValue();
-                                                                    view_xiaoxi.setY(jiaodu);
+                                                                ValueAnimator animator = ValueAnimator.ofFloat(dh, sfff * finalI);
+                                                                //动画时长，让进度条在CountDown时间内正好从0-360走完，
+                                                                animator.setDuration(1000);
+                                                                animator.setInterpolator(new DecelerateInterpolator());//匀速
+                                                                animator.setRepeatCount(0);//0表示不循环，-1表示无限循环
+                                                                animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                                                                    @Override
+                                                                    public void onAnimationUpdate(ValueAnimator animation) {
+                                                                        /**
+                                                                         * 这里我们已经知道ValueAnimator只是对值做动画运算，而不是针对控件的，因为我们设置的区间值为0-1.0f
+                                                                         * 所以animation.getAnimatedValue()得到的值也是在[0.0-1.0]区间，而我们在画进度条弧度时，设置的当前角度为360*currentAngle，
+                                                                         * 因此，当我们的区间值变为1.0的时候弧度刚好转了360度
+                                                                         */
+                                                                        float jiaodu = (float) animation.getAnimatedValue();
+                                                                        view_xiaoxi.setY(jiaodu);
 
-                                                                }
-                                                            });
-                                                            animator.start();
+                                                                    }
+                                                                });
+                                                                animator.start();
+
+                                                            scrollView_03.fullScroll(ScrollView.FOCUS_DOWN);
                                                         }
                                                     });
-                                                    scrollView_03.fullScroll(ScrollView.FOCUS_DOWN);
-                                                    SystemClock.sleep(1000);
+                                                    SystemClock.sleep(800);
 
                                                 }
                                             }
                                         }).start();
-
 
                                         boolean cv = true;
                                         for (int i = 0; i < dibuList.size(); i++) {
@@ -708,11 +733,11 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
 
                                             shuLiebiao.addView(view_dk, 0);
                                             RelativeLayout.LayoutParams layoutParams2 = (RelativeLayout.LayoutParams) touxiang.getLayoutParams();
-                                            layoutParams2.width = dw / 9;
+                                            layoutParams2.width = dw / 10;
                                             layoutParams2.topMargin = 30;
-                                            layoutParams2.height = dw / 9;
-                                            layoutParams2.leftMargin=10;
-                                            layoutParams2.rightMargin=10;
+                                            layoutParams2.height = dw / 10;
+                                            layoutParams2.leftMargin=16;
+                                            layoutParams2.rightMargin=16;
                                             touxiang.setLayoutParams(layoutParams2);
                                             touxiang.invalidate();
                                             dibuList.add(0, bean2);
@@ -860,11 +885,11 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
                                         shuLiebiao.addView(view_dk, 0);
 
                                         RelativeLayout.LayoutParams layoutParams2 = (RelativeLayout.LayoutParams) touxiang.getLayoutParams();
-                                        layoutParams2.width = dw / 9;
+                                        layoutParams2.width = dw / 10;
                                         layoutParams2.topMargin = 30;
-                                        layoutParams2.height = dw / 9;
-                                        layoutParams2.leftMargin=10;
-                                        layoutParams2.rightMargin=10;
+                                        layoutParams2.height = dw / 10;
+                                        layoutParams2.leftMargin=16;
+                                        layoutParams2.rightMargin=16;
                                         touxiang.setLayoutParams(layoutParams2);
                                         touxiang.invalidate();
 
@@ -928,6 +953,7 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
                         if (shuLiebiao.getChildCount() > 9) {
                             shuLiebiao.removeViewAt(shuLiebiao.getChildCount() - 1);
                         }
+                        oneTzm="";
 
                         break;
                     }
@@ -1020,12 +1046,16 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
                         //生日粒子动画
                         Collections.shuffle(topZuoBiao);
                         for(int i=0;i<9;i++){
+                            int min=0;
+                            int max=8;
+                            Random random = new Random();
+                            int num = random.nextInt(max)%(max-min+1) + min;
                             new ParticleSystem(MainActivity203.this, 100, topIm[i], 3000)
                                     .setSpeedModuleAndAngleRange(0.05f, 0.2f, 45, 135)
                                     .setRotationSpeed(30)
                                     .setFadeOut(1000,new LinearInterpolator())
                                     .setAcceleration(0.0001f, 90)
-                                    .emit(topZuoBiao.get(i),0, 1,100);
+                                    .emit(topZuoBiao.get(num),0, 1,100);
                         }
 
                         break;
@@ -1035,16 +1065,18 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
                         List<Bitmap> tempLists = ((List<Bitmap>) msg.obj);
                         if (tempLists==null)
                             break;
-
                         int size=tempLists.size();
-
                         for(int i=0;i<size;i++){
+                            int min=0;
+                            int max=5;
+                            Random random = new Random();
+                            int num = random.nextInt(max)%(max-min+1) + min;
                             new ParticleSystem(MainActivity203.this, 100, tempLists.get(i), 5000)
-                                    .setSpeedModuleAndAngleRange(0.02f, 0.1f, 260, 300)
+                                    .setSpeedModuleAndAngleRange(0.02f, 0.1f, 250, 290)
                                     .setRotationSpeed(0)
                                     .setFadeOut(1000,new LinearInterpolator())
                                     .setAcceleration(0.000004f, 270)
-                                    .emit(bootomZuoBiao.get(i),dh+50, 1,100);
+                                    .emit(bootomZuoBiao.get(num),dh+50, 1,100);
                         }
 
                         break;
@@ -1052,12 +1084,22 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
                     case 121:{
                         //普通访客粒子动画
                         for(int i=0;i<6;i++){
-                            new ParticleSystem(MainActivity203.this, 100, putongIm[i], 5000)
-                                    .setSpeedModuleAndAngleRange(0.02f, 0.1f, 260, 300)
+                            int min=0;
+                            int max=5;
+                            Random random = new Random();
+                            int num = random.nextInt(max)%(max-min+1) + min;
+
+                            int min2=0;
+                            int max2=8;
+                            Random random2 = new Random();
+                            int num2 = random2.nextInt(max2)%(max2-min2+1) + min2;
+
+                            new ParticleSystem(MainActivity203.this, 100, qqIm[num2], 6000)
+                                    .setSpeedModuleAndAngleRange(0.02f, 0.1f, 250, 290)
                                     .setRotationSpeed(0)
                                     .setFadeOut(1000,new LinearInterpolator())
                                     .setAcceleration(0.000004f, 270)
-                                    .emit(bootomZuoBiao.get(i),dh+50, 1,100);
+                                    .emit(bootomZuoBiao.get(num),dh+260, 1,100);
                         }
 
                         break;
@@ -1162,19 +1204,23 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
                                 Log.d("RecognizeThread", "识别了");
                                 Subject subject = subjectBox.query().equal(Subject_.teZhengMa, result.faceToken).build().findUnique();
 
-                                if (subject != null) {
-                                    subject.setPeopleType("普通访客");
-                                    linkedBlockingQueue.offer(subject);
-                                    link_shangchuanjilu(subject);
-
-                                } else {
-                                    EventBus.getDefault().post("没有查询到人员信息");
-                                    Subject subject1 = new Subject();
-                                    subject1.setId(System.currentTimeMillis());
-                                    subject1.setName("测试");
-                                    subject1.setTeZhengMa(result.faceToken);
-                                    subject1.setPeopleType("员工");
-                                    subjectBox.put(subject1);
+                                if (!oneTzm.equals(new String(result.faceToken))){
+                                    oneTzm=new String(result.faceToken);
+                                    if (subject != null) {
+                                        subject.setPeopleType("员工");
+                                        subject.setName("王力宏");
+                                        subject.setDepartmentName("营销部");
+                                        linkedBlockingQueue.offer(subject);
+                                        link_shangchuanjilu(subject);
+                                    } else {
+                                        EventBus.getDefault().post("没有查询到人员信息");
+                                        Subject subject1 = new Subject();
+                                        subject1.setId(System.currentTimeMillis());
+                                        subject1.setName("测试");
+                                        subject1.setTeZhengMa(result.faceToken);
+                                        subject1.setPeopleType("员工");
+                                        subjectBox.put(subject1);
+                                    }
                                 }
 
                             } else {
@@ -1224,7 +1270,7 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
             while (!isRing) {
                 try {
                     //有动画 ，延迟到一秒一次
-                    SystemClock.sleep(1100);
+                   // SystemClock.sleep(1100);
                     Subject subject = linkedBlockingQueue.take();
                     if (subject.getPeopleType() != null) {
                         switch (subject.getPeopleType()) {
@@ -1260,6 +1306,7 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
                                 messagey.what = 444;
                                 messagey.obj = subject;
                                 mHandler.sendMessage(messagey);
+
 //                                        }
 //
 //                                        break;
@@ -1769,6 +1816,7 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
 
         shipingView.release(true);
         unregisterReceiver(timeChangeReceiver);
+        unregisterReceiver(netWorkStateReceiver);
         EventBus.getDefault().unregister(this);//解除订阅
         if (manager != null) {
             manager.release();
@@ -2469,7 +2517,7 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
                 }
                 //Collections.shuffle(bitmapListAmin);
             }
-            Log.d("VipThired", "subjects.size():" + subjects.size());
+         //   Log.d("VipThired", "subjects.size():" + subjects.size());
             int j=0;
             while (!this.isInterrupted()) {
                      //   Collections.shuffle(bitmapListAmin);
@@ -2527,5 +2575,68 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
     }
     private static String usbPath = null;
 
+
+    public class NetWorkStateReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            //检测API是不是小于23，因为到了API23之后getNetworkInfo(int networkType)方法被弃用
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+
+                //获得ConnectivityManager对象
+                ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+                //获取ConnectivityManager对象对应的NetworkInfo对象
+                //以太网
+                NetworkInfo wifiNetworkInfo1 = connMgr.getNetworkInfo(ConnectivityManager.TYPE_ETHERNET);
+                //获取WIFI连接的信息
+                NetworkInfo wifiNetworkInfo = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+                //获取移动数据连接的信息
+                NetworkInfo dataNetworkInfo = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+                if (wifiNetworkInfo1.isConnected() || wifiNetworkInfo.isConnected() || dataNetworkInfo.isConnected()) {
+                    isNet=true;
+
+                } else {
+                    isNet=false;
+                }
+
+
+            //				if (wifiNetworkInfo.isConnected() && dataNetworkInfo.isConnected()) {
+            //					Toast.makeText(context, "WIFI已连接,移动数据已连接", Toast.LENGTH_SHORT).show();
+            //				} else if (wifiNetworkInfo.isConnected() && !dataNetworkInfo.isConnected()) {
+            //					Toast.makeText(context, "WIFI已连接,移动数据已断开", Toast.LENGTH_SHORT).show();
+            //				} else if (!wifiNetworkInfo.isConnected() && dataNetworkInfo.isConnected()) {
+            //					Toast.makeText(context, "WIFI已断开,移动数据已连接", Toast.LENGTH_SHORT).show();
+            //				} else {
+            //					Toast.makeText(context, "WIFI已断开,移动数据已断开", Toast.LENGTH_SHORT).show();
+            //				}
+            //API大于23时使用下面的方式进行网络监听
+            } else {
+
+                //获得ConnectivityManager对象
+                ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+                //获取所有网络连接的信息
+                Network[] networks = connMgr.getAllNetworks();
+                //用于存放网络连接信息
+                StringBuilder sb = new StringBuilder();
+                //通过循环将网络信息逐个取出来
+              //  Log.d(TAG, "networks.length:" + networks.length);
+                if (networks.length == 0) {
+                    isNet=false;
+                }
+                for (int i = 0; i < networks.length; i++) {
+                    //获取ConnectivityManager对象对应的NetworkInfo对象
+                    NetworkInfo networkInfo = connMgr.getNetworkInfo(networks[i]);
+
+                    if (networkInfo.isConnected()) {
+                        isNet=true;
+
+                    }
+                }
+
+            }
+        }
+    }
 
 }

@@ -5,7 +5,6 @@
     android:layout_height="wrap_content">
 
 
-    
     <RelativeLayout
         android:id="@+id/rl_xiaoxi"
         android:layout_marginLeft="50px"

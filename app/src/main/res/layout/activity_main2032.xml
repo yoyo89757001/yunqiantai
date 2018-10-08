@@ -32,14 +32,14 @@
         android:background="@drawable/touminglogo"
         android:layout_marginTop="100px"
         android:layout_centerHorizontal="true"
-        android:layout_width="150px"
-        android:layout_height="150px" />
+        android:layout_width="120px"
+        android:layout_height="120px" />
 
     <TextView
         android:layout_below="@+id/logo"
         android:id="@+id/gongsiname"
-        android:text="瑞瞳智能"
-        android:textSize="50px"
+        android:text="瑞瞳智能科技"
+        android:textSize="100px"
         android:layout_marginTop="10px"
         android:layout_centerHorizontal="true"
         android:textColor="@color/white"
@@ -93,8 +93,8 @@
             <ImageView
                 android:scaleType="fitXY"
                 android:id="@+id/tianqi_im"
-                android:layout_width="80px"
-                android:layout_height="80px" />
+                android:layout_width="90px"
+                android:layout_height="90px" />
 
             <TextView
                 android:textColor="@color/white"

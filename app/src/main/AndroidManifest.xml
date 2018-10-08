@@ -231,6 +231,10 @@
 
         <activity android:name=".ui.MoBanActivity"/>
 
+        <service android:name=".utils.MyService" android:persistent="true" >
+
+        </service>
+
     </application>
 
 </manifest>

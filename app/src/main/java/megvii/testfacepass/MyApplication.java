@@ -2,9 +2,14 @@ package megvii.testfacepass;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
 import android.util.DisplayMetrics;
 
 import android.util.Log;
@@ -30,6 +35,7 @@ import megvii.testfacepass.dialogall.CommonDialogService;
 import megvii.testfacepass.dialogall.ToastUtils;
 import megvii.testfacepass.utils.FileUtil;
 import megvii.testfacepass.utils.GsonUtil;
+import megvii.testfacepass.utils.MyService;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
@@ -44,10 +50,13 @@ public class MyApplication extends Application implements Application.ActivityLi
     private static BoxStore mBoxStore;
     public static MyApplication myApplication;
     private Box<ChengShiIDBean> chengShiIDBeanBox;
+    private MyService myService=null;
 
     static {
         System.loadLibrary("ruitongnative");
     }
+
+
 
     @Override
     public void onCreate() {
@@ -114,7 +123,6 @@ public class MyApplication extends Application implements Application.ActivityLi
                             chengShiIDBeanBox.put(bean);
                         }
 
-
                     }catch (Exception e){
                         Log.d("WebsocketPushMsg", e.getMessage()+"ttttt");
                     }
@@ -122,6 +130,9 @@ public class MyApplication extends Application implements Application.ActivityLi
                 }
             });
         }
+
+
+
 
     }
 
@@ -142,8 +153,12 @@ public class MyApplication extends Application implements Application.ActivityLi
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
         if(activity.getParent()!=null){
             CommonData.mNowContext = activity.getParent();
-        }else
+        }else{
             CommonData.mNowContext = activity;
+        }
+
+        Intent intent = new Intent(activity, MyService.class);
+        bindService(intent, serviceConnection,  Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -176,6 +191,28 @@ public class MyApplication extends Application implements Application.ActivityLi
 
     @Override
     public void onActivityDestroyed(Activity activity) {
-
+        unbindService(serviceConnection);
     }
+
+    // 在Activity中，我们通过ServiceConnection接口来取得建立连接与连接意外丢失的回调
+   private  ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+        // 建立连接
+        // 获取服务的操作对象
+            MyService.MyBinder binder = (MyService.MyBinder) service;
+            myService= binder.getService();// 获取到的Service即MyService
+            Log.d("MyService", "myService:" + myService);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            Log.d("MyService", "name:" + name);
+        // 连接断开
+        }
+    };
+
+
+
+
 }

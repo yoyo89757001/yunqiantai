@@ -535,9 +535,6 @@ public class MyReceiver extends BroadcastReceiver {
 								}
 
 							}
-							Log.d(TAG, "文件存在");
-
-							//  Log.d("SheZhiActivity", "循环到"+j);
 
 							showNotifictionIcon((int) ((j / (float) size) * 100),"入库中","入库中"+(int) ((j / (float) size) * 100)+"%");
 							if (filePath!=null){
