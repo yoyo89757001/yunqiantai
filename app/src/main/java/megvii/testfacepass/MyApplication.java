@@ -191,6 +191,7 @@ public class MyApplication extends Application implements Application.ActivityLi
 
     @Override
     public void onActivityDestroyed(Activity activity) {
+        if (serviceConnection!=null)
         unbindService(serviceConnection);
     }
 

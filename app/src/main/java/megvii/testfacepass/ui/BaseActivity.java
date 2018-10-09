@@ -25,7 +25,7 @@ public class BaseActivity extends AppCompatActivity {
         if (baoCunBean == null) {
             baoCunBean = new BaoCunBean();
             baoCunBean.setId(123456L);
-            baoCunBean.setHoutaiDiZhi("http://192.168.2.187:8980/js/f");
+            baoCunBean.setHoutaiDiZhi("http://hy.inteyeligence.com/front");
             baoCunBean.setShibieFaceSize(60);
             baoCunBean.setShibieFaZhi(70);
             baoCunBean.setYudiao(5);

@@ -18,6 +18,7 @@ public class TuiSongBean {
     private String url;
     private int status;
 
+
     public int getStatus() {
         return status;
     }

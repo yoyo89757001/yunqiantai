@@ -35,23 +35,20 @@
         android:layout_width="120px"
         android:layout_height="120px" />
 
-    <TextView
-        android:layout_below="@+id/logo"
-        android:id="@+id/gongsiname"
-        android:text="瑞瞳智能科技"
-        android:textSize="100px"
+    <megvii.testfacepass.view.AutoScalingTextView
+        android:id="@+id/zidongtext"
         android:layout_marginTop="10px"
+        android:layout_below="@+id/logo"
         android:layout_centerHorizontal="true"
-        android:textColor="@color/white"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
 
     <RelativeLayout
-        android:layout_below="@+id/gongsiname"
+        android:layout_below="@+id/zidongtext"
         android:layout_centerHorizontal="true"
         android:id="@+id/content_rl"
-        android:layout_marginTop="100px"
+        android:layout_marginTop="20px"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
@@ -166,6 +163,7 @@
     <RelativeLayout
         android:layout_centerHorizontal="true"
         android:layout_above="@+id/dibuddd"
+        android:gravity="center"
         android:layout_marginBottom="30px"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
@@ -173,11 +171,12 @@
         <LinearLayout
             android:id="@+id/fgrtgfg"
             android:orientation="vertical"
+            android:gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
             <TextView
                 android:id="@+id/xiaoshi"
-                android:textSize="62px"
+                android:textSize="66px"
                 android:textColor="@color/white"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
@@ -196,7 +195,7 @@
             android:layout_toRightOf="@+id/fgrtgfg"
             android:id="@+id/xingqi"
             android:ems="1"
-            android:layout_marginTop="10px"
+            android:layout_marginTop="14px"
             android:layout_marginLeft="4px"
             android:textSize="40px"
             android:layout_width="wrap_content"
