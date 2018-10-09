@@ -1132,7 +1132,6 @@ public class MyReceiver extends BroadcastReceiver {
 						} catch (InterruptedException | ExecutionException e) {
 							e.printStackTrace();
 						}
-
 						if (bitmap!=null) {
 							FacePassAddFaceResult faceResult = null;
 							try {
@@ -1182,8 +1181,7 @@ public class MyReceiver extends BroadcastReceiver {
 										path=saveBitmap2File2(bitmapTX, FileUtil.SDPATH + File.separator + FileUtil.PATH + File.separator + fn, 100);
 									}
 									subject.setDisplayPhoto(path);
-									subjectBox.put(subject);
-									Log.d("MyReceiver", "单个访客入库成功");
+									Log.d("MyReceiver", "单个访客入库成功"+subjectBox.put(subject));
 								}else {
 									showNotifictionIcon(0,"入库失败","图片不符合入库要求 "+renShu.getName());
 								}
@@ -1242,12 +1240,10 @@ public class MyReceiver extends BroadcastReceiver {
 			public void onResponse(Call call, Response response) throws IOException {
 				Log.d("AllConnects", "请求成功"+call.request().toString());
 				//获得返回体
-				//try{
-
+				try{
 					ResponseBody body = response.body();
 					final String ss=body.string().trim();
 					Log.d("AllConnects", "单个员工"+ss);
-
 					JsonObject jsonObject= GsonUtil.parse(ss).getAsJsonObject();
 					Gson gson=new Gson();
 					final LingShiSubject renShu=gson.fromJson(jsonObject,LingShiSubject.class);
@@ -1336,10 +1332,10 @@ public class MyReceiver extends BroadcastReceiver {
 						Log.d("MyReceiver", "单个员工删除成功");
 					}
 
-//				}catch (Exception e){
-//					Log.d("MyReceiver", "dddd");
-//					showNotifictionIcon( 0,"入库出错","出现异常"+e.getMessage());
-//				}
+				}catch (Exception e){
+					Log.d("MyReceiver", "dddd");
+					showNotifictionIcon( 0,"入库出错","出现异常"+e.getMessage());
+				}
 
 			}
 		});

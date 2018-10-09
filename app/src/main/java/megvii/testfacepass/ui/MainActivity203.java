@@ -820,7 +820,7 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
                         }
                         fangkeThired = new FangkeThired();
                         fangkeThired.start();
-                        //vip
+
                         final Subject bean2 = (Subject) msg.obj;
                         final View view_dk = View.inflate(MainActivity203.this, R.layout.fangke_item_203, null);
                         ScreenAdapterTools.getInstance().loadView(view_dk);
@@ -1241,13 +1241,13 @@ public class MainActivity203 extends Activity implements CameraManager.CameraLis
                                 Subject subject = subjectBox.query().equal(Subject_.teZhengMa, result.faceToken).build().findUnique();
 
                                 if (!oneTzm.equals(new String(result.faceToken))) {
+                                    Log.d("RecognizeThread", "识别了2");
                                     oneTzm = new String(result.faceToken);
-
                                     if (subject!=null){
+                                        Log.d("RecognizeThread", "subject:" + subject.toString());
                                         linkedBlockingQueue.offer(subject);
                                         link_shangchuanjilu(subject);
                                     }
-
 
 //                                    if (subject != null) {
 //                                        subject.setPeopleType("白名单");
