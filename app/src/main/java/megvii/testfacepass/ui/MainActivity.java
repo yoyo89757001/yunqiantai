@@ -136,6 +136,7 @@ import megvii.testfacepass.tts.util.OfflineResource;
 import megvii.testfacepass.utils.DateUtils;
 import megvii.testfacepass.utils.FacePassUtil;
 import megvii.testfacepass.utils.FileUtil;
+import megvii.testfacepass.utils.GlideUtils;
 import megvii.testfacepass.utils.GsonUtil;
 import megvii.testfacepass.utils.SettingVar;
 import megvii.testfacepass.view.DBG_View;
@@ -189,11 +190,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
     private static boolean isOne = true;
     private static Vector<Subject> yuangongList = new Vector<>();//上面的弹窗
     private static Vector<Subject> lingdaoList = new Vector<>();//下面的弹窗
-    private RequestOptions myOptions = new RequestOptions()
-            .fitCenter()
-            .error(R.drawable.erroy_bg)
-            .transform(new GlideCircleTransform(MyApplication.myApplication, 2, Color.parseColor("#ffffffff")));
-    // .transform(new GlideRoundTransform(MainActivity.this,10));
+
 
     private RequestOptions myOptions2 = new RequestOptions()
             .fitCenter()
@@ -370,7 +367,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                             Drawable drawable = new BitmapDrawable(getResources(), bitmap);
                             Glide.with(MainActivity.this)
                                     .load(drawable)
-                                    .apply(myOptions)
+                                    .apply(GlideUtils.getRequestOptions())
                                     //  .transform(new GlideCircleTransform(MyApplication.getAppContext(), 2, Color.parseColor("#ffffffff")))
                                     .into(touxiang1);
 

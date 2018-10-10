@@ -752,10 +752,11 @@ public class FileUtil {
         if (width <= height) {
             roundPx = width / 2;
             left = 0;
-            top = 0;
+            top = (height-width)/2;
             right = width;
-            bottom = width;
+            bottom = height-(height-width)/2;
             height = width;
+
             dst_left = 0;
             dst_top = 0;
             dst_right = width;
@@ -789,6 +790,7 @@ public class FileUtil {
 
         canvas.drawARGB(0, 0, 0, 0); // 填充整个Canvas
         paint.setColor(color);
+
         canvas.drawCircle(roundPx, roundPx, roundPx, paint);
 
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));// 设置两张图片相交时的模式,参考http://trylovecatch.iteye.com/blog/1189452
@@ -812,10 +814,11 @@ public class FileUtil {
         if (width <= height) {
             roundPx = width / 2;
             left = 0;
-            top = 0;
+            top = (height-width)/2;
             right = width;
-            bottom = width;
+            bottom = height-(height-width)/2;
             height = width;
+
             dst_left = 0;
             dst_top = 0;
             dst_right = width;
@@ -833,6 +836,7 @@ public class FileUtil {
             dst_right = height;
             dst_bottom = height;
         }
+
 
         Bitmap output = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(output);

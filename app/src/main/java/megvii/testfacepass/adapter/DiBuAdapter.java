@@ -34,6 +34,7 @@ import megvii.testfacepass.R;
 import megvii.testfacepass.beans.Subject;
 import megvii.testfacepass.ui.MainActivity201;
 import megvii.testfacepass.utils.DateUtils;
+import megvii.testfacepass.utils.GlideUtils;
 import megvii.testfacepass.view.GlideCircleTransform;
 
 /**
@@ -42,10 +43,7 @@ import megvii.testfacepass.view.GlideCircleTransform;
 
 
 public class DiBuAdapter extends RecyclerView.Adapter<DiBuAdapter.ViewHolder>{
-    private RequestOptions myOptions = new RequestOptions()
-            .fitCenter()
-            .error(R.drawable.erroy_bg)
-            .transform(new GlideCircleTransform(MyApplication.myApplication, 2, Color.parseColor("#ffffffff")));
+
     private List<Subject> list;
     private Context context;
     private int dw,dh;
@@ -95,14 +93,14 @@ public class DiBuAdapter extends RecyclerView.Adapter<DiBuAdapter.ViewHolder>{
             if (list.get(position).getDisplayPhoto()!=null){
                 Glide.with(context)
                         .load(new File(list.get(position).getDisplayPhoto()))
-                        .apply(myOptions)
+                        .apply(GlideUtils.getRequestOptions())
                         .into(holder.touxiang);
             }else {
                 Bitmap bitmap = facePassHandler.getFaceImage(list.get(position).getTeZhengMa());
                 Drawable drawable = new BitmapDrawable(context.getResources(), bitmap);
                 Glide.with(context)
                         .load(drawable)
-                        .apply(myOptions)
+                        .apply(GlideUtils.getRequestOptions())
                         .into(holder.touxiang);
             }
 

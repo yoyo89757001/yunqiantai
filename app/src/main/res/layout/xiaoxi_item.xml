@@ -30,11 +30,24 @@
             android:padding="10px"
             android:textColor="@color/textcolor"
             android:textSize="40px"
+            android:layout_toLeftOf="@+id/lingqu"
             android:text="祝你生日快乐"
             android:gravity="center"
             android:layout_marginLeft="10px"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
+
+        <TextView
+            android:id="@+id/lingqu"
+            android:textSize="30px"
+            android:ems="1"
+            android:layout_marginLeft="40px"
+            android:layout_marginRight="32px"
+            android:textColor="@color/textcolor"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
     </RelativeLayout>
 

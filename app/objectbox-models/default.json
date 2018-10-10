@@ -602,7 +602,7 @@
     },
     {
       "id": "9:5039147820292711371",
-      "lastPropertyId": "13:8122615490266606522",
+      "lastPropertyId": "14:3965121120321926666",
       "name": "GuanHuai",
       "properties": [
         {
@@ -654,8 +654,8 @@
           "name": "newsStatus"
         },
         {
-          "id": "13:8122615490266606522",
-          "name": "pid"
+          "id": "14:3965121120321926666",
+          "name": "employeeId"
         }
       ],
       "relations": []
@@ -669,7 +669,9 @@
   "modelVersionParserMinimum": 4,
   "retiredEntityUids": [],
   "retiredIndexUids": [],
-  "retiredPropertyUids": [],
+  "retiredPropertyUids": [
+    8122615490266606522
+  ],
   "retiredRelationUids": [],
   "version": 1
 }

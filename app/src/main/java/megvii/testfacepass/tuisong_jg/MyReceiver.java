@@ -147,7 +147,6 @@ public class MyReceiver extends BroadcastReceiver {
 					MOBan renShu=gson.fromJson(jsonObject,MOBan.class);
 					String tp[]= renShu.getContent().getSubType().split("-");
 					for (String typee : tp) {
-
 						List<BenDiMBbean> bb = benDiMBbeanDao.query().equal(BenDiMBbean_.subType,typee).build().find();
 						if (bb != null) {
 							int size = bb.size();
@@ -156,7 +155,6 @@ public class MyReceiver extends BroadcastReceiver {
 								benDiMBbeanDao.remove(bb.get(i));
 							}
 						}
-
 						p1=renShu.getContent().getBottemImageUrl().substring(1,renShu.getContent().getBottemImageUrl().length()-1);
 						String p2=renShu.getContent().getPopupImageUrl().substring(1,renShu.getContent().getPopupImageUrl().length()-1);
 
@@ -1383,10 +1381,11 @@ public class MyReceiver extends BroadcastReceiver {
 					final GuanHuai youJuBean=gson.fromJson(jsonObject,GuanHuai.class);
 					if (status!=3){
 					//添加
-						Log.d("MyReceiver", "guanHuaiBox.put(youJuBean):" + guanHuaiBox.put(youJuBean));
+						Log.d("MyReceiver", "关怀入库:" + guanHuaiBox.put(youJuBean));
 					}else {
 						//删除
-						guanHuaiBox.remove(youJuBean);
+						guanHuaiBox.remove(youJuBean.getId());
+						Log.d("MyReceiver", "删除关怀");
 					}
 
 				}catch (Exception e){
@@ -1435,10 +1434,11 @@ public class MyReceiver extends BroadcastReceiver {
 					Gson gson=new Gson();
 					final GuanHuai youJuBean=gson.fromJson(jsonObject,GuanHuai.class);
 					if (status!=3){
-						guanHuaiBox.put(youJuBean);
+						Log.d("MyReceiver", "邮局入库:" + guanHuaiBox.put(youJuBean));
 					}else {
 						//删除
-						guanHuaiBox.remove(youJuBean);
+						guanHuaiBox.remove(youJuBean.getId());
+						Log.d("MyReceiver", "删除邮局");
 					}
 				}catch (Exception e){
 					showNotifictionIcon( 0,"邮局","出现异常"+e.getMessage());

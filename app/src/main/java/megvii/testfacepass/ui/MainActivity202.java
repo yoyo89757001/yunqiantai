@@ -126,6 +126,7 @@ import megvii.testfacepass.tts.util.OfflineResource;
 import megvii.testfacepass.utils.DateUtils;
 import megvii.testfacepass.utils.FacePassUtil;
 import megvii.testfacepass.utils.FileUtil;
+import megvii.testfacepass.utils.GlideUtils;
 import megvii.testfacepass.utils.GsonUtil;
 import megvii.testfacepass.utils.SettingVar;
 import megvii.testfacepass.view.GlideCircleTransform;
@@ -183,10 +184,10 @@ public class MainActivity202 extends Activity implements CameraManager.CameraLis
     // 主控制类，所有合成控制方法从这个类开始
     private MySyntherizer synthesizer;
     private static Vector<Subject> dibuList = new Vector<>();//下面的弹窗
-    private RequestOptions myOptions = new RequestOptions()
-            .fitCenter()
-            .error(R.drawable.erroy_bg)
-            .transform(new GlideCircleTransform(MyApplication.myApplication, 2, Color.parseColor("#ffffffff")));
+//    private RequestOptions myOptions = new RequestOptions()
+//            .fitCenter()
+//            .error(R.drawable.erroy_bg)
+//            .transform(new GlideCircleTransform(MyApplication.myApplication, 2, Color.parseColor("#ffffffff")));
     // .transform(new GlideRoundTransform(MainActivity.this,10));
 
     private RequestOptions myOptions2 = new RequestOptions()
@@ -415,17 +416,17 @@ public class MainActivity202 extends Activity implements CameraManager.CameraLis
                                         ImageView touxiang = view_dk.findViewById(R.id.touxiang);
                                         name.setText(bean2.getName());
                                         try {
-                                            if (bean2.getDisplayPhoto() != null) {
+                                        if (bean2.getDisplayPhoto() != null) {
                                                 Glide.with(MainActivity202.this)
                                                         .load(new File(bean2.getDisplayPhoto()))
-                                                        .apply(myOptions)
+                                                        .apply(GlideUtils.getRequestOptions())
                                                         .into(touxiang);
                                             } else {
                                                 Bitmap bitmap = mFacePassHandler.getFaceImage(bean2.getTeZhengMa());
                                                 Drawable drawable = new BitmapDrawable(getResources(), bitmap);
                                                 Glide.with(MainActivity202.this)
                                                         .load(drawable)
-                                                        .apply(myOptions)
+                                                        .apply(GlideUtils.getRequestOptions())
                                                         .into(touxiang);
                                             }
 
@@ -537,14 +538,14 @@ public class MainActivity202 extends Activity implements CameraManager.CameraLis
                                             if (bean2.getDisplayPhoto() != null) {
                                                 Glide.with(MainActivity202.this)
                                                         .load(new File(bean2.getDisplayPhoto()))
-                                                        .apply(myOptions)
+                                                        .apply(GlideUtils.getRequestOptions())
                                                         .into(touxiang);
                                             } else {
                                                 Bitmap bitmap = mFacePassHandler.getFaceImage(bean2.getTeZhengMa());
                                                 Drawable drawable = new BitmapDrawable(getResources(), bitmap);
                                                 Glide.with(MainActivity202.this)
                                                         .load(drawable)
-                                                        .apply(myOptions)
+                                                        .apply(GlideUtils.getRequestOptions())
                                                         .into(touxiang);
                                             }
 
@@ -749,14 +750,14 @@ public class MainActivity202 extends Activity implements CameraManager.CameraLis
                                             if (bean2.getDisplayPhoto() != null) {
                                                 Glide.with(MainActivity202.this)
                                                         .load(new File(bean2.getDisplayPhoto()))
-                                                        .apply(myOptions)
+                                                        .apply(GlideUtils.getRequestOptions())
                                                         .into(touxiang);
                                             } else {
                                                 Bitmap bitmap = mFacePassHandler.getFaceImage(bean2.getTeZhengMa());
                                                 Drawable drawable = new BitmapDrawable(getResources(), bitmap);
                                                 Glide.with(MainActivity202.this)
                                                         .load(drawable)
-                                                        .apply(myOptions)
+                                                        .apply(GlideUtils.getRequestOptions())
                                                         .into(touxiang);
                                             }
 
@@ -869,7 +870,7 @@ public class MainActivity202 extends Activity implements CameraManager.CameraLis
                                     name.setText("陌生人");
                                     Glide.with(MainActivity202.this)
                                             .load(bean2.getBitmap())
-                                            .apply(myOptions)
+                                            .apply(GlideUtils.getRequestOptions())
                                             .into(touxiang);
 
                                     shuLiebiao.addView(view_dk, 0);

@@ -56,7 +56,7 @@ public class MyApplication extends Application implements Application.ActivityLi
         System.loadLibrary("ruitongnative");
     }
 
-
+    private static int sDens = 0;
 
     @Override
     public void onCreate() {
@@ -131,10 +131,16 @@ public class MyApplication extends Application implements Application.ActivityLi
             });
         }
 
-
+        DisplayMetrics dm = getResources().getDisplayMetrics();
+        sDens = dm.densityDpi;
 
 
     }
+
+    public static int getDens(){
+        return sDens;
+    }
+
 
     public BoxStore getBoxStore(){
         return mBoxStore;
@@ -191,8 +197,8 @@ public class MyApplication extends Application implements Application.ActivityLi
 
     @Override
     public void onActivityDestroyed(Activity activity) {
-        if (serviceConnection!=null)
-        unbindService(serviceConnection);
+     //   if (serviceConnection!=null)
+      //  unbindService(serviceConnection);
     }
 
     // 在Activity中，我们通过ServiceConnection接口来取得建立连接与连接意外丢失的回调

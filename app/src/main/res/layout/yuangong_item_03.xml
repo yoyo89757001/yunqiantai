@@ -24,6 +24,8 @@
 
     <LinearLayout
         android:id="@+id/ygwenzi"
+        android:visibility="gone"
+        android:orientation="vertical"
         android:layout_below="@+id/frrr"
         android:gravity="center_horizontal"
         android:layout_width="match_parent"
@@ -37,6 +39,15 @@
             android:id="@+id/ygwenzitext"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
+
+
+        <FrameLayout
+            android:id="@+id/boxfargment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+
+
 
 
 

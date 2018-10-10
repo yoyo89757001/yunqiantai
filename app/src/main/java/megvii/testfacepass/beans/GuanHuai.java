@@ -21,28 +21,35 @@ public class GuanHuai {
      * timeRange : 2018-10-09 00:00 ~ 2018-10-09 23:59
      */
 
-    @Id
-    private long pid;
+    @Id(assignable = true)
+    private Long id;
+    private Long employeeId;
     private int spareStatus;
     private String companyId;
     private String projectileStatus;
     private String machineS1;
     private String name;
     private String startTime;
-    private String id;
     private String endTime;
     private String markedWords;
     private String timeRange;
     private String repeatType;
     private String newsStatus;
 
-
-    public long getPid() {
-        return pid;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public void setPid(long pid) {
-        this.pid = pid;
+    public Long getId() {
+        return id;
+    }
+
+    public Long getEmployeeId() {
+        return employeeId;
+    }
+
+    public void setEmployeeId(Long employeeId) {
+        this.employeeId = employeeId;
     }
 
     public String getRepeatType() {
@@ -111,13 +118,6 @@ public class GuanHuai {
         this.startTime = startTime;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getEndTime() {
         return endTime;
