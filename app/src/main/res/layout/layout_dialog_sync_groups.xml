@@ -68,7 +68,6 @@
             android:text="获取所有底库" />
 
         <Button
-            android:id="@+id/btn_obtain_sync_data"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"

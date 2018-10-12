@@ -512,7 +512,7 @@ public class MyReceiver extends BroadcastReceiver {
 						Log.d(TAG, "size:" + size);
 						//循环
 						for (int j=0;j<size;j++) {
-							Log.d(TAG, "i:" + j);
+						//	Log.d(TAG, "i:" + j);
 							String filePath=null;
 							while (true){
 								try {
@@ -526,7 +526,7 @@ public class MyReceiver extends BroadcastReceiver {
 									File file=new File(filePath);
 									if ((file.isFile() && file.length()>0)|| t==100){
 										t=0;
-										Log.d(TAG, "file.length():" + file.length()+"   t:"+t);
+									//	Log.d(TAG, "file.length():" + file.length()+"   t:"+t);
 										break;
 									}
 								}catch (Exception e){
@@ -536,8 +536,8 @@ public class MyReceiver extends BroadcastReceiver {
 								}
 
 							}
-
-							showNotifictionIcon((int) ((j / (float) size) * 100),"入库中","入库中"+(int) ((j / (float) size) * 100)+"%");
+							//Log.d(TAG, "((float)j / (float) size * 100):" + ((float)j / (float) size * 100));
+							showNotifictionIcon((int) ((float)j / (float) size * 100),"入库中","入库中"+(int) ((float)j / (float) size * 100)+"%");
 							if (filePath!=null){
 								try {
 
@@ -548,12 +548,12 @@ public class MyReceiver extends BroadcastReceiver {
 										if (ee!=null){
 											//重复编辑会导致旷视底库图片增多，所以先删除旷视的
 											if (ee.getTeZhengMa()!=null){
-											boolean bb=facePassHandler.deleteFace(ee.getTeZhengMa());
+											boolean bb=facePassHandler.deleteFace(ee.getTeZhengMa().getBytes());
 												Log.d("MyRecriver", "批量入库中,删除已有的底库" + bb);
 											}
 										}
 										facePassHandler.bindGroup(group_name,faceResult.faceToken);
-										subjectList.get(j).setTeZhengMa(faceResult.faceToken);
+										subjectList.get(j).setTeZhengMa(new String(faceResult.faceToken));
 										subjectList.get(j).setDaka(0);
 										subjectBox.put(subjectList.get(j));
 										stringBuilderId.append(subjectList.get(j).getId());
@@ -1140,11 +1140,11 @@ public class MyReceiver extends BroadcastReceiver {
 									if (ee!=null){
 										//重复编辑会导致旷视底库图片增多，所以先删除旷视的
 										if (ee.getTeZhengMa()!=null)
-										Log.d("MyReceiver", "删除已有的访客底库"+facePassHandler.deleteFace(ee.getTeZhengMa()));
+										Log.d("MyReceiver", "删除已有的访客底库"+facePassHandler.deleteFace(ee.getTeZhengMa().getBytes()));
 									}
 									facePassHandler.bindGroup(group_name, faceResult.faceToken);
 									Subject subject = new Subject();
-									subject.setTeZhengMa(faceResult.faceToken);
+									subject.setTeZhengMa(new String(faceResult.faceToken));
 									subject.setId(Long.valueOf(renShu.getId()));
 									subject.setPeopleType(renShu.getPeopleType());
 									subject.setDaka(0);
@@ -1193,7 +1193,7 @@ public class MyReceiver extends BroadcastReceiver {
 
 					}else {
 						//删除
-						facePassHandler.deleteFace(subjectBox.get(Long.valueOf(id)).getTeZhengMa());
+						facePassHandler.deleteFace(subjectBox.get(Long.valueOf(id)).getTeZhengMa().getBytes());
 						subjectBox.remove(Long.valueOf(id));
 						Log.d("MyReceiver", "单个访客删除成功");
 					}
@@ -1267,11 +1267,12 @@ public class MyReceiver extends BroadcastReceiver {
 									if (ee!=null){
 										//重复编辑会导致旷视底库图片增多，所以先删除旷视的
 										if (ee.getTeZhengMa()!=null)
-										Log.d("MyReceiver", "删除已有的员工底库"+facePassHandler.deleteFace(ee.getTeZhengMa()));
+										Log.d("MyReceiver", "删除已有的员工底库"+facePassHandler.deleteFace(ee.getTeZhengMa().getBytes()));
 									}
 									facePassHandler.bindGroup(group_name, faceResult.faceToken);
+									//Log.d("MyReceiver", "faceResult.faceToken:" + new String(faceResult.faceToken));
 									Subject subject = new Subject();
-									subject.setTeZhengMa(faceResult.faceToken);
+									subject.setTeZhengMa(new String(faceResult.faceToken));
 									subject.setId(renShu.getId());
 									subject.setPeopleType(renShu.getPeopleType());
 									subject.setDaka(0);
@@ -1322,7 +1323,7 @@ public class MyReceiver extends BroadcastReceiver {
 					}else {
 						//删除
 						try {
-							facePassHandler.deleteFace(subjectBox.get(Long.valueOf(id)).getTeZhengMa());
+							facePassHandler.deleteFace(subjectBox.get(Long.valueOf(id)).getTeZhengMa().getBytes());
 						} catch (FacePassException e) {
 							e.printStackTrace();
 						}

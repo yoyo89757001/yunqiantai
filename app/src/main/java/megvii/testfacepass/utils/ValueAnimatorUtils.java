@@ -37,6 +37,7 @@ public class ValueAnimatorUtils  {
         animator.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
+                valueAnimatorIntface.start();
             }
             @Override
             public void onAnimationEnd(Animator animation) {

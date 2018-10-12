@@ -30,7 +30,8 @@ import com.badlogic.gdx.backends.android.AndroidFragmentApplication;
 
 import megvii.testfacepass.R;
 import megvii.testfacepass.box2d.Tools.BoxCreatComplete;
-import megvii.testfacepass.box2d.Tools.GiftParticleContants;
+import megvii.testfacepass.box2d.Tools.BoxFragmentInit;
+
 import megvii.testfacepass.view.InterceptableViewGroup;
 
 
@@ -41,7 +42,7 @@ import megvii.testfacepass.view.InterceptableViewGroup;
 public class Box2DFragment extends AndroidFragmentApplication implements InputProcessor, BoxCreatComplete {
 
 	private static final String TAG = "Box2DFragment";
-
+	private BoxFragmentInit boxFragmentInit;
 	public static float s_scale = 1.0f;
 
 	private View m_viewRooter = null;
@@ -70,6 +71,10 @@ public class Box2DFragment extends AndroidFragmentApplication implements InputPr
 
 	}
 
+	public void setBoxFragmentInit(BoxFragmentInit boxFragmentInit){
+		this.boxFragmentInit=boxFragmentInit;
+	}
+
 
 	@Nullable
 	@Override
@@ -81,26 +86,22 @@ public class Box2DFragment extends AndroidFragmentApplication implements InputPr
 		DisplayMetrics dm = getActivity().getApplicationContext().getResources().getDisplayMetrics();
 		s_scale = dm.density/4.0f;
 
-		Log.d(TAG, "创建box");
 		buildGDX();
-
 		return m_viewRooter;
 	}
-
 
 
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 
-
 	}
-
 
 	@Override
 	public void onDestroyView() {
 	    Log.d(TAG, "销毁boxdddd");
-
+		box2dEffectView.setCanDraw(false);
+		cleanGDX();
 		super.onDestroyView();
 	}
 
@@ -112,15 +113,10 @@ public class Box2DFragment extends AndroidFragmentApplication implements InputPr
 
 	}
 
-	@Override
-	public void onHiddenChanged(boolean hidden) {
-		Log.d(TAG, "hidden:" + hidden);
-		super.onHiddenChanged(hidden);
-	}
 
 	public void addStar(boolean isLeft, boolean isSelf) {
 		try {
-			box2dEffectView.addStar( isSelf);
+			box2dEffectView.addStar( isLeft,isSelf);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -136,7 +132,7 @@ public class Box2DFragment extends AndroidFragmentApplication implements InputPr
 
 	public void cleanGDX() {
 		try {
-			box2dEffectView.release();
+			box2dEffectView.setCanDraw(false);
 			box2dEffectView.dispose();
 
 		}catch (Exception e){}
@@ -170,43 +166,38 @@ public class Box2DFragment extends AndroidFragmentApplication implements InputPr
 	@Override
 	public void onStop() {
 		Log.d(TAG, "onStop");
-		try {
-			box2dEffectView.release();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+//		try {
+//			box2dEffectView.release();
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 
-		box2dEffectView.setCanDraw(false);
-		Log.d(TAG, "停止");
-		cleanGDX();
+//		box2dEffectView.setCanDraw(false);
+//		Log.d(TAG, "停止");
+//		cleanGDX();
 		super.onStop();
 	}
 
 	@Override
 	public void onResume() {
 		//Log.d(TAG, "onResume");
-		try {
-			super.onResume();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		box2dEffectView.setCanDraw(true);
+		super.onResume();
+
 	}
 
 	@Override
 	public void onPause() {
 		Log.d(TAG, "onPause");
-		cleanGDX();
-		try {
-			super.onPause();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 
-		if (mContainer != null && mContainer.getChildCount() <= 0)
-			return;
+		super.onPause();
 
-		if (!m_isDestorying && !isScreenLock())
-			super.onResume();
+//
+//		if (mContainer != null && mContainer.getChildCount() <= 0)
+//			return;
+//
+//		if (!m_isDestorying && !isScreenLock())
+//			super.onResume();
 	}
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -229,12 +220,12 @@ public class Box2DFragment extends AndroidFragmentApplication implements InputPr
 
 	@Override
 	public boolean keyDown(int i) {
-		if (i == Input.Keys.BACK) {
-			Intent intent = new Intent();
-			intent.setAction(GiftParticleContants.BROADCAST_GIFTPARTICLE_BACKKEY);
-			getActivity().sendBroadcast(intent);
-			return true;
-		}
+//		if (i == Input.Keys.BACK) {
+//			Intent intent = new Intent();
+//			intent.setAction(GiftParticleContants.BROADCAST_GIFTPARTICLE_BACKKEY);
+//			getActivity().sendBroadcast(intent);
+//			return true;
+//		}
 		return false;
 	}
 
@@ -281,19 +272,23 @@ public class Box2DFragment extends AndroidFragmentApplication implements InputPr
 
 	@Override
 	public void creatComplete() {
+		boxFragmentInit.initCompelte(box2dEffectView);
 
-			Log.d(TAG, "执行333333");
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					box2dEffectView.addStar( true);
-				}
-			}).start();
+
+
+//			Log.d(TAG, "执行333333");
+//			new Thread(new Runnable() {
+//				@Override
+//				public void run() {
+//					box2dEffectView.addStar( true);
+//				}
+//			}).start();
 
 	}
 
 	@Override
 	public void finsh() {
 		Log.d(TAG, "小贵的多萨达");
+
 	}
 }

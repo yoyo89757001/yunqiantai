@@ -3,11 +3,9 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="img_full_opaque">#00000000</color>
     <color name="white">#FFFFFF</color>
     <color name="huise33">#34e9d2d6</color>
     <color name="lanse33">#1b37d6</color>
-    <color name="result_minor_text">#ffc0c0c0</color>
     <color name="transparent">#00000000</color>
 
     <color name="colorBar_bg">#0d2cf9</color>
@@ -17,17 +15,6 @@
     <color name="blake">#ff111111</color>
     <color name="textcolor">#9a050505</color>
     <!-- 半透明 -->
-    <color name="ijk_color_blue_main">@color/ijk_color_blue_500</color>
-    <color name="ijk_color_blue_50">#E3F2FD</color>
-    <color name="ijk_color_blue_100">#BBDEFB</color>
-    <color name="ijk_color_blue_200">#90CAF9</color>
-    <color name="ijk_color_blue_300">#64B5F6</color>
-    <color name="ijk_color_blue_400">#42A5F5</color>
-    <color name="ijk_color_blue_500">#2196F3</color>
-    <color name="ijk_color_blue_600">#1E88E5</color>
-    <color name="ijk_color_blue_700">#1976D2</color>
-    <color name="ijk_color_blue_800">#1565C0</color>
-    <color name="ijk_color_blue_900">#0D47A1</color>
 
     <color name="ijk_transparent_dark">#77000000</color>
 
@@ -37,9 +24,8 @@
     <!-- 红色 -->
     <!-- 辅助文字-->
     <!-- 橙色 -->
-    <color name="dark_grey">#e2e1e1</color><!-- 深灰 -->
+    <!-- 深灰 -->
     <color name="huangse">#e9eeff00</color><!-- 深灰 -->
-    <color name="touming22">#59000000</color>
     <color name="dabg">#f7f7f7</color>
 
 

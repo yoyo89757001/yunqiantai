@@ -363,7 +363,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
 
                         // Log.d(TAG, "SSSSSSSSSSSSS");
                         try {
-                            Bitmap bitmap = mFacePassHandler.getFaceImage(bean.getTeZhengMa());
+                            Bitmap bitmap = mFacePassHandler.getFaceImage(bean.getTeZhengMa().getBytes());
                             Drawable drawable = new BitmapDrawable(getResources(), bitmap);
                             Glide.with(MainActivity.this)
                                     .load(drawable)
@@ -497,7 +497,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                                         ImageView touxiang1 = view1.findViewById(R.id.db_touxiang);
                                         name1.setText(subject.getName());
                                         try {
-                                            Bitmap bitmap = mFacePassHandler.getFaceImage(subject.getTeZhengMa());
+                                            Bitmap bitmap = mFacePassHandler.getFaceImage(subject.getTeZhengMa().getBytes());
                                             Drawable drawable = new BitmapDrawable(getResources(), bitmap);
                                             Glide.with(MainActivity.this)
                                                     .load(drawable)
@@ -616,7 +616,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                                     ImageView touxiang1 = view1.findViewById(R.id.db_touxiang);
                                     name1.setText(subject.getName());
                                     try {
-                                        Bitmap bitmap = mFacePassHandler.getFaceImage(subject.getTeZhengMa());
+                                        Bitmap bitmap = mFacePassHandler.getFaceImage(subject.getTeZhengMa().getBytes());
                                         Drawable drawable = new BitmapDrawable(getResources(), bitmap);
                                         Glide.with(MainActivity.this)
                                                 .load(drawable)
@@ -966,7 +966,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                                 //识别的
                                 //  getFaceImageByFaceToken(result.trackId, faceToken);
 
-                                Subject subject = subjectBox.query().equal(Subject_.teZhengMa, result.faceToken).build().findUnique();
+                                Subject subject = subjectBox.query().equal(Subject_.teZhengMa, new String(result.faceToken)).build().findUnique();
                                 if (subject != null) {
                                     linkedBlockingQueue.offer(subject);
                                     if (isOne) {

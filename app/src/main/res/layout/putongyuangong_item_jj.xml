@@ -24,7 +24,6 @@
 
 
     <ImageView
-        android:id="@+id/dangao"
         android:scaleType="fitXY"
         android:layout_marginLeft="40px"
         android:layout_width="wrap_content"
@@ -77,7 +76,6 @@
             android:layout_height="60px" />
 
         <TextView
-            android:id="@+id/xiaoxi"
             android:textColor="@color/textcolor"
             android:textSize="26px"
             android:text="消息消息消息"

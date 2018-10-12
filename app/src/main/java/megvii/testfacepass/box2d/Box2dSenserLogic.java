@@ -20,7 +20,7 @@ public class Box2dSenserLogic {
 	private SensorManager sm;
 	private Sensor sensor;
 	private boolean m_isPortrait = true;
-	private final static String TAG = Box2dSenserLogic.class.getSimpleName();
+
 	private World m_world;
 
 

@@ -26,8 +26,7 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.Random;
 
 import javax.microedition.khronos.opengles.GL10;
 
@@ -50,7 +49,7 @@ public class Box2dEffectView implements ApplicationListener {
     private OrthographicCamera camera;
     private Box2DDebugRenderer m_debugRenderer;
     private World world;
-    private Box2dSenserLogic m_box2dSenserLogic;
+   // private Box2dSenserLogic m_box2dSenserLogic;
     private Context m_context;
     private List<Body> m_ballBodys = new ArrayList<>();
     private SpriteBatch m_spriteBatch;
@@ -66,8 +65,7 @@ public class Box2dEffectView implements ApplicationListener {
 
 
 	public void release(){
-        isR=false;
-        m_box2dSenserLogic.release();
+      //  m_box2dSenserLogic.release();
 	}
 
     public void setCreatComplete(BoxCreatComplete creatComplete){
@@ -100,7 +98,7 @@ public class Box2dEffectView implements ApplicationListener {
         addleftwall();
         addrighttwall();
 
-        m_box2dSenserLogic = new Box2dSenserLogic(world, m_context);
+    //    m_box2dSenserLogic = new Box2dSenserLogic(world, m_context);
 
         //创建完成的回调
         creatComplete.creatComplete();
@@ -156,37 +154,24 @@ public class Box2dEffectView implements ApplicationListener {
 
     @Override
     public void pause() {
+        m_candraw=false;
     }
 
     @Override
     public void resume() {
+        m_candraw=true;
     }
 
 	private void setIsPortrait(boolean isPortrait){
-		if (m_box2dSenserLogic != null)
-			m_box2dSenserLogic.setIsPortrait(isPortrait);
+		//if (m_box2dSenserLogic != null)
+		//	m_box2dSenserLogic.setIsPortrait(isPortrait);
 	}
 
+    public void addStar(boolean isLeft, boolean isSelf) {
 
-    boolean isLeft;
-	int count=0;
-	boolean isR=true;
+	    if (!m_candraw)
+		    return;
 
-    public void addStar( boolean isSelf) {
-
-//
-//	    if (!m_candraw)
-//		    return;
-
-
-        while (isR){
-                if (count%2==0){
-                    count++;
-                    isLeft=true;
-                }else {
-                    count++;
-                    isLeft=false;
-                }
             _totalLimitsLogic();
             synchronized (Box2dEffectView.class) {
 
@@ -209,27 +194,31 @@ public class Box2dEffectView implements ApplicationListener {
                 ballinfo.setBallIndex(isSelf?1002:1001);
                 Body BallBody = world.createBody(BallBodydef);
                 BallBody.setUserData(ballinfo);
+                BallBody.setAngularVelocity(0.4f);
+                BallBody.setAngularDamping(0.6f);
                 BallBody.setFixedRotation(false);
                 CircleShape shape = new CircleShape();
-                shape.setRadius(1.1f);
+                shape.setRadius(7.1f);
                 FixtureDef BallFixtureDef = new FixtureDef();
                 BallFixtureDef.shape = shape;
                 BallFixtureDef.density = 1.5f;
                 BallFixtureDef.friction = 0.3f;
-                BallFixtureDef.restitution = 0.5f; // Make it bounce a little bit
+                BallFixtureDef.restitution = 0.6f; // Make it bounce a little bit
                 BallBody.createFixture(BallFixtureDef);
                 shape.dispose();
 
                 m_ballBodys.add(BallBody);
 
-                if (m_ballBodys.size() == 1)
-                    m_box2dSenserLogic.startListener();
+//                if (m_ballBodys.size() == 1)
+//                    m_box2dSenserLogic.startListener();
             }
             SystemClock.sleep(100);
-        }
+
 
 
     }
+
+
 
 	private boolean m_randomGiftLeft = false;//礼物在屏幕左侧
 	public void addGift(int index) {
@@ -273,8 +262,8 @@ public class Box2dEffectView implements ApplicationListener {
 
 			m_ballBodys.add(BallBody);
 
-			if (m_ballBodys.size() == 1)
-				m_box2dSenserLogic.startListener();
+//			if (m_ballBodys.size() == 1)
+//				m_box2dSenserLogic.startListener();
 		}
 	}
 
@@ -371,7 +360,7 @@ public class Box2dEffectView implements ApplicationListener {
 
 	        if (tempTexture!= null) {
 		        m_spriteBatch.setColor(new Color(1, 1, 1, alphascale * 0.6f));
-		        m_spriteBatch.draw(tempTexture, transformVect.x + (1f - alphascale) * widthSize, transformVect.y + (1f - alphascale) * widthSize, alphascale * widthSize * 12f, alphascale * widthSize * 12f);
+		        m_spriteBatch.draw(tempTexture, transformVect.x + (1f - alphascale) * widthSize, transformVect.y + (1f - alphascale) * widthSize, alphascale * widthSize * 10f, alphascale * widthSize * 10f);
 	        }
 
         }
@@ -392,9 +381,9 @@ public class Box2dEffectView implements ApplicationListener {
         Body body = m_ballBodys.remove(indexofbodys);
         world.destroyBody(body);
 
-        if (m_ballBodys.size() == 0){
-            m_box2dSenserLogic.stopListener();
-        }
+//        if (m_ballBodys.size() == 0){
+//            m_box2dSenserLogic.stopListener();
+//        }
     }
 
     public void openDebugRenderer(boolean debugRenderer) {
@@ -409,7 +398,7 @@ public class Box2dEffectView implements ApplicationListener {
 			BallInfo ballInfoA = (BallInfo)contact.getFixtureA().getBody().getUserData();
 			BallInfo ballInfoB = (BallInfo)contact.getFixtureB().getBody().getUserData();
 			if (ballInfoA != null && ballInfoB != null){
-				Log.d(TAG, "beginContact");
+			//	Log.d(TAG, "beginContact");
 			}
 		}
 

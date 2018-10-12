@@ -72,18 +72,19 @@ public class BaseActivity extends AppCompatActivity {
 
             case 201:
                 //默认模版 //竖屏
-             startActivity(new Intent(BaseActivity.this,MainActivity201.class));
+                startActivity(new Intent(BaseActivity.this,MainActivity203.class));
                 finish();
+           //  startActivity(new Intent(BaseActivity.this,MainActivity201.class));
+             //   finish();
 
                 break;
             case 202:
-                startActivity(new Intent(BaseActivity.this,MainActivity202.class));
-                finish();
+             //   startActivity(new Intent(BaseActivity.this,MainActivity202.class));
+              //  finish();
 
                 break;
             case 203:
-                startActivity(new Intent(BaseActivity.this,MainActivity203.class));
-                finish();
+
                 break;
 
         }

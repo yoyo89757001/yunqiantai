@@ -361,7 +361,7 @@ public class MainActivity202 extends Activity implements CameraManager.CameraLis
                                         .apply(myOptions2)
                                         .into(touxiang2);
                             } else {
-                                Bitmap bitmap = mFacePassHandler.getFaceImage(bean2.getTeZhengMa());
+                                Bitmap bitmap = mFacePassHandler.getFaceImage(bean2.getTeZhengMa().getBytes());
                                 Drawable drawable = new BitmapDrawable(getResources(), bitmap);
                                 Glide.with(MainActivity202.this)
                                         .load(drawable)
@@ -422,7 +422,7 @@ public class MainActivity202 extends Activity implements CameraManager.CameraLis
                                                         .apply(GlideUtils.getRequestOptions())
                                                         .into(touxiang);
                                             } else {
-                                                Bitmap bitmap = mFacePassHandler.getFaceImage(bean2.getTeZhengMa());
+                                                Bitmap bitmap = mFacePassHandler.getFaceImage(bean2.getTeZhengMa().getBytes());
                                                 Drawable drawable = new BitmapDrawable(getResources(), bitmap);
                                                 Glide.with(MainActivity202.this)
                                                         .load(drawable)
@@ -480,7 +480,7 @@ public class MainActivity202 extends Activity implements CameraManager.CameraLis
                                         //  .apply(myOptions2)
                                         .into(touxiang2);
                             } else {
-                                Bitmap bitmap = mFacePassHandler.getFaceImage(bean2.getTeZhengMa());
+                                Bitmap bitmap = mFacePassHandler.getFaceImage(bean2.getTeZhengMa().getBytes());
                                 Drawable drawable = new BitmapDrawable(getResources(), bitmap);
                                 Glide.with(MainActivity202.this)
                                         .load(drawable)
@@ -541,7 +541,7 @@ public class MainActivity202 extends Activity implements CameraManager.CameraLis
                                                         .apply(GlideUtils.getRequestOptions())
                                                         .into(touxiang);
                                             } else {
-                                                Bitmap bitmap = mFacePassHandler.getFaceImage(bean2.getTeZhengMa());
+                                                Bitmap bitmap = mFacePassHandler.getFaceImage(bean2.getTeZhengMa().getBytes());
                                                 Drawable drawable = new BitmapDrawable(getResources(), bitmap);
                                                 Glide.with(MainActivity202.this)
                                                         .load(drawable)
@@ -693,7 +693,7 @@ public class MainActivity202 extends Activity implements CameraManager.CameraLis
                                        // .apply(myOptions2)
                                         .into(touxiang2);
                             } else {
-                                Bitmap bitmap = mFacePassHandler.getFaceImage(bean2.getTeZhengMa());
+                                Bitmap bitmap = mFacePassHandler.getFaceImage(bean2.getTeZhengMa().getBytes());
                                 Drawable drawable = new BitmapDrawable(getResources(), bitmap);
                                 Glide.with(MainActivity202.this)
                                         .load(drawable)
@@ -753,7 +753,7 @@ public class MainActivity202 extends Activity implements CameraManager.CameraLis
                                                         .apply(GlideUtils.getRequestOptions())
                                                         .into(touxiang);
                                             } else {
-                                                Bitmap bitmap = mFacePassHandler.getFaceImage(bean2.getTeZhengMa());
+                                                Bitmap bitmap = mFacePassHandler.getFaceImage(bean2.getTeZhengMa().getBytes());
                                                 Drawable drawable = new BitmapDrawable(getResources(), bitmap);
                                                 Glide.with(MainActivity202.this)
                                                         .load(drawable)
@@ -993,7 +993,7 @@ public class MainActivity202 extends Activity implements CameraManager.CameraLis
                                 //识别的
                                 //  getFaceImageByFaceToken(result.trackId, faceToken);
 
-                                Subject subject = subjectBox.query().equal(Subject_.teZhengMa, result.faceToken).build().findUnique();
+                                Subject subject = subjectBox.query().equal(Subject_.teZhengMa, new String(result.faceToken)).build().findUnique();
                                 if (subject != null) {
                                     subject.setPeopleType("员工");
                                     linkedBlockingQueue.offer(subject);
@@ -1026,7 +1026,7 @@ public class MainActivity202 extends Activity implements CameraManager.CameraLis
                                     Subject subject1 = new Subject();
                                     subject1.setId(12345);
                                     subject1.setName("测试");
-                                    subject1.setTeZhengMa(result.faceToken);
+                                    subject1.setTeZhengMa(new String(result.faceToken));
                                     subject1.setPeopleType("白名单");
                                     subjectBox.put(subject1);
                                 }

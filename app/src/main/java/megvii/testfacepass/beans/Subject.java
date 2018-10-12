@@ -21,7 +21,7 @@ public class Subject implements Comparator<Subject> {
         this.id = id;
     }
 
-    public Subject(long id, String sid, String name, String companyId, String companyName, String workNumber, String sex, String phone, String peopleType, String email, String position, int employeeStatus, int quitType, String remark, String photo, String storeId, String storeName, String entryTime, String birthday, byte[] teZhengMa, String departmentName, int daka, String shijian, String displayPhoto, View view) {
+    public Subject(long id, String sid, String name, String companyId, String companyName, String workNumber, String sex, String phone, String peopleType, String email, String position, int employeeStatus, int quitType, String remark, String photo, String storeId, String storeName, String entryTime, String birthday, String teZhengMa, String departmentName, int daka, String shijian, String displayPhoto, View view) {
         this.id = id;
         this.sid = sid;
         this.name = name;
@@ -71,7 +71,7 @@ public class Subject implements Comparator<Subject> {
     private String storeName;// 门店名称
     private String entryTime; // 入职时间
     private String birthday; // 生日
-    private byte[] teZhengMa;
+    private String teZhengMa;
     private String departmentName;
     private int daka;
     private String shijian;
@@ -122,11 +122,11 @@ public class Subject implements Comparator<Subject> {
         this.departmentName = departmentName;
     }
 
-    public byte[] getTeZhengMa() {
+    public String getTeZhengMa() {
         return teZhengMa;
     }
 
-    public void setTeZhengMa(byte[] teZhengMa) {
+    public void setTeZhengMa(String teZhengMa) {
         this.teZhengMa = teZhengMa;
     }
 
@@ -309,7 +309,7 @@ public class Subject implements Comparator<Subject> {
                 ", storeName='" + storeName + '\'' +
                 ", entryTime='" + entryTime + '\'' +
                 ", birthday='" + birthday + '\'' +
-                ", teZhengMa=" + Arrays.toString(teZhengMa) +
+                ", teZhengMa=" + teZhengMa +
                 ", departmentName='" + departmentName + '\'' +
                 ", daka=" + daka +
                 ", shijian='" + shijian + '\'' +

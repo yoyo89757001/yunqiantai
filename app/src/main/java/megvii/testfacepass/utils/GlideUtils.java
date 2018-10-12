@@ -15,9 +15,11 @@ public class GlideUtils {
     public static RequestOptions getRequestOptions(){
         return  new RequestOptions()
                 .centerCrop()
-                .diskCacheStrategy(DiskCacheStrategy.DATA)
+
                 .error(R.drawable.erroy_bg)
-                .transform(new GlideCircleTransform(4, Color.WHITE));
+                .transform(new GlideCircleTransform(2, Color.WHITE))
+                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                ;
     }
 
 

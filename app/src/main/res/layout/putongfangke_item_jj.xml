@@ -68,7 +68,6 @@
             android:layout_height="60px" />
 
         <TextView
-            android:id="@+id/xiaoxi"
             android:textColor="@color/textcolor"
             android:textSize="26px"
             android:text="消息消息消息"

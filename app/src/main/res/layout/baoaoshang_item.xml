@@ -13,7 +13,6 @@
         android:layout_height="match_parent">
 
         <RelativeLayout
-            android:id="@+id/ghgh"
             android:layout_marginTop="40px"
             android:orientation="horizontal"
             android:layout_width="match_parent"
@@ -29,7 +28,6 @@
 
 
             <LinearLayout
-                android:id="@+id/hjhj"
                 android:orientation="vertical"
                 android:layout_toRightOf="@+id/touxiang"
                 android:gravity="center_vertical"
@@ -98,7 +96,6 @@
                 android:paddingBottom="40px"
                 android:textSize="20px"
                 android:textColor="@color/white"
-                android:id="@+id/xiaoxi"
                 android:text="消息消息消息消息消息消息"
                 android:background="@drawable/xiaoxi_bg"
                 android:layout_width="match_parent"

@@ -2,15 +2,6 @@
     <string name="app_name">瑞瞳云前台</string>
     <string name="N_A">N/A</string>
     <string name="close">Close</string>
-    <string name="exit">Exit</string>
-    <string name="sample">Sample</string>
-    <string name="recent">Recent</string>
-    <string name="settings">Settings</string>
-    <string name="tracks">Tracks</string>
-    <string name="toggle_player">Player</string>
-    <string name="toggle_render">Render</string>
-    <string name="toggle_ratio">Scale</string>
-    <string name="show_info">Info</string>
     <string name="vdec">vdec</string>
     <string name="fps">fps</string>
     <string name="v_cache">v-cache</string>
@@ -62,7 +53,6 @@
     <string name="VideoView_render_surface_view">Render: SurfaceView</string>
     <string name="VideoView_render_texture_view">Render: TextureView</string>
 
-    <string name="VideoView_player_none">Player: None</string>
     <string name="VideoView_player_AndroidMediaPlayer">Player: AndroidMediaPlayer</string>
     <string name="VideoView_player_IjkMediaPlayer">Player: IjkMediaPlayer</string>
     <string name="VideoView_player_IjkExoMediaPlayer">Player: IjkExoMediaPlayer</string>

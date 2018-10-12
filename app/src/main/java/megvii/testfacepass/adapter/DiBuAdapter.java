@@ -96,7 +96,7 @@ public class DiBuAdapter extends RecyclerView.Adapter<DiBuAdapter.ViewHolder>{
                         .apply(GlideUtils.getRequestOptions())
                         .into(holder.touxiang);
             }else {
-                Bitmap bitmap = facePassHandler.getFaceImage(list.get(position).getTeZhengMa());
+                Bitmap bitmap = facePassHandler.getFaceImage(list.get(position).getTeZhengMa().getBytes());
                 Drawable drawable = new BitmapDrawable(context.getResources(), bitmap);
                 Glide.with(context)
                         .load(drawable)
