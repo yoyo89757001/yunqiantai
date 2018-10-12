@@ -84,7 +84,8 @@ public class BaseActivity extends AppCompatActivity {
 
                 break;
             case 203:
-
+                startActivity(new Intent(BaseActivity.this,MainActivity203.class));
+                finish();
                 break;
 
         }

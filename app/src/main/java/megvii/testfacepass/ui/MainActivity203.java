@@ -144,7 +144,6 @@ import megvii.testfacepass.utils.FacePassUtil;
 import megvii.testfacepass.utils.FileUtil;
 import megvii.testfacepass.utils.GlideUtils;
 import megvii.testfacepass.utils.GsonUtil;
-import megvii.testfacepass.utils.ImageUtils;
 import megvii.testfacepass.utils.RandomDataUtil;
 import megvii.testfacepass.utils.SettingVar;
 import megvii.testfacepass.utils.ValueAnimatorIntface;
@@ -301,6 +300,7 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
     private Box<GuanHuai> guanHuaiBox = null;
     private Box2DFragment m_box2dFgm;
     private FragmentManager fragmentManager = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -1230,7 +1230,6 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
                                     .setAcceleration(0.000004f, 270)
                                     .emit(bootomZuoBiao.get(num), dh + 50, 1, 100);
                         }
-
                         break;
                     }
                     case 121: {
@@ -1694,6 +1693,7 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
         TableLayout mHudView = findViewById(R.id.hud_view);
         shipingView = findViewById(R.id.ijkplayview);
         shipingView.setVisibility(View.GONE);
+
         //背景
         daBg.setBackgroundResource(R.color.dabg);
         scrollView.setSmoothScrollingEnabled(true);
