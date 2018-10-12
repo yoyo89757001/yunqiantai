@@ -148,12 +148,10 @@ public class MyReceiver extends BroadcastReceiver {
 					String tp[]= renShu.getContent().getSubType().split("-");
 					for (String typee : tp) {
 						List<BenDiMBbean> bb = benDiMBbeanDao.query().equal(BenDiMBbean_.subType,typee).build().find();
-						if (bb != null) {
-							int size = bb.size();
-							for (int i = 0; i < size; i++) {
-								//删掉相同身份的，保证只有一种最新的身份
-								benDiMBbeanDao.remove(bb.get(i));
-							}
+						int size = bb.size();
+						for (int i = 0; i < size; i++) {
+							//删掉相同身份的，保证只有一种最新的身份
+							benDiMBbeanDao.remove(bb.get(i));
 						}
 						p1=renShu.getContent().getBottemImageUrl().substring(1,renShu.getContent().getBottemImageUrl().length()-1);
 						String p2=renShu.getContent().getPopupImageUrl().substring(1,renShu.getContent().getPopupImageUrl().length()-1);
