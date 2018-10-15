@@ -76,8 +76,16 @@ public class Subject implements Comparator<Subject> {
     private int daka;
     private String shijian;
     private String displayPhoto;
+    private byte[] bitmap;
 
 
+    public byte[] getBitmap() {
+        return bitmap;
+    }
+
+    public void setBitmap(byte[] bitmap) {
+        this.bitmap = bitmap;
+    }
 
     public String getDisplayPhoto() {
         return displayPhoto;

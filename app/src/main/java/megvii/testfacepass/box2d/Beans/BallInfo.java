@@ -12,8 +12,17 @@ public class BallInfo {
 	private float m_aplhascale = 1f;
 	private int m_ballIndex = 0;
 	private float m_randomScale = 1.0f;
+	private int type;
 
-//	private Texture m_ballTexture;
+	public int getType() {
+		return type;
+	}
+
+	public void setType(int type) {
+		this.type = type;
+	}
+
+	//	private Texture m_ballTexture;
 //
 //	public BallInfo() {
 //

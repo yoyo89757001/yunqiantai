@@ -36,6 +36,12 @@ public class GuanHuai {
     private String repeatType;
     private String newsStatus;
 
+    public GuanHuai(String projectileStatus,  String markedWords, String newsStatus) {
+        this.projectileStatus = projectileStatus;
+        this.markedWords = markedWords;
+        this.newsStatus = newsStatus;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }

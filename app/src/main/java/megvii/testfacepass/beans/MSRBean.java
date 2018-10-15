@@ -6,6 +6,15 @@ public class MSRBean {
     private byte[] bitmap;
     private String sex;
     private int age;
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public byte[] getBitmap() {
         return bitmap;

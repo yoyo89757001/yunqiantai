@@ -179,31 +179,50 @@ public class Box2dEffectView implements ApplicationListener {
                 BallBodydef.type = BodyDef.BodyType.DynamicBody;
 
                 float thrownXRandom = (float) Math.random() * 30.0f + 4.0f;
-                float thrownYRandom = -( (float) Math.random() * 20.0f + 3.0f );
+                float thrownYRandom = -( (float) Math.random() * 10.0f + 3.0f );
                 float yRandomStart = (float) Math.random() * 8f;
-                if (isLeft) {
-                    BallBodydef.linearVelocity.set(thrownXRandom, thrownYRandom);
-                    BallBodydef.position.set(new Vector2(-camera.viewportWidth/2 + 2f, camera.viewportHeight/2 - yRandomStart) );
 
+
+                if (isLeft) {
+                    BallBodydef.linearVelocity.set(0, thrownYRandom);//线速度
+                    BallBodydef.position.set(new Vector2((float) Math.random() *(-camera.viewportWidth/2)-3f, camera.viewportHeight/2 ) );
                 } else {
-                    BallBodydef.linearVelocity.set(-thrownXRandom, thrownYRandom);
-                    BallBodydef.position.set(new Vector2(camera.viewportWidth/2 - 2f, camera.viewportHeight/2 - yRandomStart) );
+
+
+                    BallBodydef.linearVelocity.set(0, thrownYRandom);
+                    BallBodydef.position.set(new Vector2((float) Math.random() *(camera.viewportWidth/2)-4f, camera.viewportHeight/2 ) );
                 }
 
                 BallInfo ballinfo = new BallInfo();
                 ballinfo.setBallIndex(isSelf?1002:1001);
+                int typee=(int) (Math.random()*5);
+                ballinfo.setType(typee);
                 Body BallBody = world.createBody(BallBodydef);
                 BallBody.setUserData(ballinfo);
                 BallBody.setAngularVelocity(0.4f);
                 BallBody.setAngularDamping(0.6f);
                 BallBody.setFixedRotation(false);
                 CircleShape shape = new CircleShape();
-                shape.setRadius(7.1f);
+                switch (typee){
+                    case 0:
+                        shape.setRadius(1.5f);
+                        break;
+                    case 1:
+                        shape.setRadius(2.5f);
+                        break;
+                    case 2:
+                        shape.setRadius(4.5f);
+                        break;
+                    case 3:
+                        shape.setRadius(7.5f);
+                        break;
+                }
+
                 FixtureDef BallFixtureDef = new FixtureDef();
                 BallFixtureDef.shape = shape;
-                BallFixtureDef.density = 1.5f;
+                BallFixtureDef.density = 0.8f;
                 BallFixtureDef.friction = 0.3f;
-                BallFixtureDef.restitution = 0.6f; // Make it bounce a little bit
+                BallFixtureDef.restitution = 0.7f; // Make it bounce a little bit
                 BallBody.createFixture(BallFixtureDef);
                 shape.dispose();
 
@@ -354,10 +373,27 @@ public class Box2dEffectView implements ApplicationListener {
 		        tempTexture = m_starTextures.get(index - 1001);
 		        widthSize = 35f;
 	        }
+	        switch (ballInfo.getType()){
+                case 0:
+                    widthSize=20;
+                    break;
+                case 1:
+                    widthSize=25;
+                    break;
+                case 2:
+                    widthSize=30;
+                    break;
+                case 3:
+                    widthSize=35;
+                    break;
+
+            }
+
 
 	        widthSize = widthSize* ballInfo.getRandomScale()* Box2DFragment.s_scale;
             //绘制
-
+       //     Log.d(TAG, "alphascale * widthSize * 10f:" + (alphascale * widthSize * 10f));
+         //   Log.d(TAG, "alphascale * widthSize * 10f:" + (alphascale * widthSize * 10f));
 	        if (tempTexture!= null) {
 		        m_spriteBatch.setColor(new Color(1, 1, 1, alphascale * 0.6f));
 		        m_spriteBatch.draw(tempTexture, transformVect.x + (1f - alphascale) * widthSize, transformVect.y + (1f - alphascale) * widthSize, alphascale * widthSize * 10f, alphascale * widthSize * 10f);

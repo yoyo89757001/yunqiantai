@@ -300,6 +300,7 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
     private Box<GuanHuai> guanHuaiBox = null;
     private Box2DFragment m_box2dFgm;
     private FragmentManager fragmentManager = null;
+    private List<GuanHuai> guanHuaiList=new ArrayList<>();
 
 
     @Override
@@ -332,6 +333,15 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
             filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
             registerReceiver(netWorkStateReceiver, filter);
         }
+
+        GuanHuai guanHuai=new GuanHuai("0","你有一个新的快递,请到前台领取","未领取");
+        GuanHuai guanHuai2=new GuanHuai("1","祝你生日快乐","");
+        GuanHuai guanHuai3=new GuanHuai("2","今天是你入职100天,请到前台领取小礼物","");
+        GuanHuai guanHuai4=new GuanHuai("3","@所有员工,国庆节快乐","");
+        guanHuaiList.add(guanHuai);
+        guanHuaiList.add(guanHuai2);
+        guanHuaiList.add(guanHuai3);
+        guanHuaiList.add(guanHuai4);
 
         //每分钟的广播
         intentFilter = new IntentFilter();
@@ -399,7 +409,7 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
             requestPermission();
         } else {
             //初始化
-            //   FacePassHandler.getAuth(authIP, apiKey, apiSecret);
+        //       FacePassHandler.getAuth(authIP, apiKey, apiSecret);
             FacePassHandler.initSDK(getApplicationContext());
             Log.d("MainActivity201", FacePassHandler.getVersion());
         }
@@ -602,7 +612,7 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
                         //生日的时候开启
                         //0小邮局 1生日提醒 2入职关怀 3节日关怀
                         boolean isSR = false;
-                        Log.d("MainActivity203", "bean2.getId():" + bean2.getId());
+                     //   Log.d("MainActivity203", "bean2.getId():" + bean2.getId());
 
                         final List<GuanHuai> guanHuaiList = guanHuaiBox.query().equal(GuanHuai_.employeeId, bean2.getId()).build().find();
                         final List<GuanHuai> guanHuaiList2 = guanHuaiBox.query().equal(GuanHuai_.employeeId, 0).build().find();
@@ -916,7 +926,296 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
 
                         break;
                     }
+                    case 555: {
+                        Log.d("MainActivity203", "收到555");
+                        //零时陌生人
+                        final Subject bean2 = (Subject) msg.obj;
+                        //生日的时候开启
+                        //0小邮局 1生日提醒 2入职关怀 3节日关怀
+                        boolean isSR = false;
 
+                        if (isSR) {
+                            if (shengRiThierd != null) {
+                                shengRiThierd.interrupt();
+                                shengRiThierd = null;
+                            }
+                            shengRiThierd = new ShengRiThierd();
+                            shengRiThierd.start();
+                        }
+
+                        final View view_dk = View.inflate(MainActivity203.this, R.layout.yuangong_item_03, null);
+                        ScreenAdapterTools.getInstance().loadView(view_dk);
+                        YGTopView ygTopView = view_dk.findViewById(R.id.ygtopview);
+                        TextView ygwenzitext = view_dk.findViewById(R.id.ygwenzitext);
+                        LinearLayout linearygwenzi = view_dk.findViewById(R.id.ygwenzi);
+                        final ScrollView scrollView_03 = view_dk.findViewById(R.id.scrollview_03);
+                        ygTopView.setHight(dh, dw);
+                        ygTopView.setBitmapHG();
+                        if (isSR){
+                            ygTopView.setName(bean2.getName(), bean2.getDepartmentName(), true);
+                        }else {
+                            ygTopView.setName(bean2.getName(), bean2.getDepartmentName(), false);
+                        }
+
+                        try {
+
+                            Bitmap bitmap =BitmapFactory.decodeByteArray(bean2.getBitmap(), 0, bean2.getBitmap().length);
+                            ygTopView.setBitmapTX(FileUtil.toRoundBitmap(bitmap));
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        final LinearLayout xiaoxi_ll = view_dk.findViewById(R.id.xiaoxi_ll);
+                        rootLayout.addView(view_dk);
+                        if (isDH) { //表示在执行动画
+                            isDH = false;
+                            utils.getValueAnimator().cancel();
+                        }
+                        //大于1个就
+                        if (rootLayout.getChildCount() > 1) {
+
+                            ValueAnimatorUtils utils = new ValueAnimatorUtils();
+                            utils.setIntface(new ValueAnimatorIntface() {
+                                @Override
+                                public void end() {
+                                    rootLayout.removeViewAt(0);
+                                }
+
+                                @Override
+                                public void update(float value) {
+                                    rootLayout.getChildAt(0).setX(value);
+                                }
+
+                                @Override
+                                public void start() {
+                                    if (box2dEffectView!=null)
+                                        box2dEffectView.pause();
+                                    boxfargment.setScaleX(0.001f);
+                                    boxfargment.setScaleY(0.001f);
+                                    boxfargment.invalidate();
+                                }
+                            });
+                            utils.animator(0, -dw, 1000, 0, 0);
+                        }
+                       final int si= guanHuaiList.size();
+                        RelativeLayout.LayoutParams layoutParams2 = (RelativeLayout.LayoutParams) ygTopView.getLayoutParams();
+                        layoutParams2.height = dh / 3;
+                        ygTopView.setLayoutParams(layoutParams2);
+                        ygTopView.invalidate();
+                        if (si > 0) {
+                            //有消息
+                            linearygwenzi.setVisibility(View.GONE);
+                            scrollView_03.setVisibility(View.VISIBLE);
+                            if (box2dEffectView!=null)
+                                box2dEffectView.pause();
+                            boxfargment.setScaleX(0.001f);
+                            boxfargment.setScaleY(0.001f);
+                            boxfargment.invalidate();
+
+
+                        } else {
+                            //没消息
+                            Log.d("MainActivity203", "没消息");
+                            boxfargment.setVisibility(View.VISIBLE);
+                            if (box2dEffectView!=null)
+                                box2dEffectView.resume();
+                            boxfargment.setScaleX(1f);
+                            boxfargment.setScaleY(1f);
+                            boxfargment.invalidate();
+                            linearygwenzi.setVisibility(View.VISIBLE);
+                            scrollView_03.setVisibility(View.GONE);
+                        }
+                        //动画
+                        SpringSystem springSystem3 = SpringSystem.create();
+                        final Spring spring3 = springSystem3.createSpring();
+                        //两个参数分别是弹力系数和阻力系数
+                        spring3.setSpringConfig(SpringConfig.fromOrigamiTensionAndFriction(100, 6));
+                        // 添加弹簧监听器
+                        spring3.addListener(new SimpleSpringListener() {
+                            @Override
+                            public void onSpringUpdate(Spring spring) {
+                                // value是一个符合弹力变化的一个数，我们根据value可以做出弹簧动画
+                                float value = (float) spring.getCurrentValue();
+                                //  Log.d("kkkk", "value:" + value);
+                                //基于Y轴的弹簧阻尼动画
+                                //	helper.itemView.setTranslationY(value);
+                                // 对图片的伸缩动画
+                                //float scale = 1f - (value * 0.5f);
+                                view_dk.setScaleX(value);
+                                view_dk.setScaleY(value);
+                                if (value == 1 && isNet) {
+
+                                    new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            for (int i = 0; i < si; i++) {
+
+                                                final int finalI = i;
+                                                runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        final View view_xiaoxi = View.inflate(MainActivity203.this, R.layout.xiaoxi_item, null);
+                                                        ScreenAdapterTools.getInstance().loadView(view_xiaoxi);
+                                                        RelativeLayout rl_xiaoxi = view_xiaoxi.findViewById(R.id.rl_xiaoxi);
+                                                        TextView neirong = view_xiaoxi.findViewById(R.id.neirong);
+                                                        TextView lingqu = view_xiaoxi.findViewById(R.id.lingqu);
+                                                        TextView biaoti = view_xiaoxi.findViewById(R.id.biaoti);
+                                                        ImageView xiaoxi_im = view_xiaoxi.findViewById(R.id.xiaoxi_im);
+                                                        switch (guanHuaiList.get(finalI).getProjectileStatus()) {
+                                                            case "0":
+                                                                //小邮局
+                                                                xiaoxi_im.setBackgroundResource(R.drawable.youjian_bg);
+                                                                try {
+                                                                    biaoti.setText("邮件");
+                                                                    lingqu.setText(guanHuaiList.get(finalI).getNewsStatus());
+                                                                    neirong.setText(guanHuaiList.get(finalI).getMarkedWords());
+                                                                } catch (Exception e) {
+                                                                    e.printStackTrace();
+                                                                }
+                                                                break;
+                                                            case "1":
+                                                                // 生日提醒
+                                                                xiaoxi_im.setBackgroundResource(R.drawable.shengri_bg2);
+                                                                try {
+                                                                    biaoti.setText("生日");
+                                                                    neirong.setText(guanHuaiList.get(finalI).getMarkedWords());
+                                                                    lingqu.setText("");
+                                                                } catch (Exception e) {
+                                                                    e.printStackTrace();
+                                                                }
+                                                                break;
+                                                            case "2":
+                                                                //入职关怀
+                                                                xiaoxi_im.setBackgroundResource(R.drawable.guanhuai_bg);
+                                                                try {
+                                                                    biaoti.setText("入职关怀");
+                                                                    lingqu.setText("");
+                                                                    neirong.setText(guanHuaiList.get(finalI).getMarkedWords());
+                                                                } catch (Exception e) {
+                                                                    e.printStackTrace();
+                                                                }
+                                                                break;
+                                                            case "3":
+                                                                //节日关怀
+                                                                xiaoxi_im.setBackgroundResource(R.drawable.jieri_xx);
+                                                                try {
+                                                                    biaoti.setText("节日关怀");
+                                                                    lingqu.setText("");
+                                                                    neirong.setText(guanHuaiList.get(finalI).getMarkedWords());
+                                                                } catch (Exception e) {
+                                                                    e.printStackTrace();
+                                                                }
+                                                                break;
+                                                        }
+
+                                                        view_xiaoxi.setY(dh);
+                                                        xiaoxi_ll.addView(view_xiaoxi);
+
+                                                        RelativeLayout.LayoutParams layoutParams6 = (RelativeLayout.LayoutParams) rl_xiaoxi.getLayoutParams();
+                                                        layoutParams6.topMargin = 40;
+                                                        layoutParams6.bottomMargin = 20;
+                                                        layoutParams6.height = (int) ((float) dh * 0.13);
+                                                        rl_xiaoxi.setLayoutParams(layoutParams6);
+                                                        rl_xiaoxi.invalidate();
+
+                                                        float sfff = 60 + ((float) dh * 0.13f);
+
+                                                        ValueAnimator animator = ValueAnimator.ofFloat(dh, sfff * finalI);
+                                                        //动画时长，让进度条在CountDown时间内正好从0-360走完，
+                                                        animator.setDuration(1000);
+                                                        animator.setInterpolator(new DecelerateInterpolator());//匀速
+                                                        animator.setRepeatCount(0);//0表示不循环，-1表示无限循环
+                                                        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                                                            @Override
+                                                            public void onAnimationUpdate(ValueAnimator animation) {
+                                                                /**
+                                                                 * 这里我们已经知道ValueAnimator只是对值做动画运算，而不是针对控件的，因为我们设置的区间值为0-1.0f
+                                                                 * 所以animation.getAnimatedValue()得到的值也是在[0.0-1.0]区间，而我们在画进度条弧度时，设置的当前角度为360*currentAngle，
+                                                                 * 因此，当我们的区间值变为1.0的时候弧度刚好转了360度
+                                                                 */
+                                                                float jiaodu = (float) animation.getAnimatedValue();
+                                                                view_xiaoxi.setY(jiaodu);
+
+                                                            }
+                                                        });
+                                                        animator.start();
+
+                                                        scrollView_03.fullScroll(ScrollView.FOCUS_DOWN);
+                                                    }
+                                                });
+                                                SystemClock.sleep(800);
+
+                                            }
+                                        }
+                                    }).start();
+
+                                    boolean cv = true;
+                                    for (int i = 0; i < dibuList.size(); i++) {
+                                        if (dibuList.get(i).getId() == bean2.getId()) {
+                                            cv = false;
+                                            break;
+                                        }
+                                    }
+                                    if (cv) {
+                                        final View view_dk = View.inflate(MainActivity203.this, R.layout.shulianbiao_203, null);
+                                        ScreenAdapterTools.getInstance().loadView(view_dk);
+                                        TextView name = view_dk.findViewById(R.id.name);
+                                        ImageView touxiang = view_dk.findViewById(R.id.touxiang);
+                                        name.setText(bean2.getName());
+                                        try {
+
+                                            Glide.with(MainActivity203.this)
+                                                    .load(bean2.getBitmap())
+                                                    .apply(GlideUtils.getRequestOptions())
+                                                    .into(touxiang);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+
+                                        shuLiebiao.addView(view_dk, 0);
+                                        RelativeLayout.LayoutParams layoutParams2 = (RelativeLayout.LayoutParams) touxiang.getLayoutParams();
+                                        layoutParams2.width = dw / 11;
+                                        layoutParams2.topMargin = 30;
+                                        layoutParams2.height = dw / 11;
+                                        layoutParams2.leftMargin = 16;
+                                        layoutParams2.rightMargin = 16;
+                                        touxiang.setLayoutParams(layoutParams2);
+                                        touxiang.invalidate();
+                                        dibuList.add(0, bean2);
+                                    }
+
+                                    //启动定时器或重置定时器
+                                    if (task != null) {
+                                        task.cancel();
+                                        //timer.cancel();
+                                        task = new TimerTask() {
+                                            @Override
+                                            public void run() {
+                                                Message message = new Message();
+                                                message.what = 999;
+                                                mHandler.sendMessage(message);
+                                            }
+                                        };
+                                        timer.schedule(task, 12000);
+                                    } else {
+                                        task = new TimerTask() {
+                                            @Override
+                                            public void run() {
+                                                Message message = new Message();
+                                                message.what = 999;
+                                                mHandler.sendMessage(message);
+                                            }
+                                        };
+                                        timer.schedule(task, 12000);
+                                    }
+                                }
+                            }
+                        });
+                        // 设置动画结束值
+                        spring3.setEndValue(1f);
+
+                        break;
+                    }
                     case 666: {
                         //普通访客
                         if (fangkeThired != null) {
@@ -1415,6 +1714,7 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
                                 }
 
                             } else {
+                                Log.d("RecognizeThread", "未识别");
                                 //未识别的
                                 // 防止concurrentHashMap 数据过多 ,超过一定数据 删除没用的
                                 if (concurrentHashMap.size() > 10) {
@@ -2119,10 +2419,16 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
             float pitch = face.pose.pitch;
             float roll = face.pose.roll;
             float yaw = face.pose.yaw;
-
+          //  Log.d("MainActivity203", "pitch:" + pitch);
+          //  Log.d("MainActivity203", "roll:" + roll);
+          //  Log.d("MainActivity203", "yaw:" + yaw);
             if (pitch < 25 && pitch > -25 && roll < 25 && roll > -25 && yaw < 25 && yaw > -25 && face.blur < 0.4) {
                 try {
+                    Log.d("MainActivity203", "tID:" + tID);
+                    Log.d("MainActivity203", "face.trackId:" + face.trackId);
+                    Log.d("MainActivity203", "isLink:" + isLink);
                     if (tID == face.trackId && isLink) {  //入库成功后将 tID=-1;
+                        Log.d("MainActivity203", "进来");
                         isLink = false;
                         tID = -1;
                         //获取图片
@@ -2141,10 +2447,12 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
                         //截取单个人头像
                         final Bitmap bitmap = Bitmap.createBitmap(bmp, x1, y1, x2, y2);
 
-                        MSRBean b = new MSRBean();
-                        b.setAge(face.age);
-                        String sex = "未知";
+                        Subject b = new Subject();
+                        b.setName("访客"+(System.currentTimeMillis()+"").substring(8,12));
+                        b.setPeopleType("员工");
+                      //  b.setAge(face.age);
 
+                        String sex = "";
                         switch (face.gender) {
                             case 0:
                                 sex = "男";
@@ -2159,8 +2467,8 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
                         b.setBitmap(bitmabToBytes2(bitmap));
                         Message message = Message.obtain();
                         message.obj = b;
-                        message.what = -100;
-                        //   mHandler.sendMessage(message);
+                        message.what = 555;
+                        mHandler.sendMessage(message);
 
                     }
 

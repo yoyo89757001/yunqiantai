@@ -9,7 +9,7 @@ package megvii.testfacepass.box2d.Beans;
 public class Box2dConstant {
 
 	public static final int MaxBallCounter = 100;
-	public static final float MaxBallLifer = 6f;
+	public static final float MaxBallLifer = 5f;
 	public static final float MaxBallLiferSP = MaxBallLifer - 0.2f;
 
 }
