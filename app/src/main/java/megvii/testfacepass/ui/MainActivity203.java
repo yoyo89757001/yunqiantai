@@ -380,8 +380,8 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
                     }
                 }
 
-                CeShi cc = new CeShi();
-                cc.statrt();
+//                CeShi cc = new CeShi();
+//                cc.statrt();
 
             }
         }).start();
@@ -1685,7 +1685,7 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
                                 //识别的
                                 //  getFaceImageByFaceToken(result.trackId, faceToken);
                                 Log.d("RecognizeThread", "识别了");
-                                Log.d("RecognizeThread", subjectBox.getAll().get(0).toString());
+                              //  Log.d("RecognizeThread", subjectBox.getAll().get(0).toString());
                                 Subject subject = subjectBox.query().equal(Subject_.teZhengMa, new String(result.faceToken)).build().findUnique();
                                 Log.d("RecognizeThread", "subject:" + subject);
                                 if (!oneTzm.equals(new String(result.faceToken))) {
