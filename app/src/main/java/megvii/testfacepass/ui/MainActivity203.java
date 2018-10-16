@@ -304,6 +304,8 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
     private Box2DFragment m_box2dFgm;
     private FragmentManager fragmentManager = null;
     private List<GuanHuai> guanHuaiList=new ArrayList<>();
+    private List<String> bumenString=new ArrayList<>();
+
 
 
     @Override
@@ -345,6 +347,12 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
         guanHuaiList.add(guanHuai2);
         guanHuaiList.add(guanHuai3);
         guanHuaiList.add(guanHuai4);
+
+        bumenString.add("技术部");
+        bumenString.add("总裁办");
+        bumenString.add("销售部");
+        bumenString.add("人力资源部");
+        bumenString.add("后勤部");
 
         //每分钟的广播
         intentFilter = new IntentFilter();
@@ -1338,6 +1346,7 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
 //                        spring3.setEndValue(1f);break;
                     }
                     case 555: {
+
                        // Log.d("MainActivity203", "收到555");
                         //零时陌生人
                         final Subject bean2 = (Subject) msg.obj;
@@ -1579,7 +1588,7 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
                                                 ImageView touxiang = view_dk.findViewById(R.id.touxiang);
                                                 name.setText(bean2.getName());
                                                 try {
-
+                                                    Glide.get(MainActivity203.this).clearMemory();
                                                     Glide.with(MainActivity203.this)
                                                             .load(bean2.getBitmap())
                                                             .apply(GlideUtils.getRequestOptions())
@@ -1827,7 +1836,7 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
                                         ImageView touxiang = view_dk.findViewById(R.id.touxiang);
                                         name.setText(bean2.getName());
                                         try {
-
+                                            Glide.get(MainActivity203.this).clearMemory();
                                             Glide.with(MainActivity203.this)
                                                     .load(bean2.getBitmap())
                                                     .apply(GlideUtils.getRequestOptions())
@@ -2638,6 +2647,12 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
 
                                 break;
                             case "陌生人":
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Glide.get(MainActivity203.this).clearDiskCache();
+                                    }
+                                }).start();
                                 Message message = Message.obtain();
                                 message.obj = subject;
                                 message.what = 555;
@@ -2677,7 +2692,6 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
         super.onPause();
 //        shipingView.pause();
     }
-
 
 //    private void showRecognizeResult(final long trackId, final float searchScore, final float livenessScore, final boolean isRecognizeOK) {
 //        mAndroidHandler.post(new Runnable() {
@@ -3257,7 +3271,7 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
                         final Bitmap bitmap = Bitmap.createBitmap(bmp, x1, y1, x2, y2);
 
                         Subject b = new Subject();
-                        b.setName("访客"+(System.currentTimeMillis()+"").substring(8,12));
+
                         b.setPeopleType("员工");
                       //  b.setAge(face.age);
 
@@ -3265,13 +3279,17 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
                         switch (face.gender) {
                             case 0:
                                 sex = "男";
+                                b.setName("先生");
                                 break;
                             case 1:
                                 sex = "女";
+                                b.setName("女士");
                                 break;
                             default:
                                 sex = "未知";
                         }
+
+                        b.setDepartmentName(bumenString.get((int) (Math.random()*5)));
                         b.setSex(sex);
                         b.setId(System.currentTimeMillis());
                         b.setBitmap(bitmabToBytes2(bitmap));

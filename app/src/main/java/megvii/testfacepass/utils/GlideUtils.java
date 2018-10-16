@@ -18,7 +18,6 @@ public class GlideUtils {
 
                 .error(R.drawable.erroy_bg)
                 .transform(new GlideCircleTransform(2, Color.WHITE))
-                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                 ;
     }
 
