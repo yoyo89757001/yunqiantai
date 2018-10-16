@@ -1191,6 +1191,7 @@ public class MyReceiver extends BroadcastReceiver {
 
 					}else {
 						//删除
+
 						facePassHandler.deleteFace(subjectBox.get(Long.valueOf(id)).getTeZhengMa().getBytes());
 						subjectBox.remove(Long.valueOf(id));
 						Log.d("MyReceiver", "单个访客删除成功");

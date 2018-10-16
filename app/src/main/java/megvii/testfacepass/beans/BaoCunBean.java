@@ -46,6 +46,15 @@ public class BaoCunBean {
     private boolean isTianQi;
     private String shangBanTime;
     private String xiaBanTime;
+    private int xiabandaka;
+
+    public int getXiabandaka() {
+        return xiabandaka;
+    }
+
+    public void setXiabandaka(int xiabandaka) {
+        this.xiabandaka = xiabandaka;
+    }
 
     public String getShangBanTime() {
         return shangBanTime;

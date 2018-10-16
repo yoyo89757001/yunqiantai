@@ -43,9 +43,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+    <TextView
+        android:textColor="@color/white"
+        android:textSize="44px"
+        android:id="@+id/ghhtttr"
+        android:gravity="center"
+        android:layout_below="@+id/zidongtext"
+        android:text="人脸识别智能办公系统"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
 
     <RelativeLayout
-        android:layout_below="@+id/zidongtext"
+        android:layout_below="@+id/ghhtttr"
         android:layout_centerHorizontal="true"
         android:id="@+id/content_rl"
         android:layout_marginTop="20px"

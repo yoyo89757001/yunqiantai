@@ -145,6 +145,7 @@ public class Box2DFragment extends AndroidFragmentApplication implements InputPr
 		box2dEffectView.setCreatComplete(this);
 		View effectview = CreateGLAlpha(box2dEffectView);
 		mContainer = (InterceptableViewGroup) m_viewRooter.findViewById(R.id.container);
+		mContainer.setIntercept(true);
 		mContainer.addView(effectview);
 		Gdx.input.setInputProcessor(this);
 		Gdx.input.setCatchBackKey(true);

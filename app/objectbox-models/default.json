@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "1:2897092732032172050",
-      "lastPropertyId": "36:3804983515502322058",
+      "lastPropertyId": "37:4693428076790267285",
       "name": "BaoCunBean",
       "properties": [
         {
@@ -151,6 +151,10 @@
         {
           "id": "36:3804983515502322058",
           "name": "xiaBanTime"
+        },
+        {
+          "id": "37:4693428076790267285",
+          "name": "xiabandaka"
         }
       ],
       "relations": []

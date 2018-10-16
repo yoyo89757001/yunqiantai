@@ -116,8 +116,8 @@ public class YGTopView extends View {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int w = MeasureSpec.getSize(widthMeasureSpec);
-        int h = MeasureSpec.getSize(heightMeasureSpec);
+        int w = MeasureSpec.getSize(widthMeasureSpec)-60;
+        int h = MeasureSpec.getSize(heightMeasureSpec)-60;
         int size = Math.min(w, h);
         setMeasuredDimension(size, size);
     }
@@ -170,10 +170,10 @@ public class YGTopView extends View {
         if (name!=null && rectF.bottom>0){
             namePaint.setTextSize(70);
             float jj=namePaint.measureText(name);
-            canvas.drawText(name,width/2-jj/2,rectF.bottom+150,namePaint);
+            canvas.drawText(name,width/2-jj/2,rectF.bottom+140,namePaint);
             namePaint.setTextSize(30);
             float kk=namePaint.measureText(bumen);
-            canvas.drawText(bumen,width/2-kk/2,rectF.bottom+220,namePaint);
+            canvas.drawText(bumen,width/2-kk/2,rectF.bottom+200,namePaint);
         }
 
         if (bitmapHG!=null && ismaozi){
